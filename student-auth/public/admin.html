@@ -1,0 +1,95 @@
+<!DOCTYPE html>
+<html lang="it">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Admin - Student Auth</title>
+  <link rel="stylesheet" href="/css/style.css">
+</head>
+<body>
+  <nav class="navbar">
+    <div class="navbar-content">
+      <a href="/dashboard.html" class="navbar-brand">Student Auth</a>
+      <ul class="navbar-nav">
+        <li><a href="/dashboard.html">Dashboard</a></li>
+        <li><a href="/posts.html">Post</a></li>
+        <li><a href="/spotted.html">Spotted</a></li>
+        <li><a href="/profile.html">Profilo</a></li>
+        <li id="nav-admin"><a href="/admin.html" class="active">Admin</a></li>
+      </ul>
+      <div class="navbar-user">
+        <span class="user-info" id="nav-user-name"></span>
+        <span class="user-role" id="nav-user-role"></span>
+        <button class="btn btn-secondary btn-sm" id="btn-logout">Esci</button>
+      </div>
+    </div>
+  </nav>
+
+  <main class="container">
+    <div class="page-header">
+      <h1>Gestione utenti</h1>
+      <p>Visualizza e gestisci gli utenti del sistema</p>
+    </div>
+
+    <div class="loading" id="loading">
+      <div class="spinner"></div>
+    </div>
+
+    <div id="admin-content" class="hidden">
+      <div id="alert" class="alert"></div>
+
+      <!-- Filtri -->
+      <div class="card">
+        <h3>Filtra utenti</h3>
+        <div style="display: flex; gap: 12px; flex-wrap: wrap;">
+          <div class="form-group" style="flex: 1; min-width: 150px;">
+            <label for="filter-role">Ruolo</label>
+            <select id="filter-role">
+              <option value="">Tutti</option>
+              <option value="studente">Studente</option>
+              <option value="rappresentante">Rappresentante</option>
+              <option value="admin">Admin</option>
+            </select>
+          </div>
+          <div class="form-group" style="flex: 1; min-width: 150px;">
+            <label for="filter-classe">Classe</label>
+            <input type="text" id="filter-classe" placeholder="Es: 5">
+          </div>
+          <div class="form-group" style="display: flex; align-items: flex-end;">
+            <button class="btn btn-primary" id="btn-filter" style="width: auto;">Filtra</button>
+          </div>
+        </div>
+      </div>
+
+      <!-- Moderazione Spotted -->
+      <div class="card">
+        <h2>Moderazione Spotted (<span id="pending-count">0</span> in attesa)</h2>
+        <div id="pending-spotted-list"></div>
+        <p id="no-pending" class="hidden" style="color: var(--text-muted); padding: 12px 0;">Nessuno spotted in attesa di approvazione.</p>
+      </div>
+
+      <!-- Tabella utenti -->
+      <div class="card">
+        <h2>Utenti (<span id="users-count">0</span>)</h2>
+        <div class="table-container">
+          <table>
+            <thead>
+              <tr>
+                <th>Nome</th>
+                <th>Email</th>
+                <th>Ruolo</th>
+                <th>Classe</th>
+                <th>Azioni</th>
+              </tr>
+            </thead>
+            <tbody id="users-table"></tbody>
+          </table>
+        </div>
+      </div>
+    </div>
+  </main>
+
+  <script src="/js/api.js"></script>
+  <script src="/js/admin.js"></script>
+</body>
+</html>

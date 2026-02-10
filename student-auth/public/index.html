@@ -1,0 +1,63 @@
+<!DOCTYPE html>
+<html lang="it">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Student Auth - Accedi</title>
+  <link rel="stylesheet" href="/css/style.css">
+</head>
+<body>
+  <div class="auth-container">
+    <div class="auth-card">
+      <h1>Student Auth</h1>
+      <p class="subtitle">Accedi o registrati per continuare</p>
+
+      <div class="tabs">
+        <button class="tab active" id="tab-login">Accedi</button>
+        <button class="tab" id="tab-signup">Registrati</button>
+      </div>
+
+      <div id="alert" class="alert"></div>
+
+      <!-- Login Form -->
+      <form id="form-login">
+        <div class="form-group">
+          <label for="login-email">Email</label>
+          <input type="email" id="login-email" required placeholder="la-tua@email.it">
+        </div>
+        <div class="form-group">
+          <label for="login-password">Password</label>
+          <input type="password" id="login-password" required placeholder="La tua password" minlength="6">
+        </div>
+        <button type="submit" class="btn btn-primary">Accedi</button>
+      </form>
+
+      <!-- Signup Form -->
+      <form id="form-signup" class="hidden">
+        <div class="form-group">
+          <label for="signup-name">Nome completo</label>
+          <input type="text" id="signup-name" required placeholder="Mario Rossi">
+        </div>
+        <div class="form-group">
+          <label for="signup-email">Email</label>
+          <input type="email" id="signup-email" required placeholder="la-tua@email.it">
+        </div>
+        <div class="form-group">
+          <label for="signup-password">Password</label>
+          <input type="password" id="signup-password" required placeholder="Minimo 6 caratteri" minlength="6">
+        </div>
+        <div class="form-group">
+          <label for="signup-school">Scuola</label>
+          <select id="signup-school" required>
+            <option value="">Seleziona la tua scuola...</option>
+          </select>
+        </div>
+        <button type="submit" class="btn btn-primary">Registrati</button>
+      </form>
+    </div>
+  </div>
+
+  <script src="/js/api.js"></script>
+  <script src="/js/auth.js"></script>
+</body>
+</html>

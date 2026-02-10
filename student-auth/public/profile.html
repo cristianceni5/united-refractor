@@ -1,0 +1,77 @@
+<!DOCTYPE html>
+<html lang="it">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Profilo - Student Auth</title>
+  <link rel="stylesheet" href="/css/style.css">
+</head>
+<body>
+  <nav class="navbar">
+    <div class="navbar-content">
+      <a href="/dashboard.html" class="navbar-brand">Student Auth</a>
+      <ul class="navbar-nav">
+        <li><a href="/dashboard.html">Dashboard</a></li>
+        <li><a href="/posts.html">Post</a></li>
+        <li><a href="/spotted.html">Spotted</a></li>
+        <li><a href="/profile.html" class="active">Profilo</a></li>
+        <li id="nav-admin" class="hidden"><a href="/admin.html">Admin</a></li>
+      </ul>
+      <div class="navbar-user">
+        <span class="user-info" id="nav-user-name"></span>
+        <span class="user-role" id="nav-user-role"></span>
+        <button class="btn btn-secondary btn-sm" id="btn-logout">Esci</button>
+      </div>
+    </div>
+  </nav>
+
+  <main class="container">
+    <div class="page-header">
+      <h1>Il tuo profilo</h1>
+      <p>Modifica le tue informazioni personali</p>
+    </div>
+
+    <div class="loading" id="loading">
+      <div class="spinner"></div>
+    </div>
+
+    <div id="profile-content" class="hidden">
+      <div class="card">
+        <div id="alert" class="alert"></div>
+
+        <form id="profile-form">
+          <div class="form-group">
+            <label for="profile-name">Nome completo</label>
+            <input type="text" id="profile-name" required>
+          </div>
+
+          <div class="form-group">
+            <label for="profile-email">Email</label>
+            <input type="email" id="profile-email" disabled>
+          </div>
+
+          <div class="form-group">
+            <label for="profile-role">Ruolo</label>
+            <input type="text" id="profile-role" disabled>
+          </div>
+
+          <div class="form-group">
+            <label for="profile-classe">Classe</label>
+            <input type="text" id="profile-classe" placeholder="Es: 5">
+          </div>
+
+          <div class="form-group">
+            <label for="profile-sezione">Sezione</label>
+            <input type="text" id="profile-sezione" placeholder="Es: A">
+          </div>
+
+          <button type="submit" class="btn btn-primary" style="margin-top: 8px;">Salva modifiche</button>
+        </form>
+      </div>
+    </div>
+  </main>
+
+  <script src="/js/api.js"></script>
+  <script src="/js/profile.js"></script>
+</body>
+</html>

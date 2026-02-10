@@ -1,0 +1,61 @@
+const { extractToken, getUserFromToken, getUserProfile, getSupabaseAdmin, headers, response } = require("./_shared/supabase");
+
+exports.handler = async (event) => {
+  if (event.httpMethod === "OPTIONS") {
+    return { statusCode: 204, headers };
+  }
+
+  if (event.httpMethod !== "POST") {
+    return response(405, { error: "Metodo non consentito" });
+  }
+
+  try {
+    const token = extractToken(event);
+    if (!token) {
+      return response(401, { error: "Non autenticato" });
+    }
+
+    const user = await getUserFromToken(token);
+    if (!user) {
+      return response(401, { error: "Token non valido" });
+    }
+
+    const profile = await getUserProfile(user.id);
+    if (!profile || !["admin", "rappresentante"].includes(profile.role)) {
+      return response(403, { error: "Solo admin e rappresentanti possono creare post" });
+    }
+
+    if (!profile.school_id) {
+      return response(400, { error: "Nessuna scuola associata al profilo" });
+    }
+
+    const { title, body, image_url, category, pinned } = JSON.parse(event.body);
+
+    if (!title || !body) {
+      return response(400, { error: "Titolo e corpo sono obbligatori" });
+    }
+
+    const admin = getSupabaseAdmin();
+    const { data, error } = await admin
+      .from("posts")
+      .insert({
+        school_id: profile.school_id,
+        author_id: user.id,
+        title,
+        body,
+        image_url: image_url || null,
+        category: category || "altro",
+        pinned: pinned || false,
+      })
+      .select()
+      .single();
+
+    if (error) {
+      return response(400, { error: error.message });
+    }
+
+    return response(201, { post: data });
+  } catch (err) {
+    return response(500, { error: "Errore interno del server" });
+  }
+};

@@ -1,0 +1,64 @@
+<!DOCTYPE html>
+<html lang="it">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Spotted - Student Auth</title>
+  <link rel="stylesheet" href="/css/style.css">
+</head>
+<body>
+  <nav class="navbar">
+    <div class="navbar-content">
+      <a href="/dashboard.html" class="navbar-brand">Student Auth</a>
+      <ul class="navbar-nav">
+        <li><a href="/dashboard.html">Dashboard</a></li>
+        <li><a href="/posts.html">Post</a></li>
+        <li><a href="/spotted.html" class="active">Spotted</a></li>
+        <li><a href="/profile.html">Profilo</a></li>
+        <li id="nav-admin" class="hidden"><a href="/admin.html">Admin</a></li>
+      </ul>
+      <div class="navbar-user">
+        <span class="user-info" id="nav-user-name"></span>
+        <span class="user-role" id="nav-user-role"></span>
+        <button class="btn btn-secondary btn-sm" id="btn-logout">Esci</button>
+      </div>
+    </div>
+  </nav>
+
+  <main class="container">
+    <div class="page-header">
+      <h1>Spotted</h1>
+      <p>Bacheca anonima della scuola</p>
+    </div>
+
+    <div class="loading" id="loading">
+      <div class="spinner"></div>
+    </div>
+
+    <div id="spotted-content" class="hidden">
+      <div id="alert" class="alert"></div>
+
+      <!-- Form creazione spotted -->
+      <div class="card">
+        <h2>Scrivi uno spotted</h2>
+        <form id="create-spotted-form">
+          <div class="form-group">
+            <textarea id="spotted-body" required placeholder="Scrivi il tuo spotted anonimo..." rows="3" style="width: 100%; padding: 10px 12px; border: 1px solid var(--border); border-radius: var(--radius); font-size: 0.95rem; font-family: inherit; resize: vertical;"></textarea>
+          </div>
+          <div style="display: flex; justify-content: space-between; align-items: center;">
+            <span style="font-size: 0.8rem; color: var(--text-muted);">Il tuo spotted sara' pubblicato in modo anonimo dopo l'approvazione.</span>
+            <button type="submit" class="btn btn-primary" style="width: auto;">Invia spotted</button>
+          </div>
+        </form>
+      </div>
+
+      <!-- Feed spotted -->
+      <div id="spotted-list"></div>
+      <p id="no-spotted" class="hidden" style="color: var(--text-muted); text-align: center; padding: 40px 0;">Nessuno spotted pubblicato.</p>
+    </div>
+  </main>
+
+  <script src="/js/api.js"></script>
+  <script src="/js/spotted.js"></script>
+</body>
+</html>

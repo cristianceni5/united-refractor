@@ -1,0 +1,97 @@
+<!DOCTYPE html>
+<html lang="it">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Post - Student Auth</title>
+  <link rel="stylesheet" href="/css/style.css">
+</head>
+<body>
+  <nav class="navbar">
+    <div class="navbar-content">
+      <a href="/dashboard.html" class="navbar-brand">Student Auth</a>
+      <ul class="navbar-nav">
+        <li><a href="/dashboard.html">Dashboard</a></li>
+        <li><a href="/posts.html" class="active">Post</a></li>
+        <li><a href="/spotted.html">Spotted</a></li>
+        <li><a href="/profile.html">Profilo</a></li>
+        <li id="nav-admin" class="hidden"><a href="/admin.html">Admin</a></li>
+      </ul>
+      <div class="navbar-user">
+        <span class="user-info" id="nav-user-name"></span>
+        <span class="user-role" id="nav-user-role"></span>
+        <button class="btn btn-secondary btn-sm" id="btn-logout">Esci</button>
+      </div>
+    </div>
+  </nav>
+
+  <main class="container">
+    <div class="page-header">
+      <h1>Post ufficiali</h1>
+      <p>Comunicazioni e avvisi dalla scuola</p>
+    </div>
+
+    <div class="loading" id="loading">
+      <div class="spinner"></div>
+    </div>
+
+    <div id="posts-content" class="hidden">
+      <div id="alert" class="alert"></div>
+
+      <!-- Form creazione post (solo admin/rappresentante) -->
+      <div id="create-post-section" class="hidden">
+        <div class="card">
+          <h2>Nuovo post</h2>
+          <form id="create-post-form">
+            <div class="form-group">
+              <label for="post-title">Titolo</label>
+              <input type="text" id="post-title" required placeholder="Titolo del post">
+            </div>
+            <div class="form-group">
+              <label for="post-body">Contenuto</label>
+              <textarea id="post-body" required placeholder="Scrivi il contenuto del post..." rows="4" style="width: 100%; padding: 10px 12px; border: 1px solid var(--border); border-radius: var(--radius); font-size: 0.95rem; font-family: inherit; resize: vertical;"></textarea>
+            </div>
+            <div style="display: flex; gap: 12px; flex-wrap: wrap;">
+              <div class="form-group" style="flex: 1; min-width: 150px;">
+                <label for="post-category">Categoria</label>
+                <select id="post-category">
+                  <option value="avviso">Avviso</option>
+                  <option value="evento">Evento</option>
+                  <option value="circolare">Circolare</option>
+                  <option value="altro">Altro</option>
+                </select>
+              </div>
+              <div class="form-group" style="flex: 1; min-width: 150px;">
+                <label for="post-image">URL Immagine (opzionale)</label>
+                <input type="url" id="post-image" placeholder="https://...">
+              </div>
+              <div class="form-group" style="display: flex; align-items: flex-end; gap: 8px;">
+                <label style="display: flex; align-items: center; gap: 6px; cursor: pointer;">
+                  <input type="checkbox" id="post-pinned"> In evidenza
+                </label>
+              </div>
+            </div>
+            <button type="submit" class="btn btn-primary" style="width: auto;">Pubblica post</button>
+          </form>
+        </div>
+      </div>
+
+      <!-- Filtro categoria -->
+      <div style="margin-bottom: 16px; display: flex; gap: 8px; flex-wrap: wrap;">
+        <button class="btn btn-secondary btn-sm filter-cat active" data-cat="">Tutti</button>
+        <button class="btn btn-secondary btn-sm filter-cat" data-cat="avviso">Avvisi</button>
+        <button class="btn btn-secondary btn-sm filter-cat" data-cat="evento">Eventi</button>
+        <button class="btn btn-secondary btn-sm filter-cat" data-cat="circolare">Circolari</button>
+        <button class="btn btn-secondary btn-sm filter-cat" data-cat="altro">Altro</button>
+      </div>
+
+      <!-- Lista post -->
+      <div id="posts-list"></div>
+      <p id="no-posts" class="hidden" style="color: var(--text-muted); text-align: center; padding: 40px 0;">Nessun post pubblicato.</p>
+    </div>
+  </main>
+
+  <script src="/js/api.js"></script>
+  <script src="/js/posts.js"></script>
+</body>
+</html>

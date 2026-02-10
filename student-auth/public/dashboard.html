@@ -1,0 +1,98 @@
+<!DOCTYPE html>
+<html lang="it">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Dashboard - Student Auth</title>
+  <link rel="stylesheet" href="/css/style.css">
+</head>
+<body>
+  <nav class="navbar">
+    <div class="navbar-content">
+      <a href="/dashboard.html" class="navbar-brand">Student Auth</a>
+      <ul class="navbar-nav">
+        <li><a href="/dashboard.html" class="active">Dashboard</a></li>
+        <li><a href="/posts.html">Post</a></li>
+        <li><a href="/spotted.html">Spotted</a></li>
+        <li><a href="/profile.html">Profilo</a></li>
+        <li id="nav-admin" class="hidden"><a href="/admin.html">Admin</a></li>
+      </ul>
+      <div class="navbar-user">
+        <span class="user-info" id="nav-user-name"></span>
+        <span class="user-role" id="nav-user-role"></span>
+        <button class="btn btn-secondary btn-sm" id="btn-logout">Esci</button>
+      </div>
+    </div>
+  </nav>
+
+  <main class="container">
+    <div class="page-header">
+      <h1>Dashboard</h1>
+      <p id="welcome-text">Benvenuto nel tuo pannello di controllo</p>
+    </div>
+
+    <div class="loading" id="loading">
+      <div class="spinner"></div>
+    </div>
+
+    <div id="dashboard-content" class="hidden">
+      <!-- Stats (visibili ad admin e rappresentante) -->
+      <div id="stats-section" class="hidden">
+        <div class="stats-grid">
+          <div class="stat-card">
+            <div class="stat-value" id="stat-total">0</div>
+            <div class="stat-label">Utenti totali</div>
+          </div>
+          <div class="stat-card">
+            <div class="stat-value" id="stat-studenti">0</div>
+            <div class="stat-label">Studenti</div>
+          </div>
+          <div class="stat-card">
+            <div class="stat-value" id="stat-rappresentanti">0</div>
+            <div class="stat-label">Rappresentanti</div>
+          </div>
+          <div class="stat-card">
+            <div class="stat-value" id="stat-admin">0</div>
+            <div class="stat-label">Admin</div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Card profilo rapido -->
+      <div class="card">
+        <h2>Il tuo profilo</h2>
+        <p><strong>Nome:</strong> <span id="profile-name">-</span></p>
+        <p><strong>Email:</strong> <span id="profile-email">-</span></p>
+        <p><strong>Ruolo:</strong> <span id="profile-role">-</span></p>
+        <p><strong>Classe:</strong> <span id="profile-classe">-</span></p>
+        <p style="margin-top: 16px;">
+          <a href="/profile.html" class="btn btn-primary" style="width: auto;">Modifica profilo</a>
+        </p>
+      </div>
+
+      <!-- Lista studenti recenti (per rappresentante e admin) -->
+      <div id="recent-users-section" class="hidden">
+        <div class="card">
+          <h2>Studenti recenti</h2>
+          <div class="table-container">
+            <table>
+              <thead>
+                <tr>
+                  <th>Nome</th>
+                  <th>Email</th>
+                  <th>Ruolo</th>
+                  <th>Classe</th>
+                </tr>
+              </thead>
+              <tbody id="recent-users-table"></tbody>
+            </table>
+          </div>
+        </div>
+      </div>
+    </div>
+  </main>
+
+  <script src="/js/api.js"></script>
+  <script src="/js/dashboard.js"></script>
+</body>
+</html>
