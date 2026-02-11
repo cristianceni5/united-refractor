@@ -1,4 +1,4 @@
-const { extractToken, getUserFromToken, getUserProfile, getSupabaseAdmin, headers, response } = require("./_shared/supabase");
+const { extractToken, getUserFromToken, getUserProfile, getSupabaseAdmin, headers, response } = require("../../lib/supabase");
 
 const VALID_ROLES = ["admin", "rappresentante", "studente"];
 

@@ -1,4 +1,4 @@
-const { getSupabaseWithToken, extractToken, headers, response } = require("./_shared/supabase");
+const { getSupabaseWithToken, extractToken, headers, response } = require("../../lib/supabase");
 
 exports.handler = async (event) => {
   if (event.httpMethod === "OPTIONS") {

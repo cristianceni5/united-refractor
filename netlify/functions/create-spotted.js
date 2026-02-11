@@ -1,4 +1,4 @@
-const { extractToken, getUserFromToken, getUserProfile, getSupabaseAdmin, isBanned, getBanMessage, headers, response } = require("./_shared/supabase");
+const { extractToken, getUserFromToken, getUserProfile, getSupabaseAdmin, isBanned, getBanMessage, headers, response } = require("../../lib/supabase");
 
 exports.handler = async (event) => {
   if (event.httpMethod === "OPTIONS") {

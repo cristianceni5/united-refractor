@@ -1,4 +1,4 @@
-const { getSupabaseAdmin, headers, response } = require("./_shared/supabase");
+const { getSupabaseAdmin, headers, response } = require("../../lib/supabase");
 
 exports.handler = async (event) => {
   if (event.httpMethod === "OPTIONS") {
