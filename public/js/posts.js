@@ -20,10 +20,6 @@ document.addEventListener("DOMContentLoaded", async () => {
     roleEl.textContent = profile.role;
     roleEl.classList.add(`role-${profile.role}`);
 
-    if (profile.role === "admin") {
-      document.getElementById("nav-admin").classList.remove("hidden");
-    }
-
     // Mostra form creazione solo per admin/rappresentante
     if (["admin", "rappresentante"].includes(profile.role)) {
       document.getElementById("create-post-section").classList.remove("hidden");

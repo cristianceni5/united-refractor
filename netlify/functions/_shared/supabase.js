@@ -56,6 +56,21 @@ function extractToken(event) {
   return authHeader.replace("Bearer ", "");
 }
 
+function isBanned(profile) {
+  if (!profile || !profile.banned_until) return false;
+  return new Date(profile.banned_until) > new Date();
+}
+
+function getBanMessage(profile) {
+  const until = new Date(profile.banned_until);
+  const isPermanent = until.getFullYear() >= 2099;
+  const reason = profile.ban_reason ? ` Motivo: ${profile.ban_reason}` : "";
+  if (isPermanent) {
+    return `Il tuo account e' stato bannato permanentemente.${reason}`;
+  }
+  return `Il tuo account e' sospeso fino al ${until.toLocaleString("it-IT")}.${reason}`;
+}
+
 module.exports = {
   getSupabaseClient,
   getSupabaseAdmin,
@@ -65,4 +80,6 @@ module.exports = {
   getUserFromToken,
   getUserProfile,
   extractToken,
+  isBanned,
+  getBanMessage,
 };

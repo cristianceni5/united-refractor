@@ -17,10 +17,6 @@ document.addEventListener("DOMContentLoaded", async () => {
     roleEl.textContent = profile.role;
     roleEl.classList.add(`role-${profile.role}`);
 
-    if (profile.role === "admin") {
-      document.getElementById("nav-admin").classList.remove("hidden");
-    }
-
     // Popola form
     document.getElementById("profile-name").value = profile.full_name || "";
     document.getElementById("profile-email").value = profile.email;

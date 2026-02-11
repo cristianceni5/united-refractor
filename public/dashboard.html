@@ -1,0 +1,222 @@
+<!DOCTYPE html>
+<html lang="it">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Dashboard - United</title>
+  <link rel="stylesheet" href="/css/style.css">
+</head>
+<body>
+  <nav class="navbar">
+    <div class="navbar-content">
+      <a href="/dashboard.html" class="navbar-brand"><img src="/img/united-logo.png" alt="United"> United</a>
+      <ul class="navbar-nav">
+        <li><a href="/dashboard.html" class="active">Dashboard</a></li>
+        <li><a href="/posts.html">Post</a></li>
+        <li><a href="/spotted.html">Spotted</a></li>
+        <li><a href="/profile.html">Profilo</a></li>
+      </ul>
+      <div class="navbar-user">
+        <span class="user-info" id="nav-user-name"></span>
+        <span class="user-role" id="nav-user-role"></span>
+        <button class="btn btn-secondary btn-sm" id="btn-logout">Esci</button>
+      </div>
+    </div>
+  </nav>
+
+  <main class="container">
+    <div class="page-header">
+      <h1>Dashboard</h1>
+      <p id="welcome-text">Benvenuto nel tuo pannello di controllo</p>
+    </div>
+
+    <div class="loading" id="loading">
+      <div class="spinner"></div>
+    </div>
+
+    <div id="dashboard-content" class="hidden">
+
+      <!-- Tab navigation (admin only) -->
+      <div id="admin-tabs" class="dash-tabs hidden">
+        <button class="dash-tab active" data-tab="overview">Panoramica</button>
+        <button class="dash-tab" data-tab="moderation">
+          Moderazione
+          <span class="tab-badge hidden" id="mod-badge">0</span>
+        </button>
+        <button class="dash-tab" data-tab="users">Utenti</button>
+      </div>
+
+      <div id="alert" class="alert"></div>
+
+      <!-- ====== TAB: Panoramica ====== -->
+      <div class="tab-panel active" id="panel-overview">
+
+        <!-- Stats (visibili ad admin e rappresentante) -->
+        <div id="stats-section" class="hidden">
+          <div class="stats-grid">
+            <div class="stat-card">
+              <div class="stat-value" id="stat-total">0</div>
+              <div class="stat-label">Utenti totali</div>
+            </div>
+            <div class="stat-card">
+              <div class="stat-value" id="stat-studenti">0</div>
+              <div class="stat-label">Studenti</div>
+            </div>
+            <div class="stat-card">
+              <div class="stat-value" id="stat-rappresentanti">0</div>
+              <div class="stat-label">Rappresentanti</div>
+            </div>
+            <div class="stat-card">
+              <div class="stat-value" id="stat-admin">0</div>
+              <div class="stat-label">Admin</div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Card profilo rapido -->
+        <div class="card">
+          <h2>Il tuo profilo</h2>
+          <div class="profile-summary">
+            <div class="profile-avatar" id="profile-avatar">U</div>
+            <div class="profile-details">
+              <p><strong>Nome:</strong> <span id="profile-name">-</span></p>
+              <p><strong>Email:</strong> <span id="profile-email">-</span></p>
+              <p><strong>Ruolo:</strong> <span id="profile-role">-</span></p>
+              <p><strong>Classe:</strong> <span id="profile-classe">-</span></p>
+            </div>
+          </div>
+          <p style="margin-top: 16px;">
+            <a href="/profile.html" class="btn btn-primary" style="width: auto;">Modifica profilo</a>
+          </p>
+        </div>
+
+        <!-- Lista studenti recenti (per rappresentante e admin) -->
+        <div id="recent-users-section" class="hidden">
+          <div class="card">
+            <h2>Studenti recenti</h2>
+            <div class="table-container">
+              <table>
+                <thead>
+                  <tr>
+                    <th>Nome</th>
+                    <th>Email</th>
+                    <th>Ruolo</th>
+                    <th>Classe</th>
+                  </tr>
+                </thead>
+                <tbody id="recent-users-table"></tbody>
+              </table>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- ====== TAB: Moderazione Spotted (admin) ====== -->
+      <div class="tab-panel" id="panel-moderation">
+        <div class="card">
+          <div class="card-header-row">
+            <h2>Spotted in attesa</h2>
+            <span class="counter-badge" id="pending-count-label">0 in attesa</span>
+          </div>
+          <div id="pending-spotted-list"></div>
+          <div id="no-pending" class="empty-state hidden">
+            <div class="empty-icon">✓</div>
+            <p>Nessuno spotted in attesa di approvazione</p>
+          </div>
+        </div>
+      </div>
+
+      <!-- ====== TAB: Gestione utenti (admin) ====== -->
+      <div class="tab-panel" id="panel-users">
+        <!-- Filtri -->
+        <div class="card">
+          <h3>Filtra utenti</h3>
+          <div class="filter-row">
+            <div class="form-group">
+              <label for="filter-role">Ruolo</label>
+              <select id="filter-role">
+                <option value="">Tutti</option>
+                <option value="studente">Studente</option>
+                <option value="rappresentante">Rappresentante</option>
+                <option value="admin">Admin</option>
+              </select>
+            </div>
+            <div class="form-group">
+              <label for="filter-classe">Classe</label>
+              <input type="text" id="filter-classe" placeholder="Es: 5">
+            </div>
+            <div class="form-group" style="display: flex; align-items: flex-end;">
+              <button class="btn btn-primary" id="btn-filter" style="width: auto;">Filtra</button>
+            </div>
+          </div>
+        </div>
+
+        <!-- Lista utenti -->
+        <div class="card">
+          <div class="card-header-row">
+            <h2>Utenti</h2>
+            <span class="counter-badge" id="users-count-label">0 utenti</span>
+          </div>
+          <div id="users-list"></div>
+        </div>
+      </div>
+
+    </div>
+  </main>
+
+  <!-- Modale Ban/Kick -->
+  <div class="modal-overlay hidden" id="ban-modal">
+    <div class="modal">
+      <div class="modal-header">
+        <h3 id="ban-modal-title">Azione utente</h3>
+        <button class="modal-close" id="ban-modal-close">&times;</button>
+      </div>
+      <div class="modal-body">
+        <p style="margin-bottom: 16px;">Scegli un'azione per <strong id="ban-user-name"></strong>:</p>
+        <div class="ban-options">
+          <label class="ban-option">
+            <input type="radio" name="ban-action" value="kick" checked>
+            <div class="ban-option-content">
+              <span class="ban-option-label">⏱ Sospensione temporanea</span>
+              <span class="ban-option-desc">L'utente non potrà accedere per un periodo limitato</span>
+            </div>
+          </label>
+          <label class="ban-option">
+            <input type="radio" name="ban-action" value="ban">
+            <div class="ban-option-content">
+              <span class="ban-option-label">🚫 Ban permanente</span>
+              <span class="ban-option-desc">L'utente sarà bloccato definitivamente</span>
+            </div>
+          </label>
+        </div>
+        <div id="kick-duration-group" class="form-group" style="margin-top: 16px;">
+          <label for="kick-duration">Durata sospensione (ore)</label>
+          <input type="number" id="kick-duration" value="24" min="1" max="8760">
+        </div>
+        <div class="form-group" style="margin-top: 12px;">
+          <label for="ban-reason">Motivo (opzionale)</label>
+          <input type="text" id="ban-reason" placeholder="Specifica il motivo...">
+        </div>
+      </div>
+      <div class="modal-footer">
+        <button class="btn btn-secondary" id="ban-modal-cancel" style="background: var(--border); color: var(--text); border: none;">Annulla</button>
+        <button class="btn btn-danger" id="ban-modal-confirm">Conferma</button>
+      </div>
+    </div>
+  </div>
+
+  <footer class="site-footer">
+    <div class="footer-content">
+      <div class="footer-brand">
+        <img src="/img/united-logo.png" alt="United"> United
+      </div>
+      <div class="footer-credits">
+        Sviluppato da <a href="#">Cristian Ceni</a>
+      </div>
+    </div>
+  </footer>
+
+  <script src="/js/api.js"></script>
+  <script src="/js/dashboard.js"></script>
+</body>
+</html>

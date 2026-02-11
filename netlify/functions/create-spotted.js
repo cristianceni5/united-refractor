@@ -1,4 +1,4 @@
-const { extractToken, getUserFromToken, getUserProfile, getSupabaseAdmin, headers, response } = require("./_shared/supabase");
+const { extractToken, getUserFromToken, getUserProfile, getSupabaseAdmin, isBanned, getBanMessage, headers, response } = require("./_shared/supabase");
 
 exports.handler = async (event) => {
   if (event.httpMethod === "OPTIONS") {
@@ -23,6 +23,10 @@ exports.handler = async (event) => {
     const profile = await getUserProfile(user.id);
     if (!profile) {
       return response(400, { error: "Profilo non trovato" });
+    }
+
+    if (isBanned(profile)) {
+      return response(403, { error: getBanMessage(profile) });
     }
 
     if (!profile.school_id) {

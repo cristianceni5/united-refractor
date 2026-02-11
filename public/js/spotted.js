@@ -19,10 +19,6 @@ document.addEventListener("DOMContentLoaded", async () => {
     roleEl.textContent = profile.role;
     roleEl.classList.add(`role-${profile.role}`);
 
-    if (profile.role === "admin") {
-      document.getElementById("nav-admin").classList.remove("hidden");
-    }
-
     await loadSpotted();
 
     loading.classList.add("hidden");

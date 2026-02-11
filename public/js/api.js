@@ -167,6 +167,13 @@ const API = {
     });
   },
 
+  async banUser(user_id, action, duration_hours, reason) {
+    return this.request("ban-user", {
+      method: "PUT",
+      body: JSON.stringify({ user_id, action, duration_hours, reason }),
+    });
+  },
+
   isLoggedIn() {
     return !!localStorage.getItem("access_token");
   },

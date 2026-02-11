@@ -1,4 +1,4 @@
-const { extractToken, getUserFromToken, getSupabaseAdmin, headers, response } = require("./_shared/supabase");
+const { extractToken, getUserFromToken, getUserProfile, getSupabaseAdmin, isBanned, getBanMessage, headers, response } = require("./_shared/supabase");
 
 exports.handler = async (event) => {
   if (event.httpMethod === "OPTIONS") {
@@ -18,6 +18,11 @@ exports.handler = async (event) => {
     const user = await getUserFromToken(token);
     if (!user) {
       return response(401, { error: "Token non valido" });
+    }
+
+    const profile = await getUserProfile(user.id);
+    if (profile && isBanned(profile)) {
+      return response(403, { error: getBanMessage(profile) });
     }
 
     const { spotted_id, body } = JSON.parse(event.body);

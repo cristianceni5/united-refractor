@@ -1,4 +1,4 @@
-const { getSupabaseClient, headers, response } = require("./_shared/supabase");
+const { getSupabaseClient, getSupabaseAdmin, headers, response } = require("./_shared/supabase");
 
 exports.handler = async (event) => {
   if (event.httpMethod === "OPTIONS") {
@@ -24,6 +24,24 @@ exports.handler = async (event) => {
 
     if (error) {
       return response(401, { error: "Credenziali non valide" });
+    }
+
+    // Controlla se l'utente e' bannato
+    const admin = getSupabaseAdmin();
+    const { data: profile } = await admin
+      .from("profiles")
+      .select("banned_until, ban_reason")
+      .eq("id", data.user.id)
+      .single();
+
+    if (profile && profile.banned_until && new Date(profile.banned_until) > new Date()) {
+      const until = new Date(profile.banned_until);
+      const isPermanent = until.getFullYear() >= 2099;
+      const reason = profile.ban_reason ? ` Motivo: ${profile.ban_reason}` : "";
+      const msg = isPermanent
+        ? `Il tuo account e' stato bannato permanentemente.${reason}`
+        : `Il tuo account e' sospeso fino al ${until.toLocaleString("it-IT")}.${reason}`;
+      return response(403, { error: msg });
     }
 
     return response(200, {

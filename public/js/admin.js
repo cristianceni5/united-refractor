@@ -60,8 +60,23 @@ document.addEventListener("DOMContentLoaded", async () => {
       const tbody = document.getElementById("users-table");
       tbody.innerHTML = users
         .map(
-          (u) => `
-        <tr>
+          (u) => {
+            const isBanned = u.banned_until && new Date(u.banned_until) > new Date();
+            const isPermanent = isBanned && new Date(u.banned_until).getFullYear() >= 2099;
+            const banLabel = isPermanent
+              ? '<span style="color: var(--error); font-weight: 600;">Bannato</span>'
+              : isBanned
+                ? `<span style="color: var(--warning); font-weight: 600;">Sospeso fino al ${new Date(u.banned_until).toLocaleString("it-IT")}</span>`
+                : '<span style="color: var(--success);">Attivo</span>';
+
+            const banActions = u.id !== currentProfile.id
+              ? isBanned
+                ? `<button class="btn btn-sm" style="background: var(--success); color: white;" onclick="unbanUser('${u.id}')">Rimuovi ban</button>`
+                : `<button class="btn btn-danger btn-sm" onclick="showBanModal('${u.id}', '${escapeHtml(u.full_name || u.email)}')">Ban/Kick</button>`
+              : '';
+
+            return `
+        <tr${isBanned ? ' style="opacity: 0.6;"' : ''}>
           <td>${escapeHtml(u.full_name || "-")}</td>
           <td>${escapeHtml(u.email)}</td>
           <td>
@@ -72,14 +87,16 @@ document.addEventListener("DOMContentLoaded", async () => {
             </select>
           </td>
           <td>${escapeHtml(u.classe ? `${u.classe} ${u.sezione || ""}`.trim() : "-")}</td>
+          <td>${banLabel}</td>
           <td>
             ${u.id !== currentProfile.id
-              ? `<button class="btn btn-primary btn-sm btn-save-role" data-user-id="${u.id}">Salva</button>`
+              ? `<button class="btn btn-primary btn-sm btn-save-role" data-user-id="${u.id}">Salva</button> ${banActions}`
               : '<span style="color: var(--text-muted); font-size: 0.85rem;">Tu</span>'
             }
           </td>
         </tr>
-      `
+      `;
+          }
         )
         .join("");
 
@@ -175,6 +192,43 @@ document.addEventListener("DOMContentLoaded", async () => {
       await API.moderateSpotted(id, "rejected");
       showAlert("Spotted rifiutato.", "success");
       await loadPendingSpotted();
+    } catch (err) {
+      showAlert(err.message, "error");
+    }
+  };
+
+  // Ban / Kick
+  window.showBanModal = (userId, userName) => {
+    const action = prompt(
+      `Azione per ${userName}:\n\n1 = Ban permanente\n2 = Kick temporaneo (sospensione)\n3 = Annulla\n\nInserisci 1, 2 o 3:`
+    );
+
+    if (action === "1") {
+      const reason = prompt("Motivo del ban (opzionale):") || "";
+      banUserAction(userId, "ban", null, reason);
+    } else if (action === "2") {
+      const hours = prompt("Per quante ore? (default: 24)") || "24";
+      const reason = prompt("Motivo della sospensione (opzionale):") || "";
+      banUserAction(userId, "kick", parseInt(hours), reason);
+    }
+  };
+
+  async function banUserAction(userId, action, hours, reason) {
+    try {
+      const result = await API.banUser(userId, action, hours, reason);
+      showAlert(result.message, "success");
+      await loadUsers();
+    } catch (err) {
+      showAlert(err.message, "error");
+    }
+  }
+
+  window.unbanUser = async (userId) => {
+    if (!confirm("Sei sicuro di voler rimuovere il ban?")) return;
+    try {
+      const result = await API.banUser(userId, "unban");
+      showAlert(result.message, "success");
+      await loadUsers();
     } catch (err) {
       showAlert(err.message, "error");
     }
