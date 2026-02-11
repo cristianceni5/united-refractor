@@ -6,7 +6,7 @@ document.addEventListener("DOMContentLoaded", async () => {
 
   const loading = document.getElementById("loading");
   const content = document.getElementById("posts-content");
-  const alertEl = document.getElementById("alert");
+  const alert = document.getElementById("alert");
   let currentProfile = null;
   let currentFilter = "";
 
@@ -24,16 +24,6 @@ document.addEventListener("DOMContentLoaded", async () => {
     if (["admin", "co_admin", "rappresentante"].includes(profile.role)) {
       document.getElementById("create-post-section").classList.remove("hidden");
       initImageUpload();
-
-      // Compose avatar
-      const composeAvatar = document.getElementById("compose-avatar");
-      if (composeAvatar) {
-        if (profile.avatar_url) {
-          composeAvatar.innerHTML = `<img src="${profile.avatar_url}" alt="Avatar">`;
-        } else if (profile.full_name) {
-          composeAvatar.textContent = profile.full_name.split(" ").map(n => n[0]).join("").toUpperCase().slice(0, 2);
-        }
-      }
     }
 
     await loadPosts();
@@ -46,12 +36,12 @@ document.addEventListener("DOMContentLoaded", async () => {
     window.location.href = "/";
   }
 
-  // Compose card toggle
+  // Collapsible create-post
   const toggleBtn = document.getElementById("toggle-create-post");
   if (toggleBtn) {
     toggleBtn.addEventListener("click", () => {
       const body = document.getElementById("create-post-body");
-      const card = toggleBtn.closest(".compose-card");
+      const card = toggleBtn.closest(".collapsible-card");
       card.classList.toggle("open");
       body.classList.toggle("collapsed");
     });
@@ -79,6 +69,7 @@ document.addEventListener("DOMContentLoaded", async () => {
 
     if (!uploadArea) return;
 
+    // Drag and drop
     uploadArea.addEventListener("dragover", (e) => {
       e.preventDefault();
       uploadArea.classList.add("dragover");
@@ -97,12 +88,14 @@ document.addEventListener("DOMContentLoaded", async () => {
       }
     });
 
+    // File input change
     fileInput.addEventListener("change", (e) => {
       if (e.target.files.length > 0) {
         handleImageSelect(e.target.files[0]);
       }
     });
 
+    // Remove image
     removeBtn.addEventListener("click", () => {
       selectedImageFile = null;
       previewContainer.classList.remove("has-image");
@@ -141,6 +134,7 @@ document.addEventListener("DOMContentLoaded", async () => {
       try {
         let imageUrl = null;
 
+        // Upload image if selected
         if (selectedImageFile) {
           const progressEl = document.getElementById("upload-progress");
           const progressFill = document.getElementById("progress-bar-fill");
@@ -157,7 +151,7 @@ document.addEventListener("DOMContentLoaded", async () => {
             showAlert("Errore upload immagine: " + uploadErr.message, "error");
             if (progressEl) progressEl.classList.remove("active");
             btn.disabled = false;
-            btn.textContent = "Pubblica";
+            btn.textContent = "Pubblica post";
             return;
           }
 
@@ -187,7 +181,7 @@ document.addEventListener("DOMContentLoaded", async () => {
         showAlert(err.message, "error");
       } finally {
         btn.disabled = false;
-        btn.textContent = "Pubblica";
+        btn.textContent = "Pubblica post";
       }
     });
   }
@@ -214,42 +208,32 @@ document.addEventListener("DOMContentLoaded", async () => {
 
       noMsg.classList.add("hidden");
       container.innerHTML = posts
-        .map((p) => {
-          // Author avatar
-          const authorInitials = (p.author_name || "?")
-            .split(" ").map(n => n[0]).join("").toUpperCase().slice(0, 2);
-          const authorAvatarHtml = p.author_avatar_url
-            ? `<img src="${escapeHtml(p.author_avatar_url)}" alt="Avatar">`
-            : authorInitials;
-
-          return `
-            <div class="post-card ${p.pinned ? "post-pinned" : ""}">
-              <div class="post-header">
-                <div>
-                  <span class="post-category cat-${p.category}">${p.category}</span>
-                  ${p.pinned ? '<span class="post-pin">📌 In evidenza</span>' : ""}
-                </div>
-                ${
-                  p.is_own || (currentProfile && ['admin', 'co_admin'].includes(currentProfile.role))
-                    ? `<div class="post-actions-menu">
-                        <button class="btn btn-danger btn-sm" onclick="deletePost('${p.id}')">Elimina</button>
-                      </div>`
-                    : ""
-                }
-              </div>
-              <h3 class="post-title">${escapeHtml(p.title)}</h3>
-              <p class="post-body">${escapeHtml(p.body)}</p>
-              ${p.image_url ? `<img src="${escapeHtml(p.image_url)}" class="post-image" alt="Immagine post" loading="lazy">` : ""}
-              <div class="post-footer">
-                <a href="/view-profile.html?id=${p.author_id}" class="post-author-link">
-                  <div class="post-author-avatar">${authorAvatarHtml}</div>
-                  <span class="post-author-name">${escapeHtml(p.author_name)}</span>
-                </a>
-                <span>${timeAgo(p.created_at)}</span>
-              </div>
+        .map(
+          (p) => `
+        <div class="post-card ${p.pinned ? "post-pinned" : ""}">
+          <div class="post-header">
+            <div>
+              <span class="post-category cat-${p.category}">${p.category}</span>
+              ${p.pinned ? '<span class="post-pin">📌 In evidenza</span>' : ""}
             </div>
-          `;
-        })
+            ${
+              p.is_own || (currentProfile && ['admin', 'co_admin'].includes(currentProfile.role))
+                ? `<div class="post-actions-menu">
+                    <button class="btn btn-danger btn-sm" style="border-radius: 999px; font-size: 0.78rem;" onclick="deletePost('${p.id}')">Elimina</button>
+                  </div>`
+                : ""
+            }
+          </div>
+          <h3 class="post-title">${escapeHtml(p.title)}</h3>
+          <p class="post-body">${escapeHtml(p.body)}</p>
+          ${p.image_url ? `<img src="${escapeHtml(p.image_url)}" class="post-image" alt="Immagine post" loading="lazy">` : ""}
+          <div class="post-footer">
+            <span>✍️ <a href="/view-profile.html?id=${p.author_id}" style="color: var(--primary); text-decoration: none; font-weight: 600;">${escapeHtml(p.author_name)}</a></span>
+            <span>${timeAgo(p.created_at)}</span>
+          </div>
+        </div>
+      `
+        )
         .join("");
     } catch (err) {
       showAlert(err.message, "error");
@@ -268,10 +252,10 @@ document.addEventListener("DOMContentLoaded", async () => {
   };
 
   function showAlert(message, type) {
-    alertEl.textContent = message;
-    alertEl.className = `alert alert-${type} show`;
+    alert.textContent = message;
+    alert.className = `alert alert-${type} show`;
     setTimeout(() => {
-      alertEl.className = "alert";
+      alert.className = "alert";
     }, 3000);
   }
 

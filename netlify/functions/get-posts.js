@@ -28,7 +28,7 @@ exports.handler = async (event) => {
     const admin = getSupabaseAdmin();
     let query = admin
       .from("posts")
-      .select("id, school_id, author_id, title, body, image_url, category, pinned, created_at, updated_at, profiles(full_name)")
+      .select("id, school_id, author_id, title, body, image_url, category, pinned, created_at, updated_at, profiles(full_name, avatar_url)")
       .eq("school_id", profile.school_id)
       .order("pinned", { ascending: false })
       .order("created_at", { ascending: false });
@@ -47,6 +47,7 @@ exports.handler = async (event) => {
     const posts = data.map((p) => ({
       ...p,
       author_name: p.profiles?.full_name || "Sconosciuto",
+      author_avatar_url: p.profiles?.avatar_url || null,
       is_own: p.author_id === user.id,
       profiles: undefined,
     }));

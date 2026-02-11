@@ -11,7 +11,7 @@
     <div class="navbar-content">
       <a href="/dashboard.html" class="navbar-brand"><img src="/img/gauss-logo.png" alt="Project Gauss"> Project Gauss</a>
       <ul class="navbar-nav">
-        <li><a href="/dashboard.html">Dashboard</a></li>
+        <li><a href="/dashboard.html">Home</a></li>
         <li><a href="/posts.html" class="active">Post</a></li>
         <li><a href="/spotted.html">Spotted</a></li>
         <li><a href="/profile.html">Profilo</a></li>
@@ -25,11 +25,6 @@
   </nav>
 
   <main class="container">
-    <div class="page-header">
-      <h1>📢 Post ufficiali</h1>
-      <p>Comunicazioni e avvisi dalla scuola</p>
-    </div>
-
     <div class="loading" id="loading">
       <div class="spinner"></div>
     </div>
@@ -37,76 +32,82 @@
     <div id="posts-content" class="hidden">
       <div id="alert" class="alert"></div>
 
+      <!-- Filtro categoria + bottone crea -->
+      <div class="feed-toolbar">
+        <div class="filter-chips">
+          <button class="filter-chip active" data-cat="">Tutti</button>
+          <button class="filter-chip" data-cat="avviso">🔔 Avvisi</button>
+          <button class="filter-chip" data-cat="evento">🎉 Eventi</button>
+          <button class="filter-chip" data-cat="circolare">📋 Circolari</button>
+          <button class="filter-chip" data-cat="altro">📌 Altro</button>
+        </div>
+      </div>
+
       <!-- Form creazione post (solo admin/rappresentante) -->
       <div id="create-post-section" class="hidden">
-        <div class="card collapsible-card">
-          <div class="collapsible-header" id="toggle-create-post">
-            <h2>✍️ Nuovo post</h2>
-            <span class="collapsible-chevron">
-              <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="6 9 12 15 18 9"/></svg>
+        <div class="compose-card">
+          <div class="compose-header" id="toggle-create-post">
+            <div class="compose-header-avatar" id="compose-avatar">✍️</div>
+            <span class="compose-header-text">Cosa vuoi condividere?</span>
+            <span class="compose-chevron">
+              <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="6 9 12 15 18 9"/></svg>
             </span>
           </div>
-          <div class="collapsible-body" id="create-post-body">
-          <form id="create-post-form">
-            <div class="form-group">
-              <label for="post-title">Titolo</label>
-              <input type="text" id="post-title" required placeholder="Titolo del post">
-            </div>
-            <div class="form-group">
-              <label for="post-body">Contenuto</label>
-              <textarea id="post-body" required placeholder="Scrivi il contenuto del post..." rows="4"></textarea>
-            </div>
-            <div class="form-row-flex">
+          <div class="compose-body collapsed" id="create-post-body">
+            <form id="create-post-form">
               <div class="form-group">
-                <label for="post-category">Categoria</label>
-                <select id="post-category">
-                  <option value="avviso">Avviso</option>
-                  <option value="evento">Evento</option>
-                  <option value="circolare">Circolare</option>
-                  <option value="altro">Altro</option>
-                </select>
+                <label for="post-title">Titolo</label>
+                <input type="text" id="post-title" required placeholder="Titolo del post">
               </div>
-              <div class="form-group" style="display: flex; align-items: flex-end; gap: 8px;">
-                <label style="display: flex; align-items: center; gap: 6px; cursor: pointer;">
-                  <input type="checkbox" id="post-pinned"> In evidenza
-                </label>
+              <div class="form-group">
+                <label for="post-body">Contenuto</label>
+                <textarea id="post-body" required placeholder="Scrivi il contenuto..." rows="3"></textarea>
               </div>
-            </div>
-            <div class="form-group">
-              <label for="post-image">Immagine (opzionale)</label>
-              <div class="image-upload-area" id="image-upload-area">
-                <input type="file" id="post-image-file" accept="image/*">
-                <span class="upload-icon">📷</span>
-                <span class="upload-text">Trascina o tocca per caricare</span>
-                <span class="upload-hint">JPG, PNG, WebP &bull; Max 5MB</span>
+              <div class="form-row-flex">
+                <div class="form-group">
+                  <label for="post-category">Categoria</label>
+                  <select id="post-category">
+                    <option value="avviso">Avviso</option>
+                    <option value="evento">Evento</option>
+                    <option value="circolare">Circolare</option>
+                    <option value="altro">Altro</option>
+                  </select>
+                </div>
+                <div class="form-group" style="display: flex; align-items: flex-end; gap: 8px;">
+                  <label style="display: flex; align-items: center; gap: 6px; cursor: pointer;">
+                    <input type="checkbox" id="post-pinned"> In evidenza
+                  </label>
+                </div>
               </div>
-              <div class="image-preview-container" id="image-preview-container">
-                <img class="image-preview" id="image-preview" src="" alt="Anteprima">
-                <button type="button" class="image-preview-remove" id="image-preview-remove">&times;</button>
+              <div class="form-group">
+                <label for="post-image">Immagine (opzionale)</label>
+                <div class="image-upload-area" id="image-upload-area">
+                  <input type="file" id="post-image-file" accept="image/*">
+                  <span class="upload-icon">📷</span>
+                  <span class="upload-text">Tocca per caricare</span>
+                  <span class="upload-hint">JPG, PNG, WebP &bull; Max 5MB</span>
+                </div>
+                <div class="image-preview-container" id="image-preview-container">
+                  <img class="image-preview" id="image-preview" src="" alt="Anteprima">
+                  <button type="button" class="image-preview-remove" id="image-preview-remove">&times;</button>
+                </div>
+                <div class="upload-progress" id="upload-progress">
+                  <div class="progress-bar"><div class="progress-bar-fill" id="progress-bar-fill"></div></div>
+                </div>
+                <input type="hidden" id="post-image" value="">
               </div>
-              <div class="upload-progress" id="upload-progress">
-                <div class="progress-bar"><div class="progress-bar-fill" id="progress-bar-fill"></div></div>
-              </div>
-              <input type="hidden" id="post-image" value="">
-            </div>
-            <button type="submit" class="btn btn-primary" style="width: 100%; border-radius: 999px;">Pubblica post</button>
-          </form>
+              <button type="submit" class="btn btn-primary" style="border-radius: 999px;">Pubblica</button>
+            </form>
           </div>
         </div>
       </div>
 
-      <!-- Filtro categoria -->
-      <div class="filter-chips">
-        <button class="filter-chip active" data-cat="">Tutti</button>
-        <button class="filter-chip" data-cat="avviso">🔔 Avvisi</button>
-        <button class="filter-chip" data-cat="evento">🎉 Eventi</button>
-        <button class="filter-chip" data-cat="circolare">📋 Circolari</button>
-        <button class="filter-chip" data-cat="altro">📌 Altro</button>
-      </div>
-
       <!-- Lista post -->
       <div id="posts-list"></div>
-      <p id="no-posts" class="hidden" style="color: var(--text-muted); text-align: center; padding: 40px 0;">Nessun post pubblicato.</p>
+      <div id="no-posts" class="empty-state hidden">
+        <div class="empty-icon">📢</div>
+        <p>Nessun post pubblicato</p>
+      </div>
     </div>
   </main>
 

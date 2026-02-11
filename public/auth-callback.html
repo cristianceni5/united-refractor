@@ -32,20 +32,6 @@
         <p class="subtitle" style="margin-bottom: 0;">Reindirizzamento...</p>
       </div>
 
-      <!-- Needs school selection -->
-      <div id="callback-school" class="hidden">
-        <div style="font-size: 3rem; margin: 16px 0;">🏫</div>
-        <p class="subtitle">Benvenuto! Seleziona la tua scuola per completare la registrazione.</p>
-        <form id="school-form" style="margin-top: 16px;">
-          <div class="form-group">
-            <select id="school-select" required>
-              <option value="">Seleziona la tua scuola...</option>
-            </select>
-          </div>
-          <button type="submit" class="btn btn-primary">Conferma</button>
-        </form>
-      </div>
-
       <div class="auth-footer">
         Sviluppato e manutenuto da <a href="#">Cristian Ceni</a>
       </div>
@@ -58,7 +44,6 @@
       const loadingEl = document.getElementById("callback-loading");
       const errorEl = document.getElementById("callback-error");
       const successEl = document.getElementById("callback-success");
-      const schoolEl = document.getElementById("callback-school");
       const statusEl = document.getElementById("callback-status");
       const errorMsgEl = document.getElementById("error-message");
 
@@ -115,38 +100,12 @@
         });
 
         if (result.needsSchool) {
-          // Mostra selezione scuola
+          // Redirect alla pagina di selezione scuola
           loadingEl.classList.add("hidden");
-          schoolEl.classList.remove("hidden");
-
-          // Carica scuole
-          const { schools } = await API.getSchools();
-          const select = document.getElementById("school-select");
-          schools.forEach((s) => {
-            const opt = document.createElement("option");
-            opt.value = s.id;
-            opt.textContent = `${s.name} - ${s.city}`;
-            select.appendChild(opt);
-          });
-
-          document.getElementById("school-form").addEventListener("submit", async (e) => {
-            e.preventDefault();
-            const schoolId = document.getElementById("school-select").value;
-            if (!schoolId) return;
-
-            const btn = e.target.querySelector("button");
-            btn.disabled = true;
-            btn.textContent = "Salvataggio...";
-
-            try {
-              await API.updateProfile({ school_id: schoolId });
-              window.location.href = "/dashboard.html";
-            } catch (err) {
-              errorMsgEl.textContent = err.message;
-              schoolEl.classList.add("hidden");
-              errorEl.classList.remove("hidden");
-            }
-          });
+          successEl.classList.remove("hidden");
+          setTimeout(() => {
+            window.location.href = "/select-school.html";
+          }, 1000);
           return;
         }
 

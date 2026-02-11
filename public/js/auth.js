@@ -25,20 +25,6 @@ document.addEventListener("DOMContentLoaded", async () => {
     window.history.replaceState({}, "", "/");
   }
 
-  // Carica lista scuole per il form di registrazione
-  try {
-    const { schools } = await API.getSchools();
-    const select = document.getElementById("signup-school");
-    schools.forEach((s) => {
-      const opt = document.createElement("option");
-      opt.value = s.id;
-      opt.textContent = `${s.name} - ${s.city}`;
-      select.appendChild(opt);
-    });
-  } catch (err) {
-    // Se non ci sono scuole, il select resta vuoto
-  }
-
   // ==============================
   // OTP Input Setup
   // ==============================
@@ -151,7 +137,17 @@ document.addEventListener("DOMContentLoaded", async () => {
       const email = document.getElementById("login-email").value;
       const password = document.getElementById("login-password").value;
       await API.login(email, password);
-      window.location.href = "/dashboard.html";
+      // Controlla se l'utente ha una scuola assegnata
+      try {
+        const { profile } = await API.getProfile();
+        if (!profile.school_id && !['admin', 'co_admin'].includes(profile.role)) {
+          window.location.href = "/select-school.html";
+        } else {
+          window.location.href = "/dashboard.html";
+        }
+      } catch (e) {
+        window.location.href = "/dashboard.html";
+      }
     } catch (err) {
       showAlert(err.message, "error");
     } finally {
@@ -174,14 +170,13 @@ document.addEventListener("DOMContentLoaded", async () => {
       const full_name = document.getElementById("signup-name").value;
       const email = document.getElementById("signup-email").value;
       const password = document.getElementById("signup-password").value;
-      const school_id = document.getElementById("signup-school").value;
 
-      const result = await API.signup(email, password, full_name, school_id);
+      const result = await API.signup(email, password, full_name);
 
       if (result.session) {
         localStorage.setItem("access_token", result.session.access_token);
         localStorage.setItem("refresh_token", result.session.refresh_token);
-        window.location.href = "/dashboard.html";
+        window.location.href = "/select-school.html";
       } else if (result.requiresConfirmation) {
         // Mostra OTP form
         pendingEmail = email;
@@ -223,7 +218,12 @@ document.addEventListener("DOMContentLoaded", async () => {
       if (result.access_token) {
         localStorage.setItem("access_token", result.access_token);
         localStorage.setItem("refresh_token", result.refresh_token);
-        window.location.href = "/dashboard.html";
+        // Dopo verifica OTP di signup, vai a selezionare la scuola
+        if (pendingOtpType === "signup") {
+          window.location.href = "/select-school.html";
+        } else {
+          window.location.href = "/dashboard.html";
+        }
       } else {
         showAlert(result.message, "success");
         backToLogin();

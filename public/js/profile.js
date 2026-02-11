@@ -43,6 +43,11 @@ document.addEventListener("DOMContentLoaded", async () => {
       document.getElementById("sezione-group").classList.add("hidden");
     }
 
+    // Mostra banner se utente non ha scuola (e non è admin)
+    if (!profile.school_id && !['admin', 'co_admin'].includes(profile.role)) {
+      document.getElementById("no-school-banner").classList.remove("hidden");
+    }
+
     loading.classList.add("hidden");
     content.classList.remove("hidden");
   } catch (err) {

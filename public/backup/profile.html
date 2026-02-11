@@ -11,7 +11,7 @@
     <div class="navbar-content">
       <a href="/dashboard.html" class="navbar-brand"><img src="/img/gauss-logo.png" alt="Project Gauss"> Project Gauss</a>
       <ul class="navbar-nav">
-        <li><a href="/dashboard.html">Home</a></li>
+        <li><a href="/dashboard.html">Dashboard</a></li>
         <li><a href="/posts.html">Post</a></li>
         <li><a href="/spotted.html">Spotted</a></li>
         <li><a href="/profile.html" class="active">Profilo</a></li>
@@ -25,6 +25,11 @@
   </nav>
 
   <main class="container">
+    <div class="page-header">
+      <h1>👤 Il tuo profilo</h1>
+      <p>Modifica le tue informazioni personali</p>
+    </div>
+
     <div class="loading" id="loading">
       <div class="spinner"></div>
     </div>
@@ -40,11 +45,11 @@
         <a href="/select-school.html" class="btn btn-primary" style="width:auto;white-space:nowrap;">Seleziona scuola</a>
       </div>
 
-      <div class="card profile-card">
+      <div class="card">
         <div id="alert" class="alert"></div>
 
         <form id="profile-form">
-          <!-- Avatar -->
+          <!-- Avatar Section -->
           <div class="profile-avatar-section">
             <div class="profile-avatar-wrapper">
               <div class="profile-avatar-large" id="profile-avatar-preview">U</div>
@@ -53,7 +58,7 @@
               </label>
               <input type="file" id="avatar-input" accept="image/*" class="hidden">
             </div>
-            <p class="avatar-hint">Tocca per cambiare foto</p>
+            <p class="avatar-hint">Clicca per cambiare foto</p>
           </div>
 
           <div class="form-group">
@@ -71,15 +76,14 @@
             <input type="text" id="profile-role" disabled>
           </div>
 
-          <div class="form-row-inline">
-            <div class="form-group" id="classe-group">
-              <label for="profile-classe">Classe</label>
-              <input type="text" id="profile-classe" placeholder="Es: 5">
-            </div>
-            <div class="form-group" id="sezione-group">
-              <label for="profile-sezione">Sezione</label>
-              <input type="text" id="profile-sezione" placeholder="Es: A">
-            </div>
+          <div class="form-group" id="classe-group">
+            <label for="profile-classe">Classe</label>
+            <input type="text" id="profile-classe" placeholder="Es: 5">
+          </div>
+
+          <div class="form-group" id="sezione-group">
+            <label for="profile-sezione">Sezione</label>
+            <input type="text" id="profile-sezione" placeholder="Es: A">
           </div>
 
           <div class="form-group">
@@ -88,7 +92,7 @@
             <span class="char-count" id="bio-char-count">0/300</span>
           </div>
 
-          <button type="submit" class="btn btn-primary" style="border-radius: 999px; margin-top: 8px;">Salva modifiche</button>
+          <button type="submit" class="btn btn-primary" style="margin-top: 8px;">Salva modifiche</button>
         </form>
       </div>
     </div>

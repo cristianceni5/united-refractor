@@ -20,29 +20,36 @@ document.addEventListener("DOMContentLoaded", async () => {
     roleEl.textContent = roleLabel;
     roleEl.classList.add(`role-${profile.role}`);
 
-    // Hero section
-    const heroRole = document.getElementById("profile-role");
-    heroRole.textContent = roleLabel;
-    heroRole.classList.add(`role-${profile.role}`);
-
+    // Card profilo
+    document.getElementById("profile-name").textContent = profile.full_name || "-";
+    document.getElementById("profile-email").textContent = profile.email;
+    document.getElementById("profile-role").textContent = roleLabel;
     document.getElementById("profile-classe").textContent =
       ['admin', 'co_admin'].includes(profile.role) ? 'Onnipresente' :
       profile.classe ? `${profile.classe} ${profile.sezione || ""}`.trim() : "Non impostata";
 
+    // Bio
+    const bioEl = document.getElementById("profile-bio");
+    if (bioEl) {
+      bioEl.textContent = profile.bio || "Nessuna bio impostata";
+      if (!profile.bio) bioEl.classList.add("text-muted");
+    }
+
     // Avatar
     const avatarEl = document.getElementById("profile-avatar");
     if (profile.avatar_url) {
-      avatarEl.innerHTML = `<img src="${profile.avatar_url}" alt="Avatar">`;
+      avatarEl.innerHTML = `<img src="${profile.avatar_url}" alt="Avatar" style="width:100%;height:100%;object-fit:cover;border-radius:50%;">`;
     } else if (profile.full_name) {
       avatarEl.textContent = profile.full_name.split(" ").map(n => n[0]).join("").toUpperCase().slice(0, 2);
     }
 
-    // Welcome greeting
+    // Welcome text
     document.getElementById("welcome-text").textContent =
-      `Ciao, ${(profile.full_name || profile.email).split(" ")[0]}!`;
+      `Benvenuto, ${profile.full_name || profile.email}!`;
 
     // Stats e lista per admin/co_admin/rappresentante
     if (["admin", "co_admin", "rappresentante"].includes(profile.role)) {
+      // Mostra sezione aggiungi scuola
       document.getElementById("add-school-section").classList.remove("hidden");
       initAddSchool();
 
@@ -59,32 +66,22 @@ document.addEventListener("DOMContentLoaded", async () => {
         document.getElementById("stat-admin").textContent =
           users.filter((u) => ["admin", "co_admin"].includes(u.role)).length;
 
-        // Recent users (card-based)
+        // Tabella recenti
         document.getElementById("recent-users-section").classList.remove("hidden");
-        const listContainer = document.getElementById("recent-users-list");
+        const tbody = document.getElementById("recent-users-table");
         const recent = users.slice(0, 10);
-        listContainer.innerHTML = recent.map(u => {
-          const initials = (u.full_name || u.email || "?")
-            .split(" ").map(n => n[0]).join("").toUpperCase().slice(0, 2);
-          const avatarHtml = u.avatar_url
-            ? `<img src="${escapeHtml(u.avatar_url)}" alt="Avatar">`
-            : initials;
-          const classeText = u.classe ? `${u.classe}${u.sezione || ""}` : "";
-          const displayRole = u.role === 'co_admin' ? 'Co-Admin' : u.role;
-
-          return `
-            <a href="/view-profile.html?id=${u.id}" class="recent-user-item">
-              <div class="recent-user-avatar">${avatarHtml}</div>
-              <div class="recent-user-info">
-                <div class="recent-user-name">${escapeHtml(u.full_name || u.email)}</div>
-                <div class="recent-user-meta">
-                  <span class="user-role role-${u.role}" style="font-size:0.62rem;padding:1px 8px;">${displayRole}</span>
-                  ${classeText ? `<span class="recent-user-classe">${escapeHtml(classeText)}</span>` : ''}
-                </div>
-              </div>
-            </a>
-          `;
-        }).join("");
+        tbody.innerHTML = recent
+          .map(
+            (u) => `
+          <tr>
+            <td><a href="/view-profile.html?id=${u.id}" style="color: var(--primary); text-decoration: none; font-weight: 600;">${escapeHtml(u.full_name || "-")}</a></td>
+            <td>${escapeHtml(u.email)}</td>
+            <td><span class="user-role role-${u.role}">${u.role}</span></td>
+            <td>${escapeHtml(u.classe ? `${u.classe} ${u.sezione || ""}`.trim() : "-")}</td>
+          </tr>
+        `
+          )
+          .join("");
       } catch (err) {
         // L'utente potrebbe non avere i permessi
       }
@@ -153,6 +150,7 @@ document.addEventListener("DOMContentLoaded", async () => {
         const isCoAdmin = currentProfile.role === 'co_admin';
         const targetIsAdmin = u.role === 'admin';
         const targetIsCoAdmin = u.role === 'co_admin';
+        // Co-admin non può toccare admin né altri co-admin
         const canManage = !isMe && !(isCoAdmin && (targetIsAdmin || targetIsCoAdmin));
 
         let statusHtml = '';
@@ -173,6 +171,7 @@ document.addEventListener("DOMContentLoaded", async () => {
 
         const roleDisplayLabel = u.role === 'co_admin' ? 'Co-Admin' : u.role;
 
+        // Opzioni ruolo: co-admin non può assegnare admin
         const roleOptions = isCoAdmin
           ? `<option value="studente" ${u.role === "studente" ? "selected" : ""}>Studente</option>
              <option value="rappresentante" ${u.role === "rappresentante" ? "selected" : ""}>Rappresentante</option>
@@ -502,8 +501,10 @@ document.addEventListener("DOMContentLoaded", async () => {
 
     if (!form) return;
 
+    // Carica lista scuole
     loadSchools();
 
+    // Toggle form
     toggleBtn.addEventListener("click", () => {
       resetSchoolForm();
       formWrapper.classList.toggle("hidden");
@@ -514,6 +515,7 @@ document.addEventListener("DOMContentLoaded", async () => {
       formWrapper.classList.add("hidden");
     });
 
+    // Logo preview
     logoInput.addEventListener("input", () => {
       const url = logoInput.value.trim();
       if (url) {
@@ -525,6 +527,7 @@ document.addEventListener("DOMContentLoaded", async () => {
       }
     });
 
+    // Submit (create or update)
     form.addEventListener("submit", async (e) => {
       e.preventDefault();
       const btn = form.querySelector("button[type=submit]");
@@ -632,6 +635,7 @@ document.addEventListener("DOMContentLoaded", async () => {
         `;
       }).join("");
 
+      // Event: edit school
       container.querySelectorAll(".btn-edit-school").forEach(btn => {
         btn.addEventListener("click", (e) => {
           e.preventDefault();

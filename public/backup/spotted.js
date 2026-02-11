@@ -6,7 +6,7 @@ document.addEventListener("DOMContentLoaded", async () => {
 
   const loading = document.getElementById("loading");
   const content = document.getElementById("spotted-content");
-  const alertEl = document.getElementById("alert");
+  const alert = document.getElementById("alert");
   let currentProfile = null;
 
   try {
@@ -19,16 +19,6 @@ document.addEventListener("DOMContentLoaded", async () => {
     roleEl.textContent = profile.role === 'co_admin' ? 'Co-Admin' : profile.role;
     roleEl.classList.add(`role-${profile.role}`);
 
-    // Compose avatar
-    const composeAvatar = document.getElementById("spotted-compose-avatar");
-    if (composeAvatar) {
-      if (profile.avatar_url) {
-        composeAvatar.innerHTML = `<img src="${profile.avatar_url}" alt="Avatar">`;
-      } else if (profile.full_name) {
-        composeAvatar.textContent = profile.full_name.split(" ").map(n => n[0]).join("").toUpperCase().slice(0, 2);
-      }
-    }
-
     await loadSpotted();
 
     loading.classList.add("hidden");
@@ -39,7 +29,7 @@ document.addEventListener("DOMContentLoaded", async () => {
     window.location.href = "/";
   }
 
-  // Compose card toggle
+  // Collapsible spotted compose
   const toggleSpottedCompose = document.getElementById("toggle-spotted-compose");
   if (toggleSpottedCompose) {
     toggleSpottedCompose.addEventListener("click", () => {
@@ -50,7 +40,7 @@ document.addEventListener("DOMContentLoaded", async () => {
     });
   }
 
-  // Char counter
+  // Creazione spotted (char counter)
   const spottedTextarea = document.getElementById("spotted-body");
   const spottedCharCount = document.getElementById("spotted-char-count");
   if (spottedTextarea && spottedCharCount) {
@@ -59,7 +49,6 @@ document.addEventListener("DOMContentLoaded", async () => {
     });
   }
 
-  // Creazione spotted
   document.getElementById("create-spotted-form").addEventListener("submit", async (e) => {
     e.preventDefault();
     const btn = e.target.querySelector("button[type=submit]");
@@ -111,61 +100,63 @@ document.addEventListener("DOMContentLoaded", async () => {
         "linear-gradient(135deg, #5AC8FA 0%, #0051D5 100%)",
       ];
 
+      // Genera un numero pseudocasuale stabile basato sull'ID dello spotted
       function anonNumber(id) {
         let hash = 0;
         for (let i = 0; i < id.length; i++) {
           hash = ((hash << 5) - hash) + id.charCodeAt(i);
           hash |= 0;
         }
-        return Math.abs(hash % 90) + 10;
+        return Math.abs(hash % 90) + 10; // 10-99
       }
 
       container.innerHTML = spotted
-        .map((s, i) => {
-          const gradient = gradients[i % gradients.length];
-          const anon = anonNumber(s.id);
-          return `
-            <div class="spotted-ig-card" data-id="${s.id}">
-              <div class="spotted-ig-header" style="background: ${gradient}">
-                ${s.status === "pending" ? '<div class="spotted-pending-badge">⏳ In attesa</div>' : ""}
-                <div class="spotted-ig-avatar" style="background: rgba(255,255,255,0.2);">
-                  ${anon}
-                </div>
-                <div class="spotted-ig-author">
-                  <span class="spotted-ig-name">Anonimo ${anon}</span>
-                  <span class="spotted-ig-time">${timeAgo(s.created_at)}</span>
-                </div>
-              </div>
-              <div class="spotted-ig-body">
-                <p class="spotted-ig-text">${escapeHtml(s.body)}</p>
-              </div>
-              <div class="spotted-ig-bar">
-                <div class="spotted-ig-actions">
-                  <button class="btn-like ${s.liked ? "liked" : ""}" onclick="toggleLike('${s.id}', this)">
-                    ${s.liked ? "❤️" : "🤍"} <span class="like-count">${s.likes_count}</span>
-                  </button>
-                  <button class="btn-comment" onclick="toggleComments('${s.id}', this)">
-                    💬 <span class="comment-label">Commenti</span>
-                  </button>
-                </div>
-                <div class="spotted-ig-meta">
-                  ${
-                    s.is_own || (currentProfile && ['admin', 'co_admin'].includes(currentProfile.role))
-                      ? `<button class="spotted-ig-delete" onclick="deleteSpotted('${s.id}')" title="Elimina">&times;</button>`
-                      : ""
-                  }
-                </div>
-              </div>
-              <div class="comments-section hidden" id="comments-${s.id}">
-                <div class="comments-list" id="comments-list-${s.id}"></div>
-                <form class="comment-form" onsubmit="submitComment(event, '${s.id}')">
-                  <input type="text" placeholder="Scrivi un commento..." required class="comment-input">
-                  <button type="submit" class="btn btn-primary btn-sm" style="border-radius: 999px;">Invia</button>
-                </form>
-              </div>
+        .map(
+          (s, i) => {
+            const gradient = gradients[i % gradients.length];
+            const anon = anonNumber(s.id);
+            return `
+        <div class="spotted-ig-card" data-id="${s.id}">
+          <div class="spotted-ig-header" style="background: ${gradient}">
+            ${s.status === "pending" ? '<div class="spotted-pending-badge">⏳ In attesa</div>' : ""}
+            <div class="spotted-ig-avatar" style="background: rgba(255,255,255,0.2);">
+              ${anon}
             </div>
-          `;
-        })
+            <div class="spotted-ig-author">
+              <span class="spotted-ig-name">Anonimo ${anon}</span>
+              <span class="spotted-ig-time">${timeAgo(s.created_at)}</span>
+            </div>
+          </div>
+          <div class="spotted-ig-body">
+            <p class="spotted-ig-text">${escapeHtml(s.body)}</p>
+          </div>
+          <div class="spotted-ig-bar">
+            <div class="spotted-ig-actions">
+              <button class="btn-like ${s.liked ? "liked" : ""}" onclick="toggleLike('${s.id}', this)">
+                ${s.liked ? "❤️" : "🤍"} <span class="like-count">${s.likes_count}</span>
+              </button>
+              <button class="btn-comment" onclick="toggleComments('${s.id}', this)">
+                💬 <span class="comment-label">Commenti</span>
+              </button>
+            </div>
+            <div class="spotted-ig-meta">
+              ${
+                s.is_own || (currentProfile && ['admin', 'co_admin'].includes(currentProfile.role))
+                  ? `<button class="spotted-ig-delete" onclick="deleteSpotted('${s.id}')" title="Elimina">&times;</button>`
+                  : ""
+              }
+            </div>
+          </div>
+          <div class="comments-section hidden" id="comments-${s.id}">
+            <div class="comments-list" id="comments-list-${s.id}"></div>
+            <form class="comment-form" onsubmit="submitComment(event, '${s.id}')">
+              <input type="text" placeholder="Scrivi un commento..." required class="comment-input">
+              <button type="submit" class="btn btn-primary btn-sm" style="border-radius: 999px;">Invia</button>
+            </form>
+          </div>
+        </div>
+      `;}
+        )
         .join("");
     } catch (err) {
       showAlert(err.message, "error");
@@ -205,22 +196,24 @@ document.addEventListener("DOMContentLoaded", async () => {
       }
 
       container.innerHTML = comments
-        .map((c) => `
-          <div class="comment">
-            <div class="comment-body">
-              <span class="comment-author">Anonimo</span>
-              <span class="comment-text">${escapeHtml(c.body)}</span>
-            </div>
-            <div class="comment-meta">
-              <span>${new Date(c.created_at).toLocaleString("it-IT")}</span>
-              ${
-                c.is_own || (currentProfile && ['admin', 'co_admin'].includes(currentProfile.role))
-                  ? `<button class="btn-delete-comment" onclick="deleteComment('${c.id}', '${spottedId}')">&times;</button>`
-                  : ""
-              }
-            </div>
+        .map(
+          (c) => `
+        <div class="comment">
+          <div class="comment-body">
+            <span class="comment-author">Anonimo</span>
+            <span class="comment-text">${escapeHtml(c.body)}</span>
           </div>
-        `)
+          <div class="comment-meta">
+            <span>${new Date(c.created_at).toLocaleString("it-IT")}</span>
+            ${
+              c.is_own || (currentProfile && ['admin', 'co_admin'].includes(currentProfile.role))
+                ? `<button class="btn-delete-comment" onclick="deleteComment('${c.id}', '${spottedId}')">&times;</button>`
+                : ""
+            }
+          </div>
+        </div>
+      `
+        )
         .join("");
     } catch (err) {
       container.innerHTML = '<p style="color: var(--error); font-size: 0.85rem;">Errore nel caricamento commenti.</p>';
@@ -265,10 +258,10 @@ document.addEventListener("DOMContentLoaded", async () => {
   };
 
   function showAlert(message, type) {
-    alertEl.textContent = message;
-    alertEl.className = `alert alert-${type} show`;
+    alert.textContent = message;
+    alert.className = `alert alert-${type} show`;
     setTimeout(() => {
-      alertEl.className = "alert";
+      alert.className = "alert";
     }, 3000);
   }
 

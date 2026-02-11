@@ -20,10 +20,10 @@ const API = {
   },
 
   // Auth
-  async signup(email, password, full_name, school_id) {
+  async signup(email, password, full_name) {
     return this.request("auth-signup", {
       method: "POST",
-      body: JSON.stringify({ email, password, full_name, school_id }),
+      body: JSON.stringify({ email, password, full_name }),
     });
   },
 
@@ -81,6 +81,10 @@ const API = {
     return this.request("get-profile", { method: "GET" });
   },
 
+  async getPublicProfile(userId) {
+    return this.request(`get-public-profile?id=${userId}`, { method: "GET" });
+  },
+
   async updateProfile(data) {
     return this.request("update-profile", {
       method: "PUT",
@@ -107,6 +111,10 @@ const API = {
     return this.request("get-schools", { method: "GET" });
   },
 
+  async getSchool(schoolId) {
+    return this.request(`get-school?id=${schoolId}`, { method: "GET" });
+  },
+
   async createSchool(data) {
     return this.request("create-school", {
       method: "POST",
@@ -118,6 +126,31 @@ const API = {
     return this.request("update-school", {
       method: "PUT",
       body: JSON.stringify(data),
+    });
+  },
+
+  async selectSchool(school_id) {
+    return this.request("select-school", {
+      method: "PUT",
+      body: JSON.stringify({ school_id }),
+    });
+  },
+
+  async requestSchool(data) {
+    return this.request("request-school", {
+      method: "POST",
+      body: JSON.stringify(data),
+    });
+  },
+
+  async getSchoolRequests(status = "pending") {
+    return this.request(`get-school-requests?status=${status}`, { method: "GET" });
+  },
+
+  async moderateSchoolRequest(request_id, action) {
+    return this.request("moderate-school-request", {
+      method: "PUT",
+      body: JSON.stringify({ request_id, action }),
     });
   },
 

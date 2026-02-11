@@ -10,10 +10,10 @@ exports.handler = async (event) => {
   }
 
   try {
-    const { email, password, full_name, school_id } = JSON.parse(event.body);
+    const { email, password, full_name } = JSON.parse(event.body);
 
-    if (!email || !password || !full_name || !school_id) {
-      return response(400, { error: "Email, password, nome completo e scuola sono obbligatori" });
+    if (!email || !password || !full_name) {
+      return response(400, { error: "Email, password e nome completo sono obbligatori" });
     }
 
     const supabase = getSupabaseClient();
@@ -23,7 +23,7 @@ exports.handler = async (event) => {
       email,
       password,
       options: {
-        data: { full_name, school_id },
+        data: { full_name },
         emailRedirectTo: `${process.env.URL || 'http://localhost:8888'}/auth-callback.html`,
       },
     });
@@ -40,7 +40,7 @@ exports.handler = async (event) => {
         id: data.user.id,
         email: email,
         full_name: full_name,
-        school_id: school_id,
+        school_id: null,
         role: "studente",
       });
 
@@ -58,7 +58,7 @@ exports.handler = async (event) => {
         id: data.user.id,
         email: email,
         full_name: full_name,
-        school_id: school_id,
+        school_id: null,
         role: "studente",
       });
     }

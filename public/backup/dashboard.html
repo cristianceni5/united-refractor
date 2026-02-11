@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Home - Project Gauss</title>
+  <title>Dashboard - Project Gauss</title>
   <link rel="stylesheet" href="/css/style.css">
 </head>
 <body>
@@ -11,7 +11,7 @@
     <div class="navbar-content">
       <a href="/dashboard.html" class="navbar-brand"><img src="/img/gauss-logo.png" alt="Project Gauss"> Project Gauss</a>
       <ul class="navbar-nav">
-        <li><a href="/dashboard.html" class="active">Home</a></li>
+        <li><a href="/dashboard.html" class="active">Dashboard</a></li>
         <li><a href="/posts.html">Post</a></li>
         <li><a href="/spotted.html">Spotted</a></li>
         <li><a href="/profile.html">Profilo</a></li>
@@ -25,44 +25,16 @@
   </nav>
 
   <main class="container">
+    <div class="page-header">
+      <h1>Dashboard</h1>
+      <p id="welcome-text">Benvenuto nel tuo pannello di controllo</p>
+    </div>
+
     <div class="loading" id="loading">
       <div class="spinner"></div>
     </div>
 
     <div id="dashboard-content" class="hidden">
-
-      <!-- Benvenuto + Profilo rapido -->
-      <div class="home-hero">
-        <div class="home-hero-left">
-          <div class="home-hero-avatar" id="profile-avatar">U</div>
-          <div class="home-hero-info">
-            <h1 class="home-hero-greeting" id="welcome-text">Ciao!</h1>
-            <div class="home-hero-meta">
-              <span class="user-role" id="profile-role">-</span>
-              <span class="home-hero-classe" id="profile-classe">-</span>
-            </div>
-          </div>
-        </div>
-        <a href="/profile.html" class="home-hero-edit" title="Modifica profilo">
-          <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7"/><path d="M18.5 2.5a2.121 2.121 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z"/></svg>
-        </a>
-      </div>
-
-      <!-- Quick actions -->
-      <div class="home-quick-actions">
-        <a href="/posts.html" class="home-action-card">
-          <span class="home-action-icon">📢</span>
-          <span class="home-action-label">Post</span>
-        </a>
-        <a href="/spotted.html" class="home-action-card">
-          <span class="home-action-icon">👀</span>
-          <span class="home-action-label">Spotted</span>
-        </a>
-        <a href="/profile.html" class="home-action-card">
-          <span class="home-action-icon">👤</span>
-          <span class="home-action-label">Profilo</span>
-        </a>
-      </div>
 
       <!-- Tab navigation (admin only) -->
       <div id="admin-tabs" class="dash-tabs hidden">
@@ -72,7 +44,7 @@
           <span class="tab-badge hidden" id="mod-badge">0</span>
         </button>
         <button class="dash-tab" data-tab="school-requests">
-          Richieste
+          Richieste scuole
           <span class="tab-badge hidden" id="school-req-badge">0</span>
         </button>
         <button class="dash-tab" data-tab="users">Utenti</button>
@@ -83,12 +55,12 @@
       <!-- ====== TAB: Panoramica ====== -->
       <div class="tab-panel active" id="panel-overview">
 
-        <!-- Stats -->
+        <!-- Stats (visibili ad admin e rappresentante) -->
         <div id="stats-section" class="hidden">
           <div class="stats-grid">
             <div class="stat-card">
               <div class="stat-value" id="stat-total">0</div>
-              <div class="stat-label">Utenti</div>
+              <div class="stat-label">Utenti totali</div>
             </div>
             <div class="stat-card">
               <div class="stat-value" id="stat-studenti">0</div>
@@ -100,20 +72,50 @@
             </div>
             <div class="stat-card">
               <div class="stat-value" id="stat-admin">0</div>
-              <div class="stat-label">Admin</div>
+              <div class="stat-label">Admin / Co-Admin</div>
             </div>
           </div>
         </div>
 
-        <!-- Studenti recenti (per rappresentante e admin) -->
+        <!-- Card profilo rapido -->
+        <div class="card">
+          <h2>Il tuo profilo</h2>
+          <div class="profile-summary">
+            <div class="profile-avatar" id="profile-avatar">U</div>
+            <div class="profile-details">
+              <p><strong>Nome:</strong> <span id="profile-name">-</span></p>
+              <p><strong>Email:</strong> <span id="profile-email">-</span></p>
+              <p><strong>Ruolo:</strong> <span id="profile-role">-</span></p>
+              <p><strong>Classe:</strong> <span id="profile-classe">-</span></p>
+              <p id="profile-bio-row"><strong>Bio:</strong> <span id="profile-bio">-</span></p>
+            </div>
+          </div>
+          <p style="margin-top: 16px;">
+            <a href="/profile.html" class="btn btn-primary" style="width: auto; border-radius: 999px; padding: 10px 24px;">Modifica profilo</a>
+          </p>
+        </div>
+
+        <!-- Lista studenti recenti (per rappresentante e admin) -->
         <div id="recent-users-section" class="hidden">
           <div class="card">
             <h2>Studenti recenti</h2>
-            <div id="recent-users-list" class="recent-users-list"></div>
+            <div class="table-container">
+              <table>
+                <thead>
+                  <tr>
+                    <th>Nome</th>
+                    <th>Email</th>
+                    <th>Ruolo</th>
+                    <th>Classe</th>
+                  </tr>
+                </thead>
+                <tbody id="recent-users-table"></tbody>
+              </table>
+            </div>
           </div>
         </div>
 
-        <!-- Scuole (admin e rappresentante) -->
+        <!-- Aggiungi scuola (admin e rappresentante) -->
         <div id="add-school-section" class="hidden">
           <div class="card">
             <div class="card-header-row">
@@ -121,12 +123,14 @@
               <button class="btn btn-sm" id="btn-toggle-school-form" style="font-size: 0.78rem; padding: 5px 14px; border-radius: 999px; background: var(--primary-light); color: var(--primary); border: none; font-weight: 700;">+ Aggiungi</button>
             </div>
 
+            <!-- Lista scuole -->
             <div id="schools-list" class="schools-list"></div>
             <div id="no-schools" class="empty-state hidden">
               <div class="empty-icon">🏫</div>
               <p>Nessuna scuola registrata</p>
             </div>
 
+            <!-- Form aggiungi/modifica scuola -->
             <div id="school-form-wrapper" class="hidden" style="margin-top: 20px; padding-top: 20px; border-top: 1px solid var(--border);">
               <h3 id="school-form-title">Aggiungi scuola</h3>
               <form id="form-add-school">
@@ -191,7 +195,7 @@
       <div class="tab-panel" id="panel-school-requests">
         <div class="card">
           <div class="card-header-row">
-            <h2>Richieste nuove scuole</h2>
+            <h2>Richieste di nuove scuole</h2>
             <span class="counter-badge" id="school-req-count-label">0 in attesa</span>
           </div>
           <div id="school-requests-list"></div>
@@ -204,6 +208,7 @@
 
       <!-- ====== TAB: Gestione utenti (admin) ====== -->
       <div class="tab-panel" id="panel-users">
+        <!-- Filtri -->
         <div class="card">
           <h3>Filtra utenti</h3>
           <div class="filter-row">
@@ -227,6 +232,7 @@
           </div>
         </div>
 
+        <!-- Lista utenti -->
         <div class="card">
           <div class="card-header-row">
             <h2>Utenti</h2>

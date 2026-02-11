@@ -1,0 +1,93 @@
+<!DOCTYPE html>
+<html lang="it">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Project Gauss - Seleziona la tua scuola</title>
+  <link rel="stylesheet" href="/css/style.css">
+</head>
+<body>
+  <div class="select-school-container">
+    <div class="select-school-card">
+      <img src="/img/gauss-logo.png" alt="Project Gauss" class="auth-logo" style="filter: brightness(0) saturate(100%) invert(15%) sepia(90%) saturate(6000%) hue-rotate(200deg) brightness(100%) contrast(100%);">
+      <h1>Seleziona la tua scuola</h1>
+      <p class="subtitle">Per continuare, scegli la scuola che frequenti</p>
+
+      <div id="alert" class="alert"></div>
+
+      <!-- Step 1: Seleziona Città -->
+      <div id="step-city" class="select-school-step">
+        <div class="form-group">
+          <label for="city-search">Cerca la tua città</label>
+          <input type="text" id="city-search" placeholder="Digita il nome della città..." autocomplete="off">
+        </div>
+        <div id="city-list" class="select-school-list"></div>
+      </div>
+
+      <!-- Step 2: Seleziona Scuola -->
+      <div id="step-school" class="select-school-step hidden">
+        <button class="btn-back" id="btn-back-city">← Cambia città</button>
+        <div class="selected-city-badge" id="selected-city-badge"></div>
+        
+        <div id="school-list" class="select-school-list"></div>
+        <div id="no-schools-msg" class="empty-state hidden">
+          <div class="empty-icon">🏫</div>
+          <p>Nessuna scuola trovata in questa città</p>
+        </div>
+
+        <div class="school-request-divider">
+          <span>La tua scuola non c'è?</span>
+        </div>
+        <button class="btn btn-request-school-action" id="btn-request-school">
+          📝 Richiedi l'aggiunta della tua scuola
+        </button>
+      </div>
+
+      <!-- Step 3: Form richiesta scuola -->
+      <div id="step-request" class="select-school-step hidden">
+        <button class="btn-back" id="btn-back-school">← Torna alla lista</button>
+        <h3 style="margin-bottom:8px;">Richiedi una nuova scuola</h3>
+        <p class="subtitle" style="margin-bottom:20px;">La tua richiesta verrà esaminata da un amministratore</p>
+        
+        <form id="form-request-school">
+          <div class="form-group">
+            <label for="req-school-name">Nome scuola *</label>
+            <input type="text" id="req-school-name" required placeholder="Es: IIS Leonardo da Vinci">
+          </div>
+          <div class="form-group">
+            <label for="req-school-city">Città *</label>
+            <input type="text" id="req-school-city" required placeholder="Es: Milano">
+          </div>
+          <div class="form-row">
+            <div class="form-group">
+              <label for="req-school-province">Provincia</label>
+              <input type="text" id="req-school-province" placeholder="Es: MI" maxlength="2">
+            </div>
+            <div class="form-group">
+              <label for="req-school-address">Indirizzo</label>
+              <input type="text" id="req-school-address" placeholder="Es: Via Roma 1">
+            </div>
+          </div>
+          <button type="submit" class="btn btn-primary" style="width:100%;">Invia richiesta</button>
+        </form>
+      </div>
+
+      <!-- Conferma richiesta inviata -->
+      <div id="step-request-sent" class="select-school-step hidden">
+        <div class="request-sent-icon">✉️</div>
+        <h3>Richiesta inviata!</h3>
+        <p class="subtitle">Un amministratore esaminerà la tua richiesta. Riceverai la scuola non appena verrà approvata.</p>
+        <p class="subtitle" style="margin-top:16px;">Nel frattempo puoi continuare a usare la piattaforma.</p>
+        <a href="/dashboard.html" class="btn btn-primary" style="display:inline-block;margin-top:20px;text-decoration:none;">Vai alla dashboard</a>
+      </div>
+
+      <div class="select-school-skip">
+        <a href="/dashboard.html" id="link-skip">Salta per ora →</a>
+      </div>
+    </div>
+  </div>
+
+  <script src="/js/api.js"></script>
+  <script src="/js/select-school.js"></script>
+</body>
+</html>

@@ -12,6 +12,7 @@ DROP TABLE IF EXISTS spotted_comments;
 DROP TABLE IF EXISTS spotted_likes;
 DROP TABLE IF EXISTS spotted;
 DROP TABLE IF EXISTS posts;
+DROP TABLE IF EXISTS school_requests;
 DROP TABLE IF EXISTS profiles;
 DROP TABLE IF EXISTS schools;
 
@@ -100,6 +101,30 @@ CREATE POLICY "Enable insert for service role"
 
 -- NOTA: il profilo viene creato dal codice in auth-signup.js
 -- Non serve più un trigger su auth.users
+
+-- ============================================================
+-- 2b. SCHOOL_REQUESTS (richieste nuove scuole)
+-- ============================================================
+CREATE TABLE school_requests (
+  id UUID DEFAULT gen_random_uuid() PRIMARY KEY,
+  name TEXT NOT NULL,
+  city TEXT NOT NULL,
+  province TEXT,
+  address TEXT,
+  requested_by UUID REFERENCES profiles(id) NOT NULL,
+  status TEXT DEFAULT 'pending' CHECK (status IN ('pending', 'approved', 'rejected')),
+  school_id UUID REFERENCES schools(id),
+  reviewed_by UUID REFERENCES profiles(id),
+  reviewed_at TIMESTAMPTZ,
+  created_at TIMESTAMPTZ DEFAULT NOW()
+);
+
+ALTER TABLE school_requests ENABLE ROW LEVEL SECURITY;
+
+CREATE POLICY "Service role full access school_requests"
+  ON school_requests FOR ALL
+  USING (true)
+  WITH CHECK (true);
 
 -- ============================================================
 -- 3. POSTS (post ufficiali)
