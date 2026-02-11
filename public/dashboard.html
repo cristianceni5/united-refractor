@@ -109,6 +109,66 @@
             </div>
           </div>
         </div>
+
+        <!-- Aggiungi scuola (admin e rappresentante) -->
+        <div id="add-school-section" class="hidden">
+          <div class="card">
+            <div class="card-header-row">
+              <h2>🏫 Scuole</h2>
+              <button class="btn btn-sm" id="btn-toggle-school-form" style="font-size: 0.78rem; padding: 5px 14px; border-radius: 999px; background: var(--primary-light); color: var(--primary); border: none; font-weight: 700;">+ Aggiungi</button>
+            </div>
+
+            <!-- Lista scuole -->
+            <div id="schools-list" class="schools-list"></div>
+            <div id="no-schools" class="empty-state hidden">
+              <div class="empty-icon">🏫</div>
+              <p>Nessuna scuola registrata</p>
+            </div>
+
+            <!-- Form aggiungi/modifica scuola -->
+            <div id="school-form-wrapper" class="hidden" style="margin-top: 20px; padding-top: 20px; border-top: 1px solid var(--border);">
+              <h3 id="school-form-title">Aggiungi scuola</h3>
+              <form id="form-add-school">
+                <input type="hidden" id="school-edit-id" value="">
+                <div class="form-row">
+                  <div class="form-group">
+                    <label for="school-name">Nome scuola *</label>
+                    <input type="text" id="school-name" required placeholder="Es: IIS Leonardo da Vinci">
+                  </div>
+                  <div class="form-group">
+                    <label for="school-city">Città *</label>
+                    <input type="text" id="school-city" required placeholder="Es: Milano">
+                  </div>
+                </div>
+                <div class="form-row">
+                  <div class="form-group">
+                    <label for="school-province">Provincia</label>
+                    <input type="text" id="school-province" placeholder="Es: MI" maxlength="2">
+                  </div>
+                  <div class="form-group">
+                    <label for="school-address">Indirizzo</label>
+                    <input type="text" id="school-address" placeholder="Es: Via Roma 1">
+                  </div>
+                </div>
+                <div class="form-group">
+                  <label for="school-logo">URL logo scuola</label>
+                  <input type="url" id="school-logo" placeholder="https://esempio.it/logo.png">
+                  <div id="school-logo-preview" class="school-logo-preview hidden">
+                    <img id="school-logo-img" src="" alt="Preview logo">
+                  </div>
+                </div>
+                <div class="form-group">
+                  <label for="school-description">Descrizione</label>
+                  <textarea id="school-description" rows="3" placeholder="Una breve descrizione della scuola..."></textarea>
+                </div>
+                <div class="form-actions-row">
+                  <button type="submit" class="btn btn-primary" style="width: auto;">Salva scuola</button>
+                  <button type="button" class="btn btn-secondary btn-sm" id="btn-cancel-school" style="background: var(--border); color: var(--text); border: none;">Annulla</button>
+                </div>
+              </form>
+            </div>
+          </div>
+        </div>
       </div>
 
       <!-- ====== TAB: Moderazione Spotted (admin) ====== -->
@@ -215,6 +275,15 @@
       </div>
     </div>
   </footer>
+
+  <nav class="bottom-nav">
+    <ul class="bottom-nav-items">
+      <li><a href="/dashboard.html" class="active"><span class="nav-icon"><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"/><polyline points="9 22 9 12 15 12 15 22"/></svg></span>Home</a></li>
+      <li><a href="/posts.html"><span class="nav-icon"><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/><line x1="16" y1="13" x2="8" y2="13"/><line x1="16" y1="17" x2="8" y2="17"/></svg></span>Post</a></li>
+      <li><a href="/spotted.html"><span class="nav-icon"><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"/><circle cx="12" cy="12" r="3"/></svg></span>Spotted</a></li>
+      <li><a href="/profile.html"><span class="nav-icon"><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/><circle cx="12" cy="7" r="4"/></svg></span>Profilo</a></li>
+    </ul>
+  </nav>
 
   <script src="/js/api.js"></script>
   <script src="/js/dashboard.js"></script>

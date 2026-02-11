@@ -1,4 +1,4 @@
-const { getSupabaseAdmin, headers, response } = require("../../lib/supabase");
+const { getSupabaseAdmin, getSupabaseClient, headers, response } = require("../../lib/supabase");
 
 exports.handler = async (event) => {
   if (event.httpMethod === "OPTIONS") {
@@ -16,24 +16,27 @@ exports.handler = async (event) => {
       return response(400, { error: "Email, password, nome completo e scuola sono obbligatori" });
     }
 
-    const supabase = getSupabaseAdmin();
+    const supabase = getSupabaseClient();
 
-    // 1. Crea utente in auth.users tramite admin API
-    const { data, error } = await supabase.auth.admin.createUser({
+    // Usa signUp standard con email verification
+    const { data, error } = await supabase.auth.signUp({
       email,
       password,
-      user_metadata: { full_name, school_id },
-      email_confirm: true,
+      options: {
+        data: { full_name, school_id },
+        emailRedirectTo: `${process.env.URL || 'http://localhost:8888'}/auth-callback.html`,
+      },
     });
 
     if (error) {
       return response(400, { error: error.message });
     }
 
-    // 2. Crea profilo manualmente in profiles (bypass del trigger)
-    const { error: profileError } = await supabase
-      .from("profiles")
-      .insert({
+    // Se l'utente è già confermato (in dev con auto-confirm)
+    if (data.session) {
+      const admin = getSupabaseAdmin();
+      // Crea profilo
+      await admin.from("profiles").upsert({
         id: data.user.id,
         email: email,
         full_name: full_name,
@@ -41,24 +44,31 @@ exports.handler = async (event) => {
         role: "studente",
       });
 
-    if (profileError) {
-      // Se il profilo fallisce, elimina l'utente creato per non lasciare orfani
-      await supabase.auth.admin.deleteUser(data.user.id);
-      return response(500, { error: "Errore nella creazione del profilo: " + profileError.message });
+      return response(200, {
+        message: "Registrazione completata!",
+        user: data.user,
+        session: data.session,
+      });
     }
 
-    // 3. Effettua il login per ottenere la sessione
-    const { data: loginData, error: loginError } = await supabase.auth.signInWithPassword({
-      email,
-      password,
-    });
+    // Email non ancora confermata - crea profilo in anticipo
+    if (data.user) {
+      const admin = getSupabaseAdmin();
+      await admin.from("profiles").upsert({
+        id: data.user.id,
+        email: email,
+        full_name: full_name,
+        school_id: school_id,
+        role: "studente",
+      });
+    }
 
     return response(200, {
-      message: "Registrazione completata con successo.",
-      user: data.user,
-      session: loginData?.session || null,
+      message: "Ti abbiamo inviato un'email di verifica! Controlla la tua casella di posta.",
+      requiresConfirmation: true,
     });
   } catch (err) {
+    console.error("Signup error:", err);
     return response(500, { error: "Errore interno del server" });
   }
 };

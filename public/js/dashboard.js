@@ -38,6 +38,10 @@ document.addEventListener("DOMContentLoaded", async () => {
 
     // Stats e lista per admin/rappresentante
     if (["admin", "rappresentante"].includes(profile.role)) {
+      // Mostra sezione aggiungi scuola
+      document.getElementById("add-school-section").classList.remove("hidden");
+      initAddSchool();
+
       try {
         const { users } = await API.getUsers();
 
@@ -361,6 +365,166 @@ document.addEventListener("DOMContentLoaded", async () => {
   function closeBanModal() {
     document.getElementById("ban-modal").classList.add("hidden");
     banTargetUserId = null;
+  }
+
+  // ========================
+  // School Management
+  // ========================
+  function initAddSchool() {
+    const form = document.getElementById("form-add-school");
+    const formWrapper = document.getElementById("school-form-wrapper");
+    const toggleBtn = document.getElementById("btn-toggle-school-form");
+    const cancelBtn = document.getElementById("btn-cancel-school");
+    const logoInput = document.getElementById("school-logo");
+    const logoPreview = document.getElementById("school-logo-preview");
+    const logoImg = document.getElementById("school-logo-img");
+
+    if (!form) return;
+
+    // Carica lista scuole
+    loadSchools();
+
+    // Toggle form
+    toggleBtn.addEventListener("click", () => {
+      resetSchoolForm();
+      formWrapper.classList.toggle("hidden");
+    });
+
+    cancelBtn.addEventListener("click", () => {
+      resetSchoolForm();
+      formWrapper.classList.add("hidden");
+    });
+
+    // Logo preview
+    logoInput.addEventListener("input", () => {
+      const url = logoInput.value.trim();
+      if (url) {
+        logoImg.src = url;
+        logoImg.onload = () => logoPreview.classList.remove("hidden");
+        logoImg.onerror = () => logoPreview.classList.add("hidden");
+      } else {
+        logoPreview.classList.add("hidden");
+      }
+    });
+
+    // Submit (create or update)
+    form.addEventListener("submit", async (e) => {
+      e.preventDefault();
+      const btn = form.querySelector("button[type=submit]");
+      const editId = document.getElementById("school-edit-id").value;
+      const isEditing = !!editId;
+
+      btn.disabled = true;
+      btn.textContent = isEditing ? "Salvataggio..." : "Aggiunta in corso...";
+
+      const schoolData = {
+        name: document.getElementById("school-name").value.trim(),
+        city: document.getElementById("school-city").value.trim(),
+        province: document.getElementById("school-province").value.trim().toUpperCase() || null,
+        address: document.getElementById("school-address").value.trim() || null,
+        logo_url: document.getElementById("school-logo").value.trim() || null,
+        description: document.getElementById("school-description").value.trim() || null,
+      };
+
+      try {
+        if (isEditing) {
+          schoolData.school_id = editId;
+          await API.updateSchool(schoolData);
+          showAlert("🏫 Scuola aggiornata!", "success");
+        } else {
+          await API.createSchool(schoolData);
+          showAlert("🏫 Scuola aggiunta!", "success");
+        }
+        resetSchoolForm();
+        formWrapper.classList.add("hidden");
+        await loadSchools();
+      } catch (err) {
+        showAlert(err.message, "error");
+      } finally {
+        btn.disabled = false;
+        btn.textContent = "Salva scuola";
+      }
+    });
+  }
+
+  function resetSchoolForm() {
+    const form = document.getElementById("form-add-school");
+    form.reset();
+    document.getElementById("school-edit-id").value = "";
+    document.getElementById("school-form-title").textContent = "Aggiungi scuola";
+    document.getElementById("school-logo-preview").classList.add("hidden");
+  }
+
+  function editSchool(school) {
+    document.getElementById("school-edit-id").value = school.id;
+    document.getElementById("school-name").value = school.name || "";
+    document.getElementById("school-city").value = school.city || "";
+    document.getElementById("school-province").value = school.province || "";
+    document.getElementById("school-address").value = school.address || "";
+    document.getElementById("school-logo").value = school.logo_url || "";
+    document.getElementById("school-description").value = school.description || "";
+    document.getElementById("school-form-title").textContent = "Modifica scuola";
+
+    const logoPreview = document.getElementById("school-logo-preview");
+    const logoImg = document.getElementById("school-logo-img");
+    if (school.logo_url) {
+      logoImg.src = school.logo_url;
+      logoPreview.classList.remove("hidden");
+    } else {
+      logoPreview.classList.add("hidden");
+    }
+
+    document.getElementById("school-form-wrapper").classList.remove("hidden");
+    document.getElementById("school-form-wrapper").scrollIntoView({ behavior: "smooth", block: "start" });
+  }
+
+  async function loadSchools() {
+    try {
+      const { schools } = await API.getSchools();
+      const container = document.getElementById("schools-list");
+      const noSchools = document.getElementById("no-schools");
+
+      if (!schools || schools.length === 0) {
+        container.innerHTML = "";
+        noSchools.classList.remove("hidden");
+        return;
+      }
+
+      noSchools.classList.add("hidden");
+      container.innerHTML = schools.map(s => {
+        const logoHtml = s.logo_url
+          ? `<img src="${escapeHtml(s.logo_url)}" alt="${escapeHtml(s.name)}" class="school-card-logo">`
+          : `<div class="school-card-logo-placeholder">🏫</div>`;
+
+        const locationParts = [s.city, s.province].filter(Boolean);
+        const location = locationParts.join(" (") + (s.province ? ")" : "");
+
+        return `
+          <div class="school-card">
+            <div class="school-card-left">
+              ${logoHtml}
+              <div class="school-card-info">
+                <div class="school-card-name">${escapeHtml(s.name)}</div>
+                <div class="school-card-location">📍 ${escapeHtml(location)}</div>
+                ${s.address ? `<div class="school-card-address">${escapeHtml(s.address)}</div>` : ""}
+                ${s.description ? `<div class="school-card-desc">${escapeHtml(s.description)}</div>` : ""}
+              </div>
+            </div>
+            <button class="btn btn-sm btn-edit-school" data-school='${JSON.stringify(s).replace(/'/g, "&#39;")}'>✏️ Modifica</button>
+          </div>
+        `;
+      }).join("");
+
+      // Event: edit school
+      container.querySelectorAll(".btn-edit-school").forEach(btn => {
+        btn.addEventListener("click", () => {
+          const school = JSON.parse(btn.dataset.school);
+          editSchool(school);
+        });
+      });
+    } catch (err) {
+      // non bloccare
+    }
   }
 
   // ========================

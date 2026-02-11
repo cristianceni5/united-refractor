@@ -72,22 +72,22 @@ document.addEventListener("DOMContentLoaded", async () => {
         .map(
           (s) => `
         <div class="spotted-card" data-id="${s.id}">
-          ${s.status === "pending" ? '<div class="spotted-pending-badge">In attesa di approvazione</div>' : ""}
+          ${s.status === "pending" ? '<div class="spotted-pending-badge">⏳ In attesa di approvazione</div>' : ""}
           <p class="spotted-body">${escapeHtml(s.body)}</p>
           <div class="spotted-footer">
             <div class="spotted-actions">
               <button class="btn-like ${s.liked ? "liked" : ""}" onclick="toggleLike('${s.id}', this)">
-                ${s.liked ? "&#9829;" : "&#9825;"} <span class="like-count">${s.likes_count}</span>
+                ${s.liked ? "❤️" : "🤍"} <span class="like-count">${s.likes_count}</span>
               </button>
               <button class="btn-comment" onclick="toggleComments('${s.id}', this)">
-                &#128172; Commenti
+                💬 Commenti
               </button>
             </div>
             <div class="spotted-meta-right">
-              <span class="spotted-date">${new Date(s.created_at).toLocaleString("it-IT")}</span>
+              <span class="spotted-date">${timeAgo(s.created_at)}</span>
               ${
                 s.is_own || (currentProfile && currentProfile.role === "admin")
-                  ? `<button class="btn btn-danger btn-sm" onclick="deleteSpotted('${s.id}')">Elimina</button>`
+                  ? `<button class="btn btn-danger btn-sm" style="border-radius: 999px;" onclick="deleteSpotted('${s.id}')">Elimina</button>`
                   : ""
               }
             </div>
@@ -95,8 +95,8 @@ document.addEventListener("DOMContentLoaded", async () => {
           <div class="comments-section hidden" id="comments-${s.id}">
             <div class="comments-list" id="comments-list-${s.id}"></div>
             <form class="comment-form" onsubmit="submitComment(event, '${s.id}')">
-              <input type="text" placeholder="Scrivi un commento anonimo..." required class="comment-input">
-              <button type="submit" class="btn btn-primary btn-sm">Invia</button>
+              <input type="text" placeholder="Scrivi un commento..." required class="comment-input">
+              <button type="submit" class="btn btn-primary btn-sm" style="border-radius: 999px;">Invia</button>
             </form>
           </div>
         </div>
@@ -112,7 +112,7 @@ document.addEventListener("DOMContentLoaded", async () => {
     try {
       const { liked, likes_count } = await API.toggleLikeSpotted(spottedId);
       btn.classList.toggle("liked", liked);
-      btn.innerHTML = `${liked ? "&#9829;" : "&#9825;"} <span class="like-count">${likes_count}</span>`;
+      btn.innerHTML = `${liked ? "❤️" : "🤍"} <span class="like-count">${likes_count}</span>`;
     } catch (err) {
       showAlert(err.message, "error");
     }
@@ -214,5 +214,17 @@ document.addEventListener("DOMContentLoaded", async () => {
     const div = document.createElement("div");
     div.textContent = text;
     return div.innerHTML;
+  }
+
+  function timeAgo(dateStr) {
+    const now = new Date();
+    const date = new Date(dateStr);
+    const diff = Math.floor((now - date) / 1000);
+
+    if (diff < 60) return "ora";
+    if (diff < 3600) return `${Math.floor(diff / 60)} min fa`;
+    if (diff < 86400) return `${Math.floor(diff / 3600)}h fa`;
+    if (diff < 604800) return `${Math.floor(diff / 86400)}g fa`;
+    return date.toLocaleDateString("it-IT");
   }
 });

@@ -24,6 +24,8 @@ CREATE TABLE schools (
   city TEXT NOT NULL,
   address TEXT,
   province TEXT,
+  description TEXT,
+  logo_url TEXT,
   created_at TIMESTAMPTZ DEFAULT NOW()
 );
 
@@ -35,6 +37,11 @@ CREATE POLICY "Anyone can read schools"
 
 CREATE POLICY "Service role can insert schools"
   ON schools FOR INSERT
+  WITH CHECK (true);
+
+CREATE POLICY "Service role can update schools"
+  ON schools FOR UPDATE
+  USING (true)
   WITH CHECK (true);
 
 -- ============================================================

@@ -47,6 +47,35 @@ const API = {
     }
   },
 
+  async oauthLogin(provider) {
+    const data = await this.request("auth-oauth", {
+      method: "POST",
+      body: JSON.stringify({ provider }),
+    });
+    return data;
+  },
+
+  async verifyOtp(email, otp, type = "signup") {
+    return this.request("auth-verify-otp", {
+      method: "POST",
+      body: JSON.stringify({ email, otp, type }),
+    });
+  },
+
+  async forgotPassword(email) {
+    return this.request("auth-forgot-password", {
+      method: "POST",
+      body: JSON.stringify({ email }),
+    });
+  },
+
+  async resetPassword(email, otp, new_password) {
+    return this.request("auth-reset-password", {
+      method: "POST",
+      body: JSON.stringify({ email, otp, new_password }),
+    });
+  },
+
   // Profile
   async getProfile() {
     return this.request("get-profile", { method: "GET" });
@@ -81,6 +110,13 @@ const API = {
   async createSchool(data) {
     return this.request("create-school", {
       method: "POST",
+      body: JSON.stringify(data),
+    });
+  },
+
+  async updateSchool(data) {
+    return this.request("update-school", {
+      method: "PUT",
       body: JSON.stringify(data),
     });
   },
@@ -171,6 +207,34 @@ const API = {
     return this.request("ban-user", {
       method: "PUT",
       body: JSON.stringify({ user_id, action, duration_hours, reason }),
+    });
+  },
+
+  async uploadImage(file) {
+    return new Promise((resolve, reject) => {
+      if (file.size > 8 * 1024 * 1024) {
+        reject(new Error("Immagine troppo grande (max 8MB)"));
+        return;
+      }
+
+      const reader = new FileReader();
+      reader.onload = async () => {
+        try {
+          const result = await this.request("upload-image", {
+            method: "POST",
+            body: JSON.stringify({
+              image: reader.result,
+              filename: file.name,
+              contentType: file.type,
+            }),
+          });
+          resolve(result);
+        } catch (err) {
+          reject(err);
+        }
+      };
+      reader.onerror = () => reject(new Error("Errore nella lettura del file"));
+      reader.readAsDataURL(file);
     });
   },
 

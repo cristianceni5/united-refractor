@@ -26,7 +26,7 @@
 
   <main class="container">
     <div class="page-header">
-      <h1>Post ufficiali</h1>
+      <h1>📢 Post ufficiali</h1>
       <p>Comunicazioni e avvisi dalla scuola</p>
     </div>
 
@@ -40,7 +40,7 @@
       <!-- Form creazione post (solo admin/rappresentante) -->
       <div id="create-post-section" class="hidden">
         <div class="card">
-          <h2>Nuovo post</h2>
+          <h2>✍️ Nuovo post</h2>
           <form id="create-post-form">
             <div class="form-group">
               <label for="post-title">Titolo</label>
@@ -61,8 +61,21 @@
                 </select>
               </div>
               <div class="form-group" style="flex: 1; min-width: 150px;">
-                <label for="post-image">URL Immagine (opzionale)</label>
-                <input type="url" id="post-image" placeholder="https://...">
+                <label for="post-image">Immagine (opzionale)</label>
+                <div class="image-upload-area" id="image-upload-area">
+                  <input type="file" id="post-image-file" accept="image/*">
+                  <span class="upload-icon">📷</span>
+                  <span class="upload-text">Trascina o tocca per caricare</span>
+                  <span class="upload-hint">JPG, PNG, WebP • Max 5MB</span>
+                </div>
+                <div class="image-preview-container" id="image-preview-container">
+                  <img class="image-preview" id="image-preview" src="" alt="Anteprima">
+                  <button type="button" class="image-preview-remove" id="image-preview-remove">&times;</button>
+                </div>
+                <div class="upload-progress" id="upload-progress">
+                  <div class="progress-bar"><div class="progress-bar-fill" id="progress-bar-fill"></div></div>
+                </div>
+                <input type="hidden" id="post-image" value="">
               </div>
               <div class="form-group" style="display: flex; align-items: flex-end; gap: 8px;">
                 <label style="display: flex; align-items: center; gap: 6px; cursor: pointer;">
@@ -100,6 +113,15 @@
       </div>
     </div>
   </footer>
+
+  <nav class="bottom-nav">
+    <ul class="bottom-nav-items">
+      <li><a href="/dashboard.html"><span class="nav-icon"><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"/><polyline points="9 22 9 12 15 12 15 22"/></svg></span>Home</a></li>
+      <li><a href="/posts.html" class="active"><span class="nav-icon"><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/><line x1="16" y1="13" x2="8" y2="13"/><line x1="16" y1="17" x2="8" y2="17"/></svg></span>Post</a></li>
+      <li><a href="/spotted.html"><span class="nav-icon"><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"/><circle cx="12" cy="12" r="3"/></svg></span>Spotted</a></li>
+      <li><a href="/profile.html"><span class="nav-icon"><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/><circle cx="12" cy="7" r="4"/></svg></span>Profilo</a></li>
+    </ul>
+  </nav>
 
   <script src="/js/api.js"></script>
   <script src="/js/posts.js"></script>

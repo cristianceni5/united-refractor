@@ -26,8 +26,8 @@
 
   <main class="container">
     <div class="page-header">
-      <h1>Spotted</h1>
-      <p>Bacheca anonima della scuola</p>
+      <h1>👀 Spotted</h1>
+      <p>Bacheca anonima della tua scuola</p>
     </div>
 
     <div class="loading" id="loading">
@@ -39,14 +39,14 @@
 
       <!-- Form creazione spotted -->
       <div class="card">
-        <h2>Scrivi uno spotted</h2>
+        <h2>💬 Scrivi uno spotted</h2>
         <form id="create-spotted-form">
           <div class="form-group">
-            <textarea id="spotted-body" required placeholder="Scrivi il tuo spotted anonimo..." rows="3" style="width: 100%; padding: 10px 12px; border: 1px solid var(--border); border-radius: var(--radius); font-size: 0.95rem; font-family: inherit; resize: vertical;"></textarea>
+            <textarea id="spotted-body" required placeholder="Cosa vuoi condividere di anonimo? ✨" rows="3" style="width: 100%; padding: 14px 16px; border: 1px solid var(--border); border-radius: var(--radius); font-size: 0.95rem; font-family: inherit; resize: vertical; background: var(--bg);"></textarea>
           </div>
-          <div style="display: flex; justify-content: space-between; align-items: center;">
-            <span style="font-size: 0.8rem; color: var(--text-muted);">Il tuo spotted sara' pubblicato in modo anonimo dopo l'approvazione.</span>
-            <button type="submit" class="btn btn-primary" style="width: auto;">Invia spotted</button>
+          <div style="display: flex; justify-content: space-between; align-items: center; gap: 12px; flex-wrap: wrap;">
+            <span style="font-size: 0.78rem; color: var(--text-muted);">🔒 Pubblicazione anonima dopo approvazione</span>
+            <button type="submit" class="btn btn-primary" style="width: auto; border-radius: 999px; padding: 10px 24px;">Invia spotted</button>
           </div>
         </form>
       </div>
@@ -67,6 +67,15 @@
       </div>
     </div>
   </footer>
+
+  <nav class="bottom-nav">
+    <ul class="bottom-nav-items">
+      <li><a href="/dashboard.html"><span class="nav-icon"><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"/><polyline points="9 22 9 12 15 12 15 22"/></svg></span>Home</a></li>
+      <li><a href="/posts.html"><span class="nav-icon"><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/><line x1="16" y1="13" x2="8" y2="13"/><line x1="16" y1="17" x2="8" y2="17"/></svg></span>Post</a></li>
+      <li><a href="/spotted.html" class="active"><span class="nav-icon"><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"/><circle cx="12" cy="12" r="3"/></svg></span>Spotted</a></li>
+      <li><a href="/profile.html"><span class="nav-icon"><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/><circle cx="12" cy="7" r="4"/></svg></span>Profilo</a></li>
+    </ul>
+  </nav>
 
   <script src="/js/api.js"></script>
   <script src="/js/spotted.js"></script>

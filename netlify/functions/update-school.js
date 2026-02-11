@@ -5,7 +5,7 @@ exports.handler = async (event) => {
     return { statusCode: 204, headers };
   }
 
-  if (event.httpMethod !== "POST") {
+  if (event.httpMethod !== "PUT") {
     return response(405, { error: "Metodo non consentito" });
   }
 
@@ -22,19 +22,31 @@ exports.handler = async (event) => {
 
     const profile = await getUserProfile(user.id);
     if (!profile || !['admin', 'rappresentante'].includes(profile.role)) {
-      return response(403, { error: "Solo amministratori e rappresentanti possono creare scuole" });
+      return response(403, { error: "Solo amministratori e rappresentanti possono modificare scuole" });
     }
 
-    const { name, city, address, province, description, logo_url } = JSON.parse(event.body);
+    const { school_id, name, city, address, province, description, logo_url } = JSON.parse(event.body);
+
+    if (!school_id) {
+      return response(400, { error: "ID scuola obbligatorio" });
+    }
 
     if (!name || !city) {
-      return response(400, { error: "Nome e citta sono obbligatori" });
+      return response(400, { error: "Nome e città sono obbligatori" });
     }
 
     const admin = getSupabaseAdmin();
+
+    const updateData = { name, city };
+    if (address !== undefined) updateData.address = address || null;
+    if (province !== undefined) updateData.province = province || null;
+    if (description !== undefined) updateData.description = description || null;
+    if (logo_url !== undefined) updateData.logo_url = logo_url || null;
+
     const { data, error } = await admin
       .from("schools")
-      .insert({ name, city, address, province, description: description || null, logo_url: logo_url || null })
+      .update(updateData)
+      .eq("id", school_id)
       .select()
       .single();
 
@@ -42,8 +54,9 @@ exports.handler = async (event) => {
       return response(400, { error: error.message });
     }
 
-    return response(201, { school: data });
+    return response(200, { school: data, message: "Scuola aggiornata con successo!" });
   } catch (err) {
+    console.error("Update school error:", err);
     return response(500, { error: "Errore interno del server" });
   }
 };
