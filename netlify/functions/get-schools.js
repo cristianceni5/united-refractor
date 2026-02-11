@@ -10,15 +10,6 @@ exports.handler = async (event) => {
   }
 
   try {
-    // Debug: controlla se le env vars sono impostate
-    if (!process.env.SUPABASE_URL || !process.env.SUPABASE_SERVICE_ROLE_KEY) {
-      console.error("ENV VARS MISSING:", {
-        SUPABASE_URL: !!process.env.SUPABASE_URL,
-        SUPABASE_SERVICE_ROLE_KEY: !!process.env.SUPABASE_SERVICE_ROLE_KEY,
-      });
-      return response(500, { error: "Configurazione server mancante: variabili d'ambiente non impostate" });
-    }
-
     const admin = getSupabaseAdmin();
     const { data, error } = await admin
       .from("schools")
