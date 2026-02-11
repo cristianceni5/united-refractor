@@ -21,8 +21,8 @@ exports.handler = async (event) => {
     }
 
     const profile = await getUserProfile(user.id);
-    if (!profile || !["admin", "rappresentante"].includes(profile.role)) {
-      return response(403, { error: "Solo admin e rappresentanti possono creare post" });
+    if (!profile || !["admin", "co_admin", "rappresentante"].includes(profile.role)) {
+      return response(403, { error: "Solo admin, co-admin e rappresentanti possono creare post" });
     }
 
     if (!profile.school_id) {

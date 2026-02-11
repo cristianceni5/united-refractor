@@ -25,7 +25,7 @@ exports.handler = async (event) => {
       return response(403, { error: "Profilo non trovato" });
     }
 
-    const { image, filename, contentType } = JSON.parse(event.body);
+    const { image, filename, contentType, folder } = JSON.parse(event.body);
 
     if (!image) {
       return response(400, { error: "Nessuna immagine fornita" });
@@ -42,7 +42,8 @@ exports.handler = async (event) => {
 
     const admin = getSupabaseAdmin();
     const ext = (filename || "image.jpg").split(".").pop() || "jpg";
-    const filePath = `posts/${user.id}/${Date.now()}.${ext}`;
+    const uploadFolder = folder === "avatars" ? "avatars" : "posts";
+    const filePath = `${uploadFolder}/${user.id}/${Date.now()}.${ext}`;
 
     const { data, error } = await admin.storage
       .from("images")

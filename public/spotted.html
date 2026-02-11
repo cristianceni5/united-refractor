@@ -3,13 +3,13 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Spotted - United</title>
+  <title>Spotted - Project Gauss</title>
   <link rel="stylesheet" href="/css/style.css">
 </head>
 <body>
   <nav class="navbar">
     <div class="navbar-content">
-      <a href="/dashboard.html" class="navbar-brand"><img src="/img/united-logo.png" alt="United"> United</a>
+      <a href="/dashboard.html" class="navbar-brand"><img src="/img/gauss-logo.png" alt="Project Gauss"> Project Gauss</a>
       <ul class="navbar-nav">
         <li><a href="/dashboard.html">Dashboard</a></li>
         <li><a href="/posts.html">Post</a></li>
@@ -37,18 +37,23 @@
     <div id="spotted-content" class="hidden">
       <div id="alert" class="alert"></div>
 
-      <!-- Form creazione spotted -->
-      <div class="card">
-        <h2>💬 Scrivi uno spotted</h2>
-        <form id="create-spotted-form">
-          <div class="form-group">
-            <textarea id="spotted-body" required placeholder="Cosa vuoi condividere di anonimo? ✨" rows="3" style="width: 100%; padding: 14px 16px; border: 1px solid var(--border); border-radius: var(--radius); font-size: 0.95rem; font-family: inherit; resize: vertical; background: var(--bg);"></textarea>
+      <!-- Form creazione spotted – stile IG question -->
+      <div class="spotted-compose">
+        <div class="spotted-compose-gradient">
+          <div class="spotted-compose-inner">
+            <p class="spotted-compose-label">Scrivi uno spotted anonimo</p>
+            <form id="create-spotted-form">
+              <div class="spotted-compose-input-wrap">
+                <textarea id="spotted-body" required placeholder="Cosa vuoi condividere? ✨" rows="2" maxlength="500"></textarea>
+                <span class="spotted-compose-count" id="spotted-char-count">0/500</span>
+              </div>
+              <div class="spotted-compose-footer">
+                <span class="spotted-compose-hint">🔒 Anonimo &bull; Approvato da un admin</span>
+                <button type="submit" class="btn btn-primary spotted-compose-btn">Invia</button>
+              </div>
+            </form>
           </div>
-          <div style="display: flex; justify-content: space-between; align-items: center; gap: 12px; flex-wrap: wrap;">
-            <span style="font-size: 0.78rem; color: var(--text-muted);">🔒 Pubblicazione anonima dopo approvazione</span>
-            <button type="submit" class="btn btn-primary" style="width: auto; border-radius: 999px; padding: 10px 24px;">Invia spotted</button>
-          </div>
-        </form>
+        </div>
       </div>
 
       <!-- Feed spotted -->
@@ -60,10 +65,10 @@
   <footer class="site-footer">
     <div class="footer-content">
       <div class="footer-brand">
-        <img src="/img/united-logo.png" alt="United"> United
+        <img src="/img/gauss-logo.png" alt="Project Gauss"> Project Gauss
       </div>
       <div class="footer-credits">
-        Sviluppato da <a href="#">Cristian Ceni</a>
+        Sviluppato e manutenuto da <a href="#">Cristian Ceni</a>
       </div>
     </div>
   </footer>

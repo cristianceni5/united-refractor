@@ -1,23 +1,23 @@
 @import url('https://fonts.googleapis.com/css2?family=Manrope:wght@300;400;500;600;700;800&display=swap');
 
 :root {
-  --primary: #7c3aed;
-  --primary-hover: #6d28d9;
-  --primary-light: #ede9fe;
-  --primary-rgb: 124, 58, 237;
-  --bg: #f5f3ff;
+  --primary: #007AFF;
+  --primary-hover: #0056CC;
+  --primary-light: #E3F2FD;
+  --primary-rgb: 0, 122, 255;
+  --bg: #F0F7FF;
   --surface: #ffffff;
   --text: #1e1b2e;
   --text-muted: #6b7280;
-  --border: #e5e1f0;
+  --border: #D6E4F0;
   --success: #10b981;
   --error: #ef4444;
   --warning: #f59e0b;
   --radius: 16px;
   --radius-sm: 10px;
-  --shadow: 0 2px 8px rgba(124, 58, 237, 0.06), 0 1px 3px rgba(0, 0, 0, 0.04);
-  --shadow-lg: 0 12px 32px -6px rgba(124, 58, 237, 0.12), 0 6px 12px -4px rgba(0, 0, 0, 0.06);
-  --shadow-xl: 0 20px 48px -8px rgba(124, 58, 237, 0.18), 0 8px 16px -4px rgba(0, 0, 0, 0.08);
+  --shadow: 0 2px 8px rgba(0, 122, 255, 0.06), 0 1px 3px rgba(0, 0, 0, 0.04);
+  --shadow-lg: 0 12px 32px -6px rgba(0, 122, 255, 0.12), 0 6px 12px -4px rgba(0, 0, 0, 0.06);
+  --shadow-xl: 0 20px 48px -8px rgba(0, 122, 255, 0.18), 0 8px 16px -4px rgba(0, 0, 0, 0.08);
 }
 
 * {
@@ -56,7 +56,7 @@ body {
   align-items: center;
   min-height: 100vh;
   padding: 20px;
-  background: linear-gradient(135deg, #7c3aed 0%, #a855f7 40%, #c084fc 70%, #7c3aed 100%);
+  background: linear-gradient(135deg, #007AFF 0%, #34AADC 40%, #5AC8FA 70%, #007AFF 100%);
   background-size: 200% 200%;
   animation: gradientShift 8s ease infinite;
 }
@@ -151,7 +151,8 @@ body {
 }
 
 .form-group input,
-.form-group select {
+.form-group select,
+.form-group textarea {
   width: 100%;
   padding: 12px 14px;
   border: 1px solid var(--border);
@@ -164,7 +165,8 @@ body {
 }
 
 .form-group input:focus,
-.form-group select:focus {
+.form-group select:focus,
+.form-group textarea:focus {
   outline: none;
   border-color: var(--primary);
   box-shadow: 0 0 0 3px rgba(var(--primary-rgb), 0.1);
@@ -189,7 +191,7 @@ body {
 }
 
 .btn-primary {
-  background: linear-gradient(135deg, var(--primary) 0%, #a855f7 100%);
+  background: linear-gradient(135deg, var(--primary) 0%, #34AADC 100%);
   color: white;
   width: 100%;
   position: relative;
@@ -206,7 +208,7 @@ body {
 }
 
 .btn-primary:hover {
-  background: linear-gradient(135deg, var(--primary-hover) 0%, #9333ea 100%);
+  background: linear-gradient(135deg, var(--primary-hover) 0%, #0051D5 100%);
   box-shadow: 0 6px 20px rgba(var(--primary-rgb), 0.35);
   transform: translateY(-2px);
 }
@@ -267,7 +269,7 @@ body {
 
 /* Navbar */
 .navbar {
-  background: linear-gradient(135deg, var(--primary) 0%, #9333ea 100%);
+  background: linear-gradient(135deg, var(--primary) 0%, #0051D5 100%);
   border-bottom: none;
   padding: 0 20px;
   box-shadow: 0 4px 24px rgba(var(--primary-rgb), 0.25);
@@ -360,6 +362,11 @@ body {
   color: #92400e;
 }
 
+.role-co_admin {
+  background: linear-gradient(135deg, #fef3c7 0%, #fed7aa 100%);
+  color: #c2410c;
+}
+
 .role-rappresentante {
   background: linear-gradient(135deg, #dbeafe 0%, #bfdbfe 100%);
   color: #1e40af;
@@ -426,7 +433,7 @@ body {
   left: 0;
   right: 0;
   height: 3px;
-  background: linear-gradient(90deg, var(--primary), #a855f7, #c084fc);
+  background: linear-gradient(90deg, var(--primary), #34AADC, #5AC8FA);
   opacity: 0;
   transition: opacity 0.3s;
 }
@@ -443,7 +450,7 @@ body {
 .stat-card .stat-value {
   font-size: 2.2rem;
   font-weight: 800;
-  background: linear-gradient(135deg, var(--primary), #a855f7);
+  background: linear-gradient(135deg, var(--primary), #34AADC);
   -webkit-background-clip: text;
   -webkit-text-fill-color: transparent;
   background-clip: text;
@@ -626,12 +633,6 @@ tbody tr:hover {
 .post-actions-menu {
   display: flex;
   gap: 8px;
-}
-
-.filter-cat.active {
-  background: linear-gradient(135deg, var(--primary, #a855f7) 0%, #a855f7 100%);
-  color: white;
-  border-color: var(--primary);
 }
 
 /* ============================================
@@ -957,7 +958,7 @@ tbody tr:hover {
   width: 64px;
   height: 64px;
   border-radius: 50%;
-  background: linear-gradient(135deg, var(--primary), #a855f7, #c084fc);
+  background: linear-gradient(135deg, var(--primary), #34AADC, #5AC8FA);
   color: white;
   display: flex;
   align-items: center;
@@ -1027,7 +1028,7 @@ tbody tr:hover {
   width: 44px;
   height: 44px;
   border-radius: 50%;
-  background: linear-gradient(135deg, var(--primary), #a855f7);
+  background: linear-gradient(135deg, var(--primary), #34AADC);
   color: white;
   display: flex;
   align-items: center;
@@ -1057,7 +1058,7 @@ tbody tr:hover {
   border-radius: 999px;
   font-size: 0.65rem;
   font-weight: 700;
-  background: linear-gradient(135deg, var(--primary), #a855f7);
+  background: linear-gradient(135deg, var(--primary), #34AADC);
   color: white;
   text-transform: uppercase;
 }
@@ -1320,8 +1321,8 @@ tbody tr:hover {
 }
 
 .school-card:hover {
-  border-color: rgba(124, 58, 237, 0.25);
-  box-shadow: 0 2px 12px rgba(124, 58, 237, 0.08);
+  border-color: rgba(0, 122, 255, 0.25);
+  box-shadow: 0 2px 12px rgba(0, 122, 255, 0.08);
   transform: translateY(-1px);
 }
 
@@ -1552,6 +1553,313 @@ tbody tr:hover {
 }
 
 /* Responsive */
+
+/* ============================================
+   COLLAPSIBLE SECTIONS
+   ============================================ */
+.collapsible-card {
+  overflow: hidden;
+}
+
+.collapsible-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  cursor: pointer;
+  user-select: none;
+  -webkit-tap-highlight-color: transparent;
+  padding: 4px 0 0;
+}
+
+.collapsible-header h2 {
+  margin-bottom: 0;
+}
+
+.collapsible-chevron {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 32px;
+  height: 32px;
+  border-radius: 50%;
+  background: var(--bg);
+  color: var(--text-muted);
+  transition: transform 0.3s ease, background 0.2s;
+  flex-shrink: 0;
+}
+
+.collapsible-header:hover .collapsible-chevron {
+  background: var(--primary-light);
+  color: var(--primary);
+}
+
+.collapsible-card.open .collapsible-chevron {
+  transform: rotate(180deg);
+}
+
+.collapsible-body {
+  max-height: 2000px;
+  overflow: hidden;
+  transition: max-height 0.35s ease, opacity 0.25s ease, margin 0.35s ease;
+  opacity: 1;
+  margin-top: 16px;
+}
+
+.collapsible-body.collapsed {
+  max-height: 0;
+  opacity: 0;
+  margin-top: 0;
+}
+
+/* ============================================
+   FILTER CHIPS
+   ============================================ */
+.filter-chips {
+  display: flex;
+  gap: 8px;
+  margin-bottom: 20px;
+  flex-wrap: wrap;
+  overflow-x: auto;
+  -webkit-overflow-scrolling: touch;
+  scrollbar-width: none;
+  -ms-overflow-style: none;
+  padding: 2px 0;
+}
+
+.filter-chips::-webkit-scrollbar {
+  display: none;
+}
+
+.filter-chip {
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+  padding: 8px 18px;
+  border-radius: 999px;
+  border: 1.5px solid var(--border);
+  background: var(--surface);
+  font-size: 0.82rem;
+  font-weight: 600;
+  font-family: 'Manrope', sans-serif;
+  color: var(--text-muted);
+  cursor: pointer;
+  transition: all 0.25s ease;
+  white-space: nowrap;
+  -webkit-tap-highlight-color: transparent;
+}
+
+.filter-chip:hover {
+  border-color: var(--primary);
+  color: var(--primary);
+  background: var(--primary-light);
+}
+
+.filter-chip.active {
+  background: linear-gradient(135deg, var(--primary) 0%, #34AADC 100%);
+  color: white;
+  border-color: transparent;
+  box-shadow: 0 2px 10px rgba(var(--primary-rgb), 0.3);
+}
+
+/* ============================================
+   FORM ROW FLEX
+   ============================================ */
+.form-row-flex {
+  display: flex;
+  gap: 16px;
+  align-items: flex-start;
+}
+
+.form-row-flex .form-group {
+  flex: 1;
+}
+
+/* ============================================
+   SPOTTED COMPOSE – IG QUESTION STYLE
+   ============================================ */
+.spotted-compose {
+  margin-bottom: 24px;
+}
+
+.spotted-compose-gradient {
+  background: linear-gradient(135deg, #007AFF 0%, #34AADC 100%);
+  border-radius: var(--radius);
+  padding: 3px;
+  box-shadow: var(--shadow-lg);
+}
+
+.spotted-compose-inner {
+  background: rgba(255, 255, 255, 0.97);
+  border-radius: calc(var(--radius) - 2px);
+  padding: 20px;
+}
+
+.spotted-compose-label {
+  font-size: 0.95rem;
+  font-weight: 700;
+  color: var(--text);
+  margin-bottom: 12px;
+  text-align: center;
+}
+
+.spotted-compose-input-wrap {
+  position: relative;
+}
+
+.spotted-compose-input-wrap textarea {
+  width: 100%;
+  padding: 14px 16px;
+  border: 1.5px solid var(--border);
+  border-radius: var(--radius-sm);
+  font-size: 0.92rem;
+  font-family: 'Manrope', sans-serif;
+  resize: none;
+  min-height: 64px;
+  background: var(--bg);
+  transition: border-color 0.25s, box-shadow 0.25s;
+}
+
+.spotted-compose-input-wrap textarea:focus {
+  border-color: var(--primary);
+  box-shadow: 0 0 0 3px rgba(var(--primary-rgb), 0.1);
+  background: var(--surface);
+  outline: none;
+}
+
+.spotted-compose-count {
+  position: absolute;
+  bottom: 8px;
+  right: 12px;
+  font-size: 0.7rem;
+  color: var(--text-muted);
+}
+
+.spotted-compose-footer {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-top: 12px;
+  gap: 12px;
+}
+
+.spotted-compose-hint {
+  font-size: 0.75rem;
+  color: var(--text-muted);
+}
+
+.spotted-compose-btn {
+  border-radius: 999px !important;
+  padding: 10px 28px !important;
+  font-weight: 700;
+  white-space: nowrap;
+}
+
+/* ============================================
+   SPOTTED IG CARDS – Question Box Style
+   ============================================ */
+.spotted-ig-card {
+  margin-bottom: 20px;
+  border-radius: var(--radius);
+  background: var(--surface);
+  box-shadow: var(--shadow);
+  overflow: hidden;
+  transition: box-shadow 0.3s ease, transform 0.3s ease;
+}
+
+.spotted-ig-card:hover {
+  box-shadow: var(--shadow-lg);
+  transform: translateY(-2px);
+}
+
+.spotted-ig-bubble {
+  padding: 28px 24px;
+  border-radius: var(--radius) var(--radius) 0 0;
+  position: relative;
+  min-height: 80px;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+}
+
+.spotted-ig-bubble .spotted-pending-badge {
+  position: absolute;
+  top: 12px;
+  right: 12px;
+  margin: 0;
+  font-size: 0.65rem;
+  padding: 3px 10px;
+  background: rgba(255,255,255,0.85);
+  backdrop-filter: blur(4px);
+  color: #92400e;
+}
+
+.spotted-ig-text {
+  font-size: 1.05rem;
+  font-weight: 600;
+  color: white;
+  text-align: center;
+  line-height: 1.6;
+  white-space: pre-wrap;
+  word-break: break-word;
+  text-shadow: 0 1px 4px rgba(0,0,0,0.15);
+}
+
+.spotted-ig-anon {
+  font-size: 0.72rem;
+  font-weight: 700;
+  color: rgba(255,255,255,0.75);
+  text-transform: uppercase;
+  letter-spacing: 0.06em;
+  margin-bottom: 8px;
+  display: block;
+  text-align: center;
+}
+
+.spotted-ig-bar {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 12px 16px;
+  background: var(--surface);
+  border-top: 1px solid var(--border);
+}
+
+.spotted-ig-actions {
+  display: flex;
+  gap: 8px;
+  align-items: center;
+}
+
+.spotted-ig-meta {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+.spotted-ig-delete {
+  background: none;
+  border: none;
+  color: var(--error);
+  cursor: pointer;
+  font-size: 1.4rem;
+  line-height: 1;
+  padding: 2px 6px;
+  border-radius: 50%;
+  transition: background 0.2s;
+}
+
+.spotted-ig-delete:hover {
+  background: #fef2f2;
+}
+
+/* Comments inside IG card */
+.spotted-ig-card .comments-section {
+  margin-top: 0;
+  padding: 12px 16px 16px;
+  border-top: 1px solid var(--border);
+}
+
 @media (max-width: 768px) {
   .auth-card {
     padding: 32px 20px;
@@ -1633,6 +1941,56 @@ tbody tr:hover {
   .spotted-footer {
     flex-direction: column;
     align-items: flex-start;
+  }
+
+  .spotted-ig-bubble {
+    padding: 22px 18px;
+  }
+
+  .spotted-ig-text {
+    font-size: 0.95rem;
+  }
+
+  .spotted-ig-bar {
+    padding: 10px 14px;
+    flex-wrap: wrap;
+    gap: 8px;
+  }
+
+  .comment-label {
+    display: none;
+  }
+
+  .filter-chips {
+    flex-wrap: nowrap;
+    gap: 6px;
+  }
+
+  .filter-chip {
+    padding: 7px 14px;
+    font-size: 0.78rem;
+  }
+
+  .form-row-flex {
+    flex-direction: column;
+    gap: 0;
+  }
+
+  .spotted-compose-inner {
+    padding: 16px;
+  }
+
+  .spotted-compose-footer {
+    flex-direction: column;
+    align-items: stretch;
+  }
+
+  .spotted-compose-hint {
+    text-align: center;
+  }
+
+  .spotted-compose-btn {
+    width: 100%;
   }
 
   .comment-form {
@@ -1922,7 +2280,7 @@ tbody tr:hover {
 
 .progress-bar-fill {
   height: 100%;
-  background: linear-gradient(90deg, var(--primary), #a855f7);
+  background: linear-gradient(90deg, var(--primary), #34AADC);
   border-radius: 2px;
   width: 0%;
   transition: width 0.3s ease;
@@ -1982,6 +2340,8 @@ select {
 /* Textarea styling */
 textarea {
   font-family: 'Manrope', sans-serif;
+  resize: vertical;
+  min-height: 80px;
 }
 
 /* Toast-style alerts */
@@ -2040,7 +2400,7 @@ textarea {
    FOOTER
    ============================================ */
 .site-footer {
-  background: linear-gradient(135deg, var(--primary) 0%, #9333ea 100%);
+  background: linear-gradient(135deg, var(--primary) 0%, #0051D5 100%);
   color: rgba(255, 255, 255, 0.85);
   padding: 28px 20px;
   margin-top: 48px;
@@ -2171,7 +2531,7 @@ textarea {
 
 .otp-digit:focus {
   border-color: var(--primary);
-  box-shadow: 0 0 0 3px rgba(124, 58, 237, 0.15);
+  box-shadow: 0 0 0 3px rgba(0, 122, 255, 0.15);
   transform: translateY(-2px);
 }
 
@@ -2326,4 +2686,89 @@ textarea {
   }
 }
 
-.cat-circolare { background: var(--primary-light); color: #5b21b6; }
+.cat-circolare { background: var(--primary-light); color: #0A4DA6; }
+
+/* ============================================
+   PROFILE AVATAR UPLOAD (profile page)
+   ============================================ */
+.profile-avatar-section {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  margin-bottom: 24px;
+}
+
+.profile-avatar-wrapper {
+  position: relative;
+  width: 96px;
+  height: 96px;
+  cursor: pointer;
+}
+
+.profile-avatar-large {
+  width: 96px;
+  height: 96px;
+  border-radius: 50%;
+  background: linear-gradient(135deg, var(--primary), #34AADC, #5AC8FA);
+  color: white;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-weight: 800;
+  font-size: 1.8rem;
+  flex-shrink: 0;
+  box-shadow: 0 6px 20px rgba(var(--primary-rgb), 0.3);
+  overflow: hidden;
+  position: relative;
+}
+
+.profile-avatar-large img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  border-radius: 50%;
+}
+
+.profile-avatar-overlay {
+  position: absolute;
+  bottom: 0;
+  right: 0;
+  width: 32px;
+  height: 32px;
+  border-radius: 50%;
+  background: var(--primary);
+  color: white;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  box-shadow: 0 2px 8px rgba(0,0,0,0.2);
+  border: 2px solid var(--surface);
+  transition: transform 0.2s ease;
+}
+
+.profile-avatar-overlay:hover {
+  transform: scale(1.1);
+}
+
+.avatar-hint {
+  margin-top: 8px;
+  font-size: 0.78rem;
+  color: var(--text-muted);
+}
+
+/* ============================================
+   BIO / CHAR COUNT
+   ============================================ */
+.char-count {
+  display: block;
+  text-align: right;
+  font-size: 0.75rem;
+  color: var(--text-muted);
+  margin-top: 4px;
+}
+
+.text-muted {
+  color: var(--text-muted);
+  font-style: italic;
+}

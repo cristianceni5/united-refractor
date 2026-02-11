@@ -1,7 +1,7 @@
 {
-  "name": "student-auth",
+  "name": "project-gauss",
   "version": "1.0.0",
-  "description": "Sistema di autenticazione e ruoli per studenti con Netlify Functions e Supabase",
+  "description": "Project Gauss — Piattaforma scolastica. Sviluppato e manutenuto da Cristian Ceni.",
   "scripts": {
     "dev": "netlify dev"
   },

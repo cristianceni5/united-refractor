@@ -21,8 +21,8 @@ exports.handler = async (event) => {
     }
 
     const profile = await getUserProfile(user.id);
-    if (!profile || profile.role !== "admin") {
-      return response(403, { error: "Solo gli amministratori possono bannare utenti" });
+    if (!profile || !['admin', 'co_admin'].includes(profile.role)) {
+      return response(403, { error: "Solo admin e co-admin possono bannare utenti" });
     }
 
     const { user_id, action, duration_hours, reason } = JSON.parse(event.body);
@@ -36,13 +36,17 @@ exports.handler = async (event) => {
       return response(400, { error: "Non puoi bannare te stesso" });
     }
 
-    // Non puoi bannare un altro admin
+    // Non puoi bannare un admin
     const targetProfile = await getUserProfile(user_id);
     if (!targetProfile) {
       return response(404, { error: "Utente non trovato" });
     }
     if (targetProfile.role === "admin") {
-      return response(403, { error: "Non puoi bannare un altro amministratore" });
+      return response(403, { error: "Non puoi bannare un amministratore" });
+    }
+    // Co-admin non può bannare un altro co-admin
+    if (profile.role === 'co_admin' && targetProfile.role === 'co_admin') {
+      return response(403, { error: "Un co-admin non può bannare un altro co-admin" });
     }
 
     const admin = getSupabaseAdmin();

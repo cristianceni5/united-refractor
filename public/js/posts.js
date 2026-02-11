@@ -17,11 +17,11 @@ document.addEventListener("DOMContentLoaded", async () => {
     // Navbar
     document.getElementById("nav-user-name").textContent = profile.full_name || profile.email;
     const roleEl = document.getElementById("nav-user-role");
-    roleEl.textContent = profile.role;
+    roleEl.textContent = profile.role === 'co_admin' ? 'Co-Admin' : profile.role;
     roleEl.classList.add(`role-${profile.role}`);
 
-    // Mostra form creazione solo per admin/rappresentante
-    if (["admin", "rappresentante"].includes(profile.role)) {
+    // Mostra form creazione solo per admin/co-admin/rappresentante
+    if (["admin", "co_admin", "rappresentante"].includes(profile.role)) {
       document.getElementById("create-post-section").classList.remove("hidden");
       initImageUpload();
     }
@@ -36,10 +36,21 @@ document.addEventListener("DOMContentLoaded", async () => {
     window.location.href = "/";
   }
 
+  // Collapsible create-post
+  const toggleBtn = document.getElementById("toggle-create-post");
+  if (toggleBtn) {
+    toggleBtn.addEventListener("click", () => {
+      const body = document.getElementById("create-post-body");
+      const card = toggleBtn.closest(".collapsible-card");
+      card.classList.toggle("open");
+      body.classList.toggle("collapsed");
+    });
+  }
+
   // Filtri categoria
-  document.querySelectorAll(".filter-cat").forEach((btn) => {
+  document.querySelectorAll(".filter-chip").forEach((btn) => {
     btn.addEventListener("click", (e) => {
-      document.querySelectorAll(".filter-cat").forEach((b) => b.classList.remove("active"));
+      document.querySelectorAll(".filter-chip").forEach((b) => b.classList.remove("active"));
       e.target.classList.add("active");
       currentFilter = e.target.dataset.cat;
       loadPosts();
@@ -206,9 +217,9 @@ document.addEventListener("DOMContentLoaded", async () => {
               ${p.pinned ? '<span class="post-pin">📌 In evidenza</span>' : ""}
             </div>
             ${
-              p.is_own || (currentProfile && currentProfile.role === "admin")
+              p.is_own || (currentProfile && ['admin', 'co_admin'].includes(currentProfile.role))
                 ? `<div class="post-actions-menu">
-                    <button class="btn btn-danger btn-sm" style="border-radius: 999px;" onclick="deletePost('${p.id}')">Elimina</button>
+                    <button class="btn btn-danger btn-sm" style="border-radius: 999px; font-size: 0.78rem;" onclick="deletePost('${p.id}')">Elimina</button>
                   </div>`
                 : ""
             }

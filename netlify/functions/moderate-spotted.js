@@ -21,8 +21,8 @@ exports.handler = async (event) => {
     }
 
     const profile = await getUserProfile(user.id);
-    if (!profile || profile.role !== "admin") {
-      return response(403, { error: "Solo gli amministratori possono moderare gli spotted" });
+    if (!profile || !['admin', 'co_admin'].includes(profile.role)) {
+      return response(403, { error: "Solo admin e co-admin possono moderare gli spotted" });
     }
 
     const { spotted_id, status } = JSON.parse(event.body);

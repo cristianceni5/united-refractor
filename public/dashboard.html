@@ -3,13 +3,13 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Dashboard - United</title>
+  <title>Dashboard - Project Gauss</title>
   <link rel="stylesheet" href="/css/style.css">
 </head>
 <body>
   <nav class="navbar">
     <div class="navbar-content">
-      <a href="/dashboard.html" class="navbar-brand"><img src="/img/united-logo.png" alt="United"> United</a>
+      <a href="/dashboard.html" class="navbar-brand"><img src="/img/gauss-logo.png" alt="Project Gauss"> Project Gauss</a>
       <ul class="navbar-nav">
         <li><a href="/dashboard.html" class="active">Dashboard</a></li>
         <li><a href="/posts.html">Post</a></li>
@@ -68,7 +68,7 @@
             </div>
             <div class="stat-card">
               <div class="stat-value" id="stat-admin">0</div>
-              <div class="stat-label">Admin</div>
+              <div class="stat-label">Admin / Co-Admin</div>
             </div>
           </div>
         </div>
@@ -83,10 +83,11 @@
               <p><strong>Email:</strong> <span id="profile-email">-</span></p>
               <p><strong>Ruolo:</strong> <span id="profile-role">-</span></p>
               <p><strong>Classe:</strong> <span id="profile-classe">-</span></p>
+              <p id="profile-bio-row"><strong>Bio:</strong> <span id="profile-bio">-</span></p>
             </div>
           </div>
           <p style="margin-top: 16px;">
-            <a href="/profile.html" class="btn btn-primary" style="width: auto;">Modifica profilo</a>
+            <a href="/profile.html" class="btn btn-primary" style="width: auto; border-radius: 999px; padding: 10px 24px;">Modifica profilo</a>
           </p>
         </div>
 
@@ -198,6 +199,7 @@
                 <option value="">Tutti</option>
                 <option value="studente">Studente</option>
                 <option value="rappresentante">Rappresentante</option>
+                <option value="co_admin">Co-Admin</option>
                 <option value="admin">Admin</option>
               </select>
             </div>
@@ -268,10 +270,10 @@
   <footer class="site-footer">
     <div class="footer-content">
       <div class="footer-brand">
-        <img src="/img/united-logo.png" alt="United"> United
+        <img src="/img/gauss-logo.png" alt="Project Gauss"> Project Gauss
       </div>
       <div class="footer-credits">
-        Sviluppato da <a href="#">Cristian Ceni</a>
+        Sviluppato e manutenuto da <a href="#">Cristian Ceni</a>
       </div>
     </div>
   </footer>

@@ -238,6 +238,35 @@ const API = {
     });
   },
 
+  async uploadAvatar(file) {
+    return new Promise((resolve, reject) => {
+      if (file.size > 8 * 1024 * 1024) {
+        reject(new Error("Immagine troppo grande (max 8MB)"));
+        return;
+      }
+
+      const reader = new FileReader();
+      reader.onload = async () => {
+        try {
+          const result = await this.request("upload-image", {
+            method: "POST",
+            body: JSON.stringify({
+              image: reader.result,
+              filename: file.name,
+              contentType: file.type,
+              folder: "avatars",
+            }),
+          });
+          resolve(result);
+        } catch (err) {
+          reject(err);
+        }
+      };
+      reader.onerror = () => reject(new Error("Errore nella lettura del file"));
+      reader.readAsDataURL(file);
+    });
+  },
+
   isLoggedIn() {
     return !!localStorage.getItem("access_token");
   },

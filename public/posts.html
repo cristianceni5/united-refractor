@@ -3,13 +3,13 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Post - United</title>
+  <title>Post - Project Gauss</title>
   <link rel="stylesheet" href="/css/style.css">
 </head>
 <body>
   <nav class="navbar">
     <div class="navbar-content">
-      <a href="/dashboard.html" class="navbar-brand"><img src="/img/united-logo.png" alt="United"> United</a>
+      <a href="/dashboard.html" class="navbar-brand"><img src="/img/gauss-logo.png" alt="Project Gauss"> Project Gauss</a>
       <ul class="navbar-nav">
         <li><a href="/dashboard.html">Dashboard</a></li>
         <li><a href="/posts.html" class="active">Post</a></li>
@@ -39,8 +39,14 @@
 
       <!-- Form creazione post (solo admin/rappresentante) -->
       <div id="create-post-section" class="hidden">
-        <div class="card">
-          <h2>✍️ Nuovo post</h2>
+        <div class="card collapsible-card">
+          <div class="collapsible-header" id="toggle-create-post">
+            <h2>✍️ Nuovo post</h2>
+            <span class="collapsible-chevron">
+              <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="6 9 12 15 18 9"/></svg>
+            </span>
+          </div>
+          <div class="collapsible-body" id="create-post-body">
           <form id="create-post-form">
             <div class="form-group">
               <label for="post-title">Titolo</label>
@@ -48,10 +54,10 @@
             </div>
             <div class="form-group">
               <label for="post-body">Contenuto</label>
-              <textarea id="post-body" required placeholder="Scrivi il contenuto del post..." rows="4" style="width: 100%; padding: 10px 12px; border: 1px solid var(--border); border-radius: var(--radius); font-size: 0.95rem; font-family: inherit; resize: vertical;"></textarea>
+              <textarea id="post-body" required placeholder="Scrivi il contenuto del post..." rows="4"></textarea>
             </div>
-            <div style="display: flex; gap: 12px; flex-wrap: wrap;">
-              <div class="form-group" style="flex: 1; min-width: 150px;">
+            <div class="form-row-flex">
+              <div class="form-group">
                 <label for="post-category">Categoria</label>
                 <select id="post-category">
                   <option value="avviso">Avviso</option>
@@ -60,41 +66,42 @@
                   <option value="altro">Altro</option>
                 </select>
               </div>
-              <div class="form-group" style="flex: 1; min-width: 150px;">
-                <label for="post-image">Immagine (opzionale)</label>
-                <div class="image-upload-area" id="image-upload-area">
-                  <input type="file" id="post-image-file" accept="image/*">
-                  <span class="upload-icon">📷</span>
-                  <span class="upload-text">Trascina o tocca per caricare</span>
-                  <span class="upload-hint">JPG, PNG, WebP • Max 5MB</span>
-                </div>
-                <div class="image-preview-container" id="image-preview-container">
-                  <img class="image-preview" id="image-preview" src="" alt="Anteprima">
-                  <button type="button" class="image-preview-remove" id="image-preview-remove">&times;</button>
-                </div>
-                <div class="upload-progress" id="upload-progress">
-                  <div class="progress-bar"><div class="progress-bar-fill" id="progress-bar-fill"></div></div>
-                </div>
-                <input type="hidden" id="post-image" value="">
-              </div>
               <div class="form-group" style="display: flex; align-items: flex-end; gap: 8px;">
                 <label style="display: flex; align-items: center; gap: 6px; cursor: pointer;">
                   <input type="checkbox" id="post-pinned"> In evidenza
                 </label>
               </div>
             </div>
-            <button type="submit" class="btn btn-primary" style="width: auto;">Pubblica post</button>
+            <div class="form-group">
+              <label for="post-image">Immagine (opzionale)</label>
+              <div class="image-upload-area" id="image-upload-area">
+                <input type="file" id="post-image-file" accept="image/*">
+                <span class="upload-icon">📷</span>
+                <span class="upload-text">Trascina o tocca per caricare</span>
+                <span class="upload-hint">JPG, PNG, WebP &bull; Max 5MB</span>
+              </div>
+              <div class="image-preview-container" id="image-preview-container">
+                <img class="image-preview" id="image-preview" src="" alt="Anteprima">
+                <button type="button" class="image-preview-remove" id="image-preview-remove">&times;</button>
+              </div>
+              <div class="upload-progress" id="upload-progress">
+                <div class="progress-bar"><div class="progress-bar-fill" id="progress-bar-fill"></div></div>
+              </div>
+              <input type="hidden" id="post-image" value="">
+            </div>
+            <button type="submit" class="btn btn-primary" style="width: 100%; border-radius: 999px;">Pubblica post</button>
           </form>
+          </div>
         </div>
       </div>
 
       <!-- Filtro categoria -->
-      <div style="margin-bottom: 16px; display: flex; gap: 8px; flex-wrap: wrap;">
-        <button class="btn btn-secondary btn-sm filter-cat active" data-cat="">Tutti</button>
-        <button class="btn btn-secondary btn-sm filter-cat" data-cat="avviso">Avvisi</button>
-        <button class="btn btn-secondary btn-sm filter-cat" data-cat="evento">Eventi</button>
-        <button class="btn btn-secondary btn-sm filter-cat" data-cat="circolare">Circolari</button>
-        <button class="btn btn-secondary btn-sm filter-cat" data-cat="altro">Altro</button>
+      <div class="filter-chips">
+        <button class="filter-chip active" data-cat="">Tutti</button>
+        <button class="filter-chip" data-cat="avviso">🔔 Avvisi</button>
+        <button class="filter-chip" data-cat="evento">🎉 Eventi</button>
+        <button class="filter-chip" data-cat="circolare">📋 Circolari</button>
+        <button class="filter-chip" data-cat="altro">📌 Altro</button>
       </div>
 
       <!-- Lista post -->
@@ -106,10 +113,10 @@
   <footer class="site-footer">
     <div class="footer-content">
       <div class="footer-brand">
-        <img src="/img/united-logo.png" alt="United"> United
+        <img src="/img/gauss-logo.png" alt="Project Gauss"> Project Gauss
       </div>
       <div class="footer-credits">
-        Sviluppato da <a href="#">Cristian Ceni</a>
+        Sviluppato e manutenuto da <a href="#">Cristian Ceni</a>
       </div>
     </div>
   </footer>

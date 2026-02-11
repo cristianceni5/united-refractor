@@ -51,10 +51,12 @@ CREATE TABLE profiles (
   id UUID REFERENCES auth.users(id) ON DELETE CASCADE PRIMARY KEY,
   email TEXT NOT NULL,
   full_name TEXT,
-  role TEXT DEFAULT 'studente' CHECK (role IN ('admin', 'rappresentante', 'studente')),
+  role TEXT DEFAULT 'studente' CHECK (role IN ('admin', 'co_admin', 'rappresentante', 'studente')),
   school_id UUID REFERENCES schools(id),
   classe TEXT,
   sezione TEXT,
+  bio TEXT,
+  avatar_url TEXT,
   banned_until TIMESTAMPTZ DEFAULT NULL,
   ban_reason TEXT DEFAULT NULL,
   created_at TIMESTAMPTZ DEFAULT NOW(),
@@ -73,7 +75,7 @@ CREATE POLICY "Admin and reps can read all profiles"
     EXISTS (
       SELECT 1 FROM profiles
       WHERE id = auth.uid()
-      AND role IN ('admin', 'rappresentante')
+      AND role IN ('admin', 'co_admin', 'rappresentante')
     )
   );
 
@@ -88,7 +90,7 @@ CREATE POLICY "Admin can update any profile"
     EXISTS (
       SELECT 1 FROM profiles
       WHERE id = auth.uid()
-      AND role = 'admin'
+      AND role IN ('admin', 'co_admin')
     )
   );
 

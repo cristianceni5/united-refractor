@@ -1,6 +1,6 @@
 const { extractToken, getUserFromToken, getUserProfile, getSupabaseAdmin, headers, response } = require("../../lib/supabase");
 
-const VALID_ROLES = ["admin", "rappresentante", "studente"];
+const VALID_ROLES = ["admin", "co_admin", "rappresentante", "studente"];
 
 exports.handler = async (event) => {
   if (event.httpMethod === "OPTIONS") {
@@ -23,8 +23,8 @@ exports.handler = async (event) => {
     }
 
     const profile = await getUserProfile(user.id);
-    if (!profile || profile.role !== "admin") {
-      return response(403, { error: "Solo gli amministratori possono modificare i ruoli" });
+    if (!profile || !['admin', 'co_admin'].includes(profile.role)) {
+      return response(403, { error: "Solo admin e co-admin possono modificare i ruoli" });
     }
 
     const { user_id, role } = JSON.parse(event.body);
@@ -35,6 +35,20 @@ exports.handler = async (event) => {
 
     if (!VALID_ROLES.includes(role)) {
       return response(400, { error: `Ruolo non valido. Ruoli disponibili: ${VALID_ROLES.join(", ")}` });
+    }
+
+    // Co-admin non può promuovere ad admin
+    if (profile.role === 'co_admin' && role === 'admin') {
+      return response(403, { error: "Un co-admin non può promuovere un utente ad admin" });
+    }
+
+    // Co-admin non può modificare il ruolo di un admin
+    const targetProfile = await getUserProfile(user_id);
+    if (!targetProfile) {
+      return response(404, { error: "Utente non trovato" });
+    }
+    if (profile.role === 'co_admin' && targetProfile.role === 'admin') {
+      return response(403, { error: "Un co-admin non può modificare il ruolo di un admin" });
     }
 
     const admin = getSupabaseAdmin();

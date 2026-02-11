@@ -21,7 +21,7 @@ exports.handler = async (event) => {
     }
 
     const profile = await getUserProfile(user.id);
-    if (!profile || !["admin", "rappresentante"].includes(profile.role)) {
+    if (!profile || !["admin", "co_admin", "rappresentante"].includes(profile.role)) {
       return response(403, { error: "Accesso negato" });
     }
 
@@ -44,7 +44,7 @@ exports.handler = async (event) => {
       return response(404, { error: "Post non trovato" });
     }
 
-    if (existingPost.author_id !== user.id && profile.role !== "admin") {
+    if (existingPost.author_id !== user.id && !['admin', 'co_admin'].includes(profile.role)) {
       return response(403, { error: "Puoi modificare solo i tuoi post" });
     }
 

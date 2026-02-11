@@ -3,13 +3,13 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Profilo - United</title>
+  <title>Profilo - Project Gauss</title>
   <link rel="stylesheet" href="/css/style.css">
 </head>
 <body>
   <nav class="navbar">
     <div class="navbar-content">
-      <a href="/dashboard.html" class="navbar-brand"><img src="/img/united-logo.png" alt="United"> United</a>
+      <a href="/dashboard.html" class="navbar-brand"><img src="/img/gauss-logo.png" alt="Project Gauss"> Project Gauss</a>
       <ul class="navbar-nav">
         <li><a href="/dashboard.html">Dashboard</a></li>
         <li><a href="/posts.html">Post</a></li>
@@ -39,6 +39,18 @@
         <div id="alert" class="alert"></div>
 
         <form id="profile-form">
+          <!-- Avatar Section -->
+          <div class="profile-avatar-section">
+            <div class="profile-avatar-wrapper">
+              <div class="profile-avatar-large" id="profile-avatar-preview">U</div>
+              <label class="profile-avatar-overlay" for="avatar-input">
+                <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M23 19a2 2 0 0 1-2 2H3a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h4l2-3h6l2 3h4a2 2 0 0 1 2 2z"/><circle cx="12" cy="13" r="4"/></svg>
+              </label>
+              <input type="file" id="avatar-input" accept="image/*" class="hidden">
+            </div>
+            <p class="avatar-hint">Clicca per cambiare foto</p>
+          </div>
+
           <div class="form-group">
             <label for="profile-name">Nome completo</label>
             <input type="text" id="profile-name" required>
@@ -54,14 +66,20 @@
             <input type="text" id="profile-role" disabled>
           </div>
 
-          <div class="form-group">
+          <div class="form-group" id="classe-group">
             <label for="profile-classe">Classe</label>
             <input type="text" id="profile-classe" placeholder="Es: 5">
           </div>
 
-          <div class="form-group">
+          <div class="form-group" id="sezione-group">
             <label for="profile-sezione">Sezione</label>
             <input type="text" id="profile-sezione" placeholder="Es: A">
+          </div>
+
+          <div class="form-group">
+            <label for="profile-bio">Bio</label>
+            <textarea id="profile-bio" rows="3" maxlength="300" placeholder="Scrivi qualcosa su di te..."></textarea>
+            <span class="char-count" id="bio-char-count">0/300</span>
           </div>
 
           <button type="submit" class="btn btn-primary" style="margin-top: 8px;">Salva modifiche</button>
@@ -73,10 +91,10 @@
   <footer class="site-footer">
     <div class="footer-content">
       <div class="footer-brand">
-        <img src="/img/united-logo.png" alt="United"> United
+        <img src="/img/gauss-logo.png" alt="Project Gauss"> Project Gauss
       </div>
       <div class="footer-credits">
-        Sviluppato da <a href="#">Cristian Ceni</a>
+        Sviluppato e manutenuto da <a href="#">Cristian Ceni</a>
       </div>
     </div>
   </footer>

@@ -16,7 +16,7 @@ document.addEventListener("DOMContentLoaded", async () => {
     // Navbar
     document.getElementById("nav-user-name").textContent = profile.full_name || profile.email;
     const roleEl = document.getElementById("nav-user-role");
-    roleEl.textContent = profile.role;
+    roleEl.textContent = profile.role === 'co_admin' ? 'Co-Admin' : profile.role;
     roleEl.classList.add(`role-${profile.role}`);
 
     await loadSpotted();
@@ -29,7 +29,15 @@ document.addEventListener("DOMContentLoaded", async () => {
     window.location.href = "/";
   }
 
-  // Creazione spotted
+  // Creazione spotted (char counter)
+  const spottedTextarea = document.getElementById("spotted-body");
+  const spottedCharCount = document.getElementById("spotted-char-count");
+  if (spottedTextarea && spottedCharCount) {
+    spottedTextarea.addEventListener("input", () => {
+      spottedCharCount.textContent = `${spottedTextarea.value.length}/500`;
+    });
+  }
+
   document.getElementById("create-spotted-form").addEventListener("submit", async (e) => {
     e.preventDefault();
     const btn = e.target.querySelector("button[type=submit]");
@@ -40,13 +48,14 @@ document.addEventListener("DOMContentLoaded", async () => {
     try {
       const result = await API.createSpotted(textarea.value);
       textarea.value = "";
+      if (spottedCharCount) spottedCharCount.textContent = "0/500";
       showAlert(result.message || "Spotted inviato!", "success");
       await loadSpotted();
     } catch (err) {
       showAlert(err.message, "error");
     } finally {
       btn.disabled = false;
-      btn.textContent = "Invia spotted";
+      btn.textContent = "Invia";
     }
   });
 
@@ -68,26 +77,51 @@ document.addEventListener("DOMContentLoaded", async () => {
       }
 
       noMsg.classList.add("hidden");
+
+      const gradients = [
+        "linear-gradient(135deg, #007AFF 0%, #34AADC 100%)",
+        "linear-gradient(135deg, #5AC8FA 0%, #007AFF 100%)",
+        "linear-gradient(135deg, #34AADC 0%, #0051D5 100%)",
+        "linear-gradient(135deg, #0A84FF 0%, #5AC8FA 100%)",
+        "linear-gradient(135deg, #007AFF 0%, #64D2FF 100%)",
+        "linear-gradient(135deg, #0051D5 0%, #34AADC 100%)",
+        "linear-gradient(135deg, #30B0C7 0%, #007AFF 100%)",
+        "linear-gradient(135deg, #5AC8FA 0%, #0051D5 100%)",
+      ];
+
+      // Genera un numero pseudocasuale stabile basato sull'ID dello spotted
+      function anonNumber(id) {
+        let hash = 0;
+        for (let i = 0; i < id.length; i++) {
+          hash = ((hash << 5) - hash) + id.charCodeAt(i);
+          hash |= 0;
+        }
+        return Math.abs(hash % 90) + 10; // 10-99
+      }
+
       container.innerHTML = spotted
         .map(
-          (s) => `
-        <div class="spotted-card" data-id="${s.id}">
-          ${s.status === "pending" ? '<div class="spotted-pending-badge">⏳ In attesa di approvazione</div>' : ""}
-          <p class="spotted-body">${escapeHtml(s.body)}</p>
-          <div class="spotted-footer">
-            <div class="spotted-actions">
+          (s, i) => `
+        <div class="spotted-ig-card" data-id="${s.id}">
+          <div class="spotted-ig-bubble" style="background: ${gradients[i % gradients.length]}">
+            ${s.status === "pending" ? '<div class="spotted-pending-badge">⏳ In attesa</div>' : ""}
+            <span class="spotted-ig-anon">Anonimo ${anonNumber(s.id)}</span>
+            <p class="spotted-ig-text">${escapeHtml(s.body)}</p>
+          </div>
+          <div class="spotted-ig-bar">
+            <div class="spotted-ig-actions">
               <button class="btn-like ${s.liked ? "liked" : ""}" onclick="toggleLike('${s.id}', this)">
                 ${s.liked ? "❤️" : "🤍"} <span class="like-count">${s.likes_count}</span>
               </button>
               <button class="btn-comment" onclick="toggleComments('${s.id}', this)">
-                💬 Commenti
+                💬 <span class="comment-label">Commenti</span>
               </button>
             </div>
-            <div class="spotted-meta-right">
+            <div class="spotted-ig-meta">
               <span class="spotted-date">${timeAgo(s.created_at)}</span>
               ${
-                s.is_own || (currentProfile && currentProfile.role === "admin")
-                  ? `<button class="btn btn-danger btn-sm" style="border-radius: 999px;" onclick="deleteSpotted('${s.id}')">Elimina</button>`
+                s.is_own || (currentProfile && ['admin', 'co_admin'].includes(currentProfile.role))
+                  ? `<button class="spotted-ig-delete" onclick="deleteSpotted('${s.id}')" title="Elimina">&times;</button>`
                   : ""
               }
             </div>
@@ -151,7 +185,7 @@ document.addEventListener("DOMContentLoaded", async () => {
           <div class="comment-meta">
             <span>${new Date(c.created_at).toLocaleString("it-IT")}</span>
             ${
-              c.is_own || (currentProfile && currentProfile.role === "admin")
+              c.is_own || (currentProfile && ['admin', 'co_admin'].includes(currentProfile.role))
                 ? `<button class="btn-delete-comment" onclick="deleteComment('${c.id}', '${spottedId}')">&times;</button>`
                 : ""
             }

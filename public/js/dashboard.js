@@ -16,19 +16,30 @@ document.addEventListener("DOMContentLoaded", async () => {
     // Navbar
     document.getElementById("nav-user-name").textContent = profile.full_name || profile.email;
     const roleEl = document.getElementById("nav-user-role");
-    roleEl.textContent = profile.role;
+    const roleLabel = profile.role === 'co_admin' ? 'Co-Admin' : profile.role;
+    roleEl.textContent = roleLabel;
     roleEl.classList.add(`role-${profile.role}`);
 
     // Card profilo
     document.getElementById("profile-name").textContent = profile.full_name || "-";
     document.getElementById("profile-email").textContent = profile.email;
-    document.getElementById("profile-role").textContent = profile.role;
+    document.getElementById("profile-role").textContent = roleLabel;
     document.getElementById("profile-classe").textContent =
+      ['admin', 'co_admin'].includes(profile.role) ? 'Onnipresente' :
       profile.classe ? `${profile.classe} ${profile.sezione || ""}`.trim() : "Non impostata";
+
+    // Bio
+    const bioEl = document.getElementById("profile-bio");
+    if (bioEl) {
+      bioEl.textContent = profile.bio || "Nessuna bio impostata";
+      if (!profile.bio) bioEl.classList.add("text-muted");
+    }
 
     // Avatar
     const avatarEl = document.getElementById("profile-avatar");
-    if (profile.full_name) {
+    if (profile.avatar_url) {
+      avatarEl.innerHTML = `<img src="${profile.avatar_url}" alt="Avatar" style="width:100%;height:100%;object-fit:cover;border-radius:50%;">`;
+    } else if (profile.full_name) {
       avatarEl.textContent = profile.full_name.split(" ").map(n => n[0]).join("").toUpperCase().slice(0, 2);
     }
 
@@ -36,8 +47,8 @@ document.addEventListener("DOMContentLoaded", async () => {
     document.getElementById("welcome-text").textContent =
       `Benvenuto, ${profile.full_name || profile.email}!`;
 
-    // Stats e lista per admin/rappresentante
-    if (["admin", "rappresentante"].includes(profile.role)) {
+    // Stats e lista per admin/co_admin/rappresentante
+    if (["admin", "co_admin", "rappresentante"].includes(profile.role)) {
       // Mostra sezione aggiungi scuola
       document.getElementById("add-school-section").classList.remove("hidden");
       initAddSchool();
@@ -53,7 +64,7 @@ document.addEventListener("DOMContentLoaded", async () => {
         document.getElementById("stat-rappresentanti").textContent =
           users.filter((u) => u.role === "rappresentante").length;
         document.getElementById("stat-admin").textContent =
-          users.filter((u) => u.role === "admin").length;
+          users.filter((u) => ["admin", "co_admin"].includes(u.role)).length;
 
         // Tabella recenti
         document.getElementById("recent-users-section").classList.remove("hidden");
@@ -76,8 +87,8 @@ document.addEventListener("DOMContentLoaded", async () => {
       }
     }
 
-    // Admin-only: mostra tabs e carica dati
-    if (profile.role === "admin") {
+    // Admin e co_admin: mostra tabs e carica dati
+    if (["admin", "co_admin"].includes(profile.role)) {
       document.getElementById("admin-tabs").classList.remove("hidden");
       initTabs();
       await loadPendingSpotted();
@@ -135,6 +146,11 @@ document.addEventListener("DOMContentLoaded", async () => {
         const isBanned = u.banned_until && new Date(u.banned_until) > new Date();
         const isPermanent = isBanned && new Date(u.banned_until).getFullYear() >= 2099;
         const isMe = u.id === currentProfile.id;
+        const isCoAdmin = currentProfile.role === 'co_admin';
+        const targetIsAdmin = u.role === 'admin';
+        const targetIsCoAdmin = u.role === 'co_admin';
+        // Co-admin non può toccare admin né altri co-admin
+        const canManage = !isMe && !(isCoAdmin && (targetIsAdmin || targetIsCoAdmin));
 
         let statusHtml = '';
         if (isPermanent) {
@@ -148,27 +164,41 @@ document.addEventListener("DOMContentLoaded", async () => {
         const initials = (u.full_name || u.email || "?")
           .split(" ").map(n => n[0]).join("").toUpperCase().slice(0, 2);
 
+        const avatarHtml = u.avatar_url
+          ? `<img src="${u.avatar_url}" alt="Avatar" style="width:100%;height:100%;object-fit:cover;border-radius:50%;">`
+          : initials;
+
+        const roleDisplayLabel = u.role === 'co_admin' ? 'Co-Admin' : u.role;
+
+        // Opzioni ruolo: co-admin non può assegnare admin
+        const roleOptions = isCoAdmin
+          ? `<option value="studente" ${u.role === "studente" ? "selected" : ""}>Studente</option>
+             <option value="rappresentante" ${u.role === "rappresentante" ? "selected" : ""}>Rappresentante</option>
+             <option value="co_admin" ${u.role === "co_admin" ? "selected" : ""}>Co-Admin</option>`
+          : `<option value="studente" ${u.role === "studente" ? "selected" : ""}>Studente</option>
+             <option value="rappresentante" ${u.role === "rappresentante" ? "selected" : ""}>Rappresentante</option>
+             <option value="co_admin" ${u.role === "co_admin" ? "selected" : ""}>Co-Admin</option>
+             <option value="admin" ${u.role === "admin" ? "selected" : ""}>Admin</option>`;
+
         return `
           <div class="user-card${isBanned ? ' user-banned' : ''}${isMe ? ' user-me' : ''}">
             <div class="user-card-left">
-              <div class="user-avatar">${initials}</div>
+              <div class="user-avatar">${avatarHtml}</div>
               <div class="user-info-block">
                 <div class="user-name">${escapeHtml(u.full_name || "-")}${isMe ? ' <span class="you-badge">Tu</span>' : ''}</div>
                 <div class="user-email">${escapeHtml(u.email)}</div>
                 <div class="user-meta">
-                  <span class="user-role role-${u.role}">${u.role}</span>
+                  <span class="user-role role-${u.role}">${roleDisplayLabel}</span>
                   ${u.classe ? `<span class="user-classe">${escapeHtml(`${u.classe}${u.sezione || ''}`)}</span>` : ''}
                   ${statusHtml}
                 </div>
               </div>
             </div>
-            ${!isMe ? `
+            ${canManage ? `
             <div class="user-card-actions">
               <div class="role-switch">
                 <select class="role-select" data-user-id="${u.id}">
-                  <option value="studente" ${u.role === "studente" ? "selected" : ""}>Studente</option>
-                  <option value="rappresentante" ${u.role === "rappresentante" ? "selected" : ""}>Rappresentante</option>
-                  <option value="admin" ${u.role === "admin" ? "selected" : ""}>Admin</option>
+                  ${roleOptions}
                 </select>
                 <button class="btn btn-primary btn-sm btn-save-role" data-user-id="${u.id}">Salva ruolo</button>
               </div>
@@ -178,7 +208,7 @@ document.addEventListener("DOMContentLoaded", async () => {
                   : `<button class="btn btn-sm btn-ban" data-user-id="${u.id}" data-user-name="${escapeHtml(u.full_name || u.email)}">Ban / Sospendi</button>`
                 }
               </div>
-            </div>` : ''}
+            </div>` : isMe ? '' : `<div class="user-card-actions"><span style="color: var(--text-muted); font-size: 0.8rem;">Protetto</span></div>`}
           </div>
         `;
       }).join("");

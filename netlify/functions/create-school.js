@@ -21,8 +21,8 @@ exports.handler = async (event) => {
     }
 
     const profile = await getUserProfile(user.id);
-    if (!profile || !['admin', 'rappresentante'].includes(profile.role)) {
-      return response(403, { error: "Solo amministratori e rappresentanti possono creare scuole" });
+    if (!profile || !['admin', 'co_admin', 'rappresentante'].includes(profile.role)) {
+      return response(403, { error: "Solo admin, co-admin e rappresentanti possono creare scuole" });
     }
 
     const { name, city, address, province, description, logo_url } = JSON.parse(event.body);

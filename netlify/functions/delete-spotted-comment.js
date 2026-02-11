@@ -43,7 +43,7 @@ exports.handler = async (event) => {
       return response(404, { error: "Commento non trovato" });
     }
 
-    if (existing.author_id !== user.id && profile.role !== "admin") {
+    if (existing.author_id !== user.id && !['admin', 'co_admin'].includes(profile.role)) {
       return response(403, { error: "Non puoi eliminare questo commento" });
     }
 

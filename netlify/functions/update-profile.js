@@ -20,12 +20,14 @@ exports.handler = async (event) => {
       return response(401, { error: "Token non valido" });
     }
 
-    const { full_name, classe, sezione } = JSON.parse(event.body);
+    const { full_name, classe, sezione, bio, avatar_url } = JSON.parse(event.body);
 
     const updates = { updated_at: new Date().toISOString() };
     if (full_name !== undefined) updates.full_name = full_name;
     if (classe !== undefined) updates.classe = classe;
     if (sezione !== undefined) updates.sezione = sezione;
+    if (bio !== undefined) updates.bio = bio;
+    if (avatar_url !== undefined) updates.avatar_url = avatar_url;
 
     const admin = getSupabaseAdmin();
     const { data, error } = await admin

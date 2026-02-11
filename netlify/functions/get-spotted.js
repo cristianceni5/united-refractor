@@ -35,10 +35,10 @@ exports.handler = async (event) => {
       .eq("school_id", profile.school_id)
       .order("created_at", { ascending: false });
 
-    if (params.status && profile.role === "admin") {
+    if (params.status && ['admin', 'co_admin'].includes(profile.role)) {
       query = query.eq("status", params.status);
-    } else if (profile.role === "admin" && !params.status) {
-      // Admin vede tutto di default
+    } else if (['admin', 'co_admin'].includes(profile.role) && !params.status) {
+      // Admin/co-admin vede tutto di default
     } else {
       // Non-admin vedono solo gli approved
       query = query.eq("status", "approved");
