@@ -33,9 +33,8 @@ exports.handler = async (event) => {
 
     const isConvenzione = category === "convenzione";
 
-    // Solo admin/co_admin/rappresentante possono creare post normali
-    // Chiunque autenticato può creare un post convenzione (va in approvazione)
-    if (!isConvenzione && !["admin", "co_admin", "rappresentante"].includes(profile.role)) {
+    // Solo admin/co_admin/rappresentante possono creare post
+    if (!["admin", "co_admin", "rappresentante"].includes(profile.role)) {
       return response(403, { error: "Solo admin, co-admin e rappresentanti possono creare post" });
     }
 
@@ -46,11 +45,7 @@ exports.handler = async (event) => {
       return response(400, { error: "Nessuna scuola associata al profilo" });
     }
 
-    // Convenzioni richiedono approvazione admin (auto-approve per admin/co_admin)
-    let postStatus = "approved";
-    if (isConvenzione && !['admin', 'co_admin'].includes(profile.role)) {
-      postStatus = "pending";
-    }
+    const postStatus = "approved";
 
     const admin = getSupabaseAdmin();
     const { data, error } = await admin

@@ -446,7 +446,7 @@ document.addEventListener("DOMContentLoaded", async () => {
         if (previewContainer) previewContainer.classList.remove("has-image");
         if (uploadArea) uploadArea.style.display = "";
 
-        showAlert("Post pubblicato!" + (document.getElementById("post-category").value === "convenzione" && !['admin', 'co_admin'].includes(currentProfile.role) ? " In attesa di approvazione." : ""), "success");
+        showAlert("Post pubblicato!", "success");
         await loadPosts();
       } catch (err) {
         showAlert(err.message, "error");
@@ -488,8 +488,6 @@ document.addEventListener("DOMContentLoaded", async () => {
             : authorInitials;
 
           const canDelete = p.is_own || (currentProfile && ['admin', 'co_admin'].includes(currentProfile.role));
-          const canModerate = currentProfile && ['admin', 'co_admin'].includes(currentProfile.role) && p.status === 'pending';
-          const isPending = p.status === 'pending';
           const isConvenzione = p.category === 'convenzione';
 
           // Text truncation: collapse if > 140 chars
@@ -503,14 +501,14 @@ document.addEventListener("DOMContentLoaded", async () => {
           };
 
           return `
-            <div class="post-card ${p.pinned ? "post-pinned" : ""} ${isConvenzione ? "post-convenzione" : ""} ${isPending ? "post-pending" : ""}">
-              ${isPending ? '<div class="pending-ribbon">⏳ In attesa di approvazione</div>' : ''}
+            <div class="post-card ${p.pinned ? "post-pinned" : ""} ${isConvenzione ? "post-convenzione" : ""}">
               <div class="post-ig-header">
                 <a href="/view-profile.html?id=${p.author_id}" class="post-ig-avatar">${authorAvatarHtml}</a>
                 <div class="post-ig-header-info">
                   <a href="/view-profile.html?id=${p.author_id}" class="post-ig-author">${escapeHtml(p.author_name)}</a>
                   <div class="post-ig-meta">
                     <span class="post-ig-time">${timeAgo(p.created_at)}</span>
+                    ${p.pinned ? '<span class="post-pin">In evidenza</span>' : ''}
                   </div>
                 </div>
                 <div class="post-ig-header-right">
@@ -542,13 +540,7 @@ document.addEventListener("DOMContentLoaded", async () => {
                 <div class="post-ig-badges">
                   <span class="post-category cat-${p.category}">${categoryLabels[p.category] || p.category}</span>
                   ${isConvenzione && p.discount ? `<span class="post-discount-pill">${escapeHtml(p.discount)}</span>` : ''}
-                  ${p.pinned ? '<span class="post-pin">In evidenza</span>' : ""}
                 </div>
-                ${canModerate ? `
-                <div class="post-moderate-actions">
-                  <button class="btn btn-sm btn-approve" onclick="moderatePost('${p.id}', 'approved')">✓ Approva</button>
-                  <button class="btn btn-sm btn-reject" onclick="moderatePost('${p.id}', 'rejected')">✕ Rifiuta</button>
-                </div>` : ''}
               </div>
             </div>
           `;
