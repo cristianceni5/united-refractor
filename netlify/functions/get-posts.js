@@ -25,11 +25,6 @@ exports.handler = async (event) => {
       return response(404, { error: "Profilo non trovato" });
     }
 
-    // Admin e co_admin vedono tutte le scuole, gli altri solo la propria
-    if (!['admin', 'co_admin'].includes(profile.role) && !profile.school_id) {
-      return response(400, { error: "Nessuna scuola associata al profilo" });
-    }
-
     const admin = getSupabaseAdmin();
     let query = admin
       .from("posts")
@@ -42,9 +37,16 @@ exports.handler = async (event) => {
       query = query.eq("status", "approved");
     }
 
-    // Admin e co_admin vedono tutto; gli altri vedono la propria scuola + post globali (school_id IS NULL)
-    if (!['admin', 'co_admin'].includes(profile.role) && profile.school_id) {
-      query = query.or(`school_id.eq.${profile.school_id},school_id.is.null`);
+    // Admin e co_admin vedono tutto.
+    // Gli altri vedono:
+    // - post della propria scuola + globali, se hanno school_id
+    // - solo post globali, se non hanno school_id
+    if (!['admin', 'co_admin'].includes(profile.role)) {
+      if (profile.school_id) {
+        query = query.or(`school_id.eq.${profile.school_id},school_id.is.null`);
+      } else {
+        query = query.is("school_id", null);
+      }
     }
 
     const params = event.queryStringParameters || {};

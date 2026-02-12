@@ -7,8 +7,10 @@ document.addEventListener("DOMContentLoaded", async () => {
   const loading = document.getElementById("loading");
   const content = document.getElementById("posts-content");
   const alertEl = document.getElementById("alert");
+  const categorySelect = document.getElementById("post-category");
   let currentProfile = null;
   let currentFilter = "";
+  let availableSchools = [];
 
   try {
     const { profile } = await API.getProfile();
@@ -24,6 +26,11 @@ document.addEventListener("DOMContentLoaded", async () => {
     if (["admin", "co_admin", "rappresentante"].includes(profile.role)) {
       document.getElementById("create-post-section").classList.remove("hidden");
       initImageUpload();
+      try {
+        await initDestinationSelector();
+      } catch (destinationErr) {
+        console.error("Errore inizializzazione destinazioni post:", destinationErr);
+      }
 
       // Compose avatar
       const composeAvatar = document.getElementById("compose-avatar");
@@ -41,9 +48,25 @@ document.addEventListener("DOMContentLoaded", async () => {
     loading.classList.add("hidden");
     content.classList.remove("hidden");
   } catch (err) {
-    localStorage.removeItem("access_token");
-    localStorage.removeItem("refresh_token");
-    window.location.href = "/";
+    const errorMessage = (err && err.message ? err.message : "").toLowerCase();
+    const isAuthError =
+      errorMessage.includes("non autenticato") ||
+      errorMessage.includes("token non valido") ||
+      errorMessage.includes("jwt") ||
+      errorMessage.includes("unauthorized") ||
+      errorMessage.includes("401");
+
+    if (isAuthError) {
+      localStorage.removeItem("access_token");
+      localStorage.removeItem("refresh_token");
+      window.location.href = "/";
+      return;
+    }
+
+    console.error("Errore caricamento pagina post:", err);
+    loading.classList.add("hidden");
+    content.classList.remove("hidden");
+    showAlert("Errore nel caricamento della pagina post. Riprova tra poco.", "error");
   }
 
   // Compose card toggle
@@ -68,16 +91,107 @@ document.addEventListener("DOMContentLoaded", async () => {
   });
 
   // Toggle visibilità campo sconto al cambio categoria
-  const categorySelect = document.getElementById("post-category");
   if (categorySelect) {
     categorySelect.addEventListener("change", (e) => {
-      const discountField = document.getElementById("discount-field");
-      if (e.target.value === "convenzione") {
-        discountField.classList.remove("hidden");
-      } else {
-        discountField.classList.add("hidden");
-      }
+      updatePostCategoryUI(e.target.value);
     });
+  }
+
+  function isAdminOrCoAdmin() {
+    return currentProfile && ["admin", "co_admin"].includes(currentProfile.role);
+  }
+
+  function canChooseDestination(category) {
+    if (!currentProfile) return false;
+    if (isAdminOrCoAdmin()) return true;
+    return currentProfile.role === "rappresentante" && category === "convenzione";
+  }
+
+  function updateTargetSchoolsVisibility() {
+    const wrap = document.getElementById("post-target-schools-wrap");
+    if (!wrap) return;
+    const mode = document.querySelector('input[name="post-target-mode"]:checked')?.value || "global";
+    wrap.classList.toggle("hidden", mode !== "schools");
+  }
+
+  function updatePostCategoryUI(categoryValue) {
+    const discountField = document.getElementById("discount-field");
+    const destinationField = document.getElementById("post-destination-field");
+    const destinationFixed = document.getElementById("post-destination-fixed");
+    const destinationFixedText = document.getElementById("post-destination-fixed-text");
+    const targetHelp = document.getElementById("post-target-help");
+    const category = categoryValue || (categorySelect ? categorySelect.value : "altro");
+    const showDestinationPicker = canChooseDestination(category);
+
+    if (discountField) {
+      discountField.classList.toggle("hidden", category !== "convenzione");
+    }
+
+    if (destinationField) {
+      destinationField.classList.toggle("hidden", !showDestinationPicker);
+    }
+    if (destinationFixed) {
+      destinationFixed.classList.toggle("hidden", showDestinationPicker);
+    }
+
+    if (showDestinationPicker) {
+      if (targetHelp) {
+        targetHelp.textContent = isAdminOrCoAdmin()
+          ? "Scegli Globale oppure una o più scuole di destinazione."
+          : "Per le convenzioni puoi scegliere Globale oppure una o più scuole.";
+      }
+      updateTargetSchoolsVisibility();
+    } else if (destinationFixedText) {
+      const schoolName = currentProfile?.school?.name || "la tua scuola";
+      destinationFixedText.textContent = `Solo ${schoolName}`;
+    }
+  }
+
+  function renderTargetSchools() {
+    const listEl = document.getElementById("post-target-schools-list");
+    if (!listEl) return;
+
+    if (!availableSchools.length) {
+      listEl.innerHTML = '<div class="post-target-school-item"><span class="post-target-school-meta">Nessuna scuola disponibile</span></div>';
+      return;
+    }
+
+    listEl.innerHTML = availableSchools.map((school) => {
+      const locationParts = [school.city, school.province].filter(Boolean);
+      const location = locationParts.join(" (") + (school.province ? ")" : "");
+      return `
+        <label class="post-target-school-item">
+          <span class="post-target-school-main">
+            <input type="checkbox" class="post-target-school-checkbox" value="${school.id}">
+            <span class="post-target-school-name">${escapeHtml(school.name)}</span>
+          </span>
+          <span class="post-target-school-meta">${escapeHtml(location)}</span>
+        </label>
+      `;
+    }).join("");
+  }
+
+  async function initDestinationSelector() {
+    const destinationField = document.getElementById("post-destination-field");
+    const destinationFixed = document.getElementById("post-destination-fixed");
+    if (!destinationField || !destinationFixed || !currentProfile) return;
+
+    const modeInputs = document.querySelectorAll('input[name="post-target-mode"]');
+    modeInputs.forEach((input) => {
+      input.addEventListener("change", updateTargetSchoolsVisibility);
+    });
+
+    if (!availableSchools.length) {
+      try {
+        const { schools } = await API.getSchools();
+        availableSchools = schools || [];
+      } catch (err) {
+        availableSchools = [];
+      }
+    }
+
+    renderTargetSchools();
+    updatePostCategoryUI(categorySelect ? categorySelect.value : "altro");
   }
 
   // Image Upload & Reposition
@@ -420,18 +534,37 @@ document.addEventListener("DOMContentLoaded", async () => {
           }
         }
 
-        await API.createPost({
+        const selectedCategory = document.getElementById("post-category").value;
+        const canSelectDestination = canChooseDestination(selectedCategory);
+        const selectedMode = document.querySelector('input[name="post-target-mode"]:checked')?.value || "global";
+        const targetSchoolIds = Array.from(document.querySelectorAll(".post-target-school-checkbox:checked"))
+          .map((input) => input.value);
+
+        if (canSelectDestination && selectedMode === "schools" && targetSchoolIds.length === 0) {
+          showAlert("Seleziona almeno una scuola di destinazione o usa Globale.", "error");
+          btn.disabled = false;
+          btn.textContent = "Pubblica";
+          return;
+        }
+
+        const createResult = await API.createPost({
           title: document.getElementById("post-title").value,
           body: document.getElementById("post-body").value,
-          category: document.getElementById("post-category").value,
+          category: selectedCategory,
           image_url: imageUrl || null,
           pinned: document.getElementById("post-pinned").checked,
           discount: document.getElementById("post-discount").value || null,
+          target_global: canSelectDestination ? selectedMode === "global" : false,
+          target_school_ids: canSelectDestination && selectedMode === "schools" ? targetSchoolIds : [],
         });
 
         createForm.reset();
-        // Reset del campo sconto (visibile solo quando si seleziona "convenzione")
-        document.getElementById("discount-field").classList.add("hidden");
+        const globalModeRadio = document.querySelector('input[name="post-target-mode"][value="global"]');
+        if (globalModeRadio) globalModeRadio.checked = true;
+        document.querySelectorAll(".post-target-school-checkbox").forEach((checkbox) => {
+          checkbox.checked = false;
+        });
+        updatePostCategoryUI(categorySelect ? categorySelect.value : "altro");
         selectedImageFile = null;
         imgOffsetX = 0;
         imgOffsetY = 0;
@@ -446,7 +579,8 @@ document.addEventListener("DOMContentLoaded", async () => {
         if (previewContainer) previewContainer.classList.remove("has-image");
         if (uploadArea) uploadArea.style.display = "";
 
-        showAlert("Post pubblicato!", "success");
+        const createdCount = createResult?.created_count || 1;
+        showAlert(createdCount > 1 ? `${createdCount} post pubblicati!` : "Post pubblicato!", "success");
         await loadPosts();
       } catch (err) {
         showAlert(err.message, "error");

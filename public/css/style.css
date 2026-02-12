@@ -1084,12 +1084,11 @@ body {
   text-align: center;
 }
 
-/* Spotted compose card - gradient border */
+/* Spotted compose card */
 .spotted-compose-card {
-  border: 2px solid transparent;
-  background-image: linear-gradient(var(--surface), var(--surface)), linear-gradient(135deg, #007AFF, #0051D5);
-  background-origin: border-box;
-  background-clip: padding-box, border-box;
+  border: 1px solid var(--border);
+  background-image: none;
+  background: var(--surface);
 }
 
 .spotted-compose-input-wrap {
@@ -1122,6 +1121,175 @@ body {
   right: 12px;
   font-size: 0.7rem;
   color: var(--text-muted);
+}
+
+#create-post-form {
+  padding-top: 4px;
+}
+
+#create-post-form textarea#post-body {
+  min-height: 100px;
+  line-height: 1.55;
+  background: var(--bg);
+}
+
+.post-meta-pinned {
+  display: flex;
+  align-items: flex-end;
+}
+
+.post-pinned-toggle {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  cursor: pointer;
+  color: var(--text-muted);
+}
+
+.post-pinned-toggle input {
+  width: 16px;
+  height: 16px;
+  margin: 0;
+  accent-color: var(--primary);
+}
+
+.post-pinned-toggle span {
+  font-size: 0.82rem;
+  font-weight: 600;
+}
+
+.post-submit-btn {
+  border-radius: var(--radius-sm);
+  width: auto;
+  min-width: 132px;
+  margin-left: auto;
+}
+
+.post-compose-footer {
+  display: flex;
+  flex-direction: row;
+  justify-content: flex-end;
+  align-items: center;
+}
+
+#discount-field,
+#post-destination-field,
+#post-destination-fixed {
+  border: none;
+  background: transparent;
+  padding: 0;
+}
+
+.post-target-mode {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+}
+
+.post-target-mode-option {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  padding: 6px 10px;
+  border: 1px solid var(--border);
+  border-radius: var(--radius-sm);
+  background: var(--surface);
+  color: var(--text-muted);
+  font-size: 0.78rem;
+  font-weight: 600;
+  cursor: pointer;
+  transition: border-color 0.2s ease, color 0.2s ease, background 0.2s ease;
+}
+
+.post-target-mode-option input {
+  margin: 0;
+  accent-color: var(--primary);
+}
+
+.post-target-mode-option:has(input:checked) {
+  border-color: var(--primary);
+  background: var(--surface);
+  color: var(--primary);
+}
+
+.post-target-schools {
+  margin-top: 10px;
+  border: 1px solid var(--border);
+  border-radius: var(--radius-sm);
+  background: var(--surface);
+  max-height: 180px;
+  overflow-y: auto;
+}
+
+.post-target-schools-list {
+  display: flex;
+  flex-direction: column;
+}
+
+.post-target-school-item {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 10px;
+  padding: 10px 12px;
+  border-bottom: 1px solid var(--border);
+  cursor: pointer;
+}
+
+.post-target-school-item:hover {
+  background: var(--bg);
+}
+
+.post-target-school-item:last-child {
+  border-bottom: none;
+}
+
+.post-target-school-main {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  min-width: 0;
+}
+
+.post-target-school-checkbox {
+  width: 16px;
+  height: 16px;
+  margin: 0;
+  flex-shrink: 0;
+  accent-color: var(--primary);
+}
+
+.post-target-school-name {
+  color: var(--text);
+  font-size: 0.82rem;
+  font-weight: 600;
+}
+
+.post-target-school-meta {
+  color: var(--text-muted);
+  font-size: 0.72rem;
+}
+
+.post-target-help {
+  margin-top: 8px;
+  color: var(--text-muted);
+  font-size: 0.76rem;
+  line-height: 1.35;
+}
+
+.post-target-fixed {
+  border: 1px solid var(--border);
+  border-radius: var(--radius-sm);
+  background: var(--surface);
+  color: var(--text-muted);
+  font-size: 0.82rem;
+  padding: 10px 12px;
+  font-weight: 600;
+}
+
+.compose-submit-btn {
+  border-radius: var(--radius-sm);
+  padding: 10px 24px;
 }
 
 /* ============================================
@@ -3951,6 +4119,22 @@ textarea {
 
   .form-row-flex .form-group {
     flex: 1;
+  }
+
+  #create-post-form .form-row-flex {
+    align-items: stretch;
+  }
+
+  #create-post-form textarea#post-body {
+    min-height: 125px;
+  }
+
+  .post-meta-pinned {
+    justify-content: flex-end;
+  }
+
+  .post-target-schools {
+    max-height: 220px;
   }
 
   .form-actions-row {
