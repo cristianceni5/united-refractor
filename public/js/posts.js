@@ -15,7 +15,7 @@ document.addEventListener("DOMContentLoaded", async () => {
     currentProfile = profile;
 
     // Navbar
-    document.getElementById("nav-user-name").textContent = profile.full_name || profile.email;
+    document.getElementById("nav-user-name").textContent = profile.nickname || profile.full_name;
     const roleEl = document.getElementById("nav-user-role");
     roleEl.textContent = profile.role === 'co_admin' ? 'Co-Admin' : profile.role;
     roleEl.classList.add(`role-${profile.role}`);
@@ -118,15 +118,72 @@ document.addEventListener("DOMContentLoaded", async () => {
         return;
       }
 
-      selectedImageFile = file;
-      const reader = new FileReader();
-      reader.onload = (e) => {
-        previewImg.src = e.target.result;
-        previewContainer.classList.add("has-image");
-        uploadArea.style.display = "none";
-      };
-      reader.readAsDataURL(file);
+      // Ridimensiona l'immagine a max 1080px di larghezza (risoluzione standard IG)
+      resizeImage(file, 1080, 0.88).then(resizedFile => {
+        selectedImageFile = resizedFile;
+        const reader = new FileReader();
+        reader.onload = (e) => {
+          previewImg.src = e.target.result;
+          previewContainer.classList.add("has-image");
+          uploadArea.style.display = "none";
+        };
+        reader.readAsDataURL(resizedFile);
+      }).catch(() => {
+        // fallback: usa file originale
+        selectedImageFile = file;
+        const reader = new FileReader();
+        reader.onload = (e) => {
+          previewImg.src = e.target.result;
+          previewContainer.classList.add("has-image");
+          uploadArea.style.display = "none";
+        };
+        reader.readAsDataURL(file);
+      });
     }
+  }
+
+  /**
+   * Ridimensiona un'immagine lato client a una larghezza max,
+   * mantenendo l'aspect ratio. Risoluzione di riferimento: 1080px (come IG).
+   */
+  function resizeImage(file, maxWidth = 1080, quality = 0.88) {
+    return new Promise((resolve, reject) => {
+      const img = new Image();
+      const url = URL.createObjectURL(file);
+      img.onload = () => {
+        URL.revokeObjectURL(url);
+        let w = img.naturalWidth;
+        let h = img.naturalHeight;
+
+        // Se già sotto il max, restituisci originale
+        if (w <= maxWidth) {
+          resolve(file);
+          return;
+        }
+
+        const ratio = maxWidth / w;
+        w = maxWidth;
+        h = Math.round(h * ratio);
+
+        const canvas = document.createElement("canvas");
+        canvas.width = w;
+        canvas.height = h;
+        const ctx = canvas.getContext("2d");
+        ctx.drawImage(img, 0, 0, w, h);
+
+        canvas.toBlob(
+          (blob) => {
+            if (!blob) { reject(); return; }
+            const resized = new File([blob], file.name, { type: "image/jpeg" });
+            resolve(resized);
+          },
+          "image/jpeg",
+          quality
+        );
+      };
+      img.onerror = reject;
+      img.src = url;
+    });
   }
 
   // Creazione post
@@ -222,30 +279,52 @@ document.addEventListener("DOMContentLoaded", async () => {
             ? `<img src="${escapeHtml(p.author_avatar_url)}" alt="Avatar">`
             : authorInitials;
 
+          const canDelete = p.is_own || (currentProfile && ['admin', 'co_admin'].includes(currentProfile.role));
+
+          // Text truncation: collapse if > 140 chars
+          const bodyText = escapeHtml(p.body);
+          const isLong = p.body.length > 140;
+
           return `
             <div class="post-card ${p.pinned ? "post-pinned" : ""}">
-              <div class="post-header">
-                <div>
-                  <span class="post-category cat-${p.category}">${p.category}</span>
-                  ${p.pinned ? '<span class="post-pin">📌 In evidenza</span>' : ""}
+              <div class="post-ig-header">
+                <a href="/view-profile.html?id=${p.author_id}" class="post-ig-avatar">${authorAvatarHtml}</a>
+                <div class="post-ig-header-info">
+                  <a href="/view-profile.html?id=${p.author_id}" class="post-ig-author">${escapeHtml(p.author_name)}</a>
+                  <div class="post-ig-meta">
+                    <span class="post-ig-time">${timeAgo(p.created_at)}</span>
+                  </div>
                 </div>
-                ${
-                  p.is_own || (currentProfile && ['admin', 'co_admin'].includes(currentProfile.role))
-                    ? `<div class="post-actions-menu">
-                        <button class="btn btn-danger btn-sm" onclick="deletePost('${p.id}')">Elimina</button>
-                      </div>`
-                    : ""
-                }
+                <div class="post-ig-header-right">
+                  ${canDelete ? `
+                    <div class="card-more-wrap">
+                      <button class="card-more-btn" onclick="toggleMoreMenu(event)" aria-label="Opzioni">
+                        <svg width="20" height="20" viewBox="0 0 24 24" fill="currentColor"><circle cx="12" cy="5" r="2"/><circle cx="12" cy="12" r="2"/><circle cx="12" cy="19" r="2"/></svg>
+                      </button>
+                      <div class="card-more-dropdown">
+                        <button class="card-more-item danger" onclick="deletePost('${p.id}')">
+                          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="3 6 5 6 21 6"/><path d="M19 6l-1 14a2 2 0 0 1-2 2H8a2 2 0 0 1-2-2L5 6"/><path d="M10 11v6"/><path d="M14 11v6"/><path d="M9 6V4a1 1 0 0 1 1-1h4a1 1 0 0 1 1 1v2"/></svg>
+                          Elimina
+                        </button>
+                      </div>
+                    </div>` : ""}
+                </div>
               </div>
-              <h3 class="post-title">${escapeHtml(p.title)}</h3>
-              <p class="post-body">${escapeHtml(p.body)}</p>
-              ${p.image_url ? `<img src="${escapeHtml(p.image_url)}" class="post-image" alt="Immagine post" loading="lazy">` : ""}
-              <div class="post-footer">
-                <a href="/view-profile.html?id=${p.author_id}" class="post-author-link">
-                  <div class="post-author-avatar">${authorAvatarHtml}</div>
-                  <span class="post-author-name">${escapeHtml(p.author_name)}</span>
-                </a>
-                <span>${timeAgo(p.created_at)}</span>
+              ${p.image_url ? `
+                <div class="post-ig-image-wrap">
+                  <img src="${escapeHtml(p.image_url)}" class="post-ig-image" alt="Immagine post" loading="lazy"
+                    onload="adjustImageRatio(this)">
+                </div>` : ""}
+              <div class="post-ig-body${!p.image_url ? ' post-ig-body-only' : ''}">
+                <div class="post-ig-title">${escapeHtml(p.title)}</div>
+                <div class="post-ig-text${isLong ? ' collapsed' : ''}" id="post-text-${p.id}">${bodyText}</div>
+                ${isLong ? `<button class="post-ig-read-more" onclick="togglePostText('${p.id}', this)">altro</button>` : ''}
+              </div>
+              <div class="post-ig-footer">
+                <div class="post-ig-badges">
+                  <span class="post-category cat-${p.category}">${p.category}</span>
+                  ${p.pinned ? '<span class="post-pin">In evidenza</span>' : ""}
+                </div>
               </div>
             </div>
           `;
@@ -257,6 +336,7 @@ document.addEventListener("DOMContentLoaded", async () => {
   }
 
   window.deletePost = async (id) => {
+    closeAllMoreMenus();
     if (!confirm("Sei sicuro di voler eliminare questo post?")) return;
     try {
       await API.deletePost(id);
@@ -265,6 +345,46 @@ document.addEventListener("DOMContentLoaded", async () => {
     } catch (err) {
       showAlert(err.message, "error");
     }
+  };
+
+  // Three-dots menu helpers
+  window.toggleMoreMenu = (e) => {
+    e.stopPropagation();
+    const dropdown = e.currentTarget.nextElementSibling;
+    const wasOpen = dropdown.classList.contains("open");
+    closeAllMoreMenus();
+    if (!wasOpen) dropdown.classList.add("open");
+  };
+
+  function closeAllMoreMenus() {
+    document.querySelectorAll(".card-more-dropdown.open").forEach(d => d.classList.remove("open"));
+  }
+
+  document.addEventListener("click", () => closeAllMoreMenus());
+
+  // Toggle "altro" / "meno" per testi lunghi
+  window.togglePostText = (postId, btn) => {
+    const el = document.getElementById(`post-text-${postId}`);
+    if (!el) return;
+    el.classList.toggle("collapsed");
+    btn.textContent = el.classList.contains("collapsed") ? "altro" : "meno";
+  };
+
+  // Determina aspect ratio immagine e aggiunge classe
+  window.adjustImageRatio = (img) => {
+    const wrap = img.parentElement;
+    if (!wrap) return;
+    const ratio = img.naturalWidth / img.naturalHeight;
+    // Rimuovi classi precedenti
+    wrap.classList.remove("ratio-1x1", "ratio-4x5", "ratio-16x9");
+    if (ratio > 1.5) {
+      wrap.classList.add("ratio-16x9");       // panoramico
+    } else if (ratio < 0.7) {
+      wrap.classList.add("ratio-4x5");        // verticale
+    } else if (ratio >= 0.95 && ratio <= 1.05) {
+      wrap.classList.add("ratio-1x1");        // quadrato
+    }
+    // altrimenti usa il default 4:3
   };
 
   function showAlert(message, type) {

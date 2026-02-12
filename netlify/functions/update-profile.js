@@ -20,16 +20,34 @@ exports.handler = async (event) => {
       return response(401, { error: "Token non valido" });
     }
 
-    const { full_name, classe, sezione, bio, avatar_url } = JSON.parse(event.body);
+    const { full_name, nickname, classe, sezione, bio, avatar_url } = JSON.parse(event.body);
+
+    const admin = getSupabaseAdmin();
 
     const updates = { updated_at: new Date().toISOString() };
     if (full_name !== undefined) updates.full_name = full_name;
+    if (nickname !== undefined) {
+      const clean = nickname.trim().toLowerCase();
+      if (!/^[a-zA-Z0-9_.-]{3,24}$/.test(clean)) {
+        return response(400, { error: "Nickname non valido (3-24 caratteri, lettere, numeri, _ . -)" });
+      }
+      // Controlla unicità
+      const { data: existingNick } = await admin
+        .from("profiles")
+        .select("id")
+        .eq("nickname", clean)
+        .neq("id", user.id)
+        .maybeSingle();
+      if (existingNick) {
+        return response(400, { error: "Questo nickname è già in uso" });
+      }
+      updates.nickname = clean;
+    }
     if (classe !== undefined) updates.classe = classe;
     if (sezione !== undefined) updates.sezione = sezione;
     if (bio !== undefined) updates.bio = bio;
     if (avatar_url !== undefined) updates.avatar_url = avatar_url;
 
-    const admin = getSupabaseAdmin();
     const { data, error } = await admin
       .from("profiles")
       .update(updates)

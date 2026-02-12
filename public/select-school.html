@@ -1,15 +1,18 @@
 <!DOCTYPE html>
 <html lang="it">
+
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Project Gauss - Seleziona la tua scuola</title>
   <link rel="stylesheet" href="/css/style.css">
 </head>
+
 <body>
   <div class="select-school-container">
     <div class="select-school-card">
-      <img src="/img/gauss-logo.png" alt="Project Gauss" class="auth-logo" style="filter: brightness(0) saturate(100%) invert(15%) sepia(90%) saturate(6000%) hue-rotate(200deg) brightness(100%) contrast(100%);">
+      <img src="/img/gauss-logo.png" alt="Project Gauss" class="auth-logo"
+        style="filter: brightness(0) saturate(100%) invert(15%) sepia(90%) saturate(6000%) hue-rotate(200deg) brightness(100%) contrast(100%);">
       <h1>Seleziona la tua scuola</h1>
       <p class="subtitle">Per continuare, scegli la scuola che frequenti</p>
 
@@ -28,10 +31,10 @@
       <div id="step-school" class="select-school-step hidden">
         <button class="btn-back" id="btn-back-city">← Cambia città</button>
         <div class="selected-city-badge" id="selected-city-badge"></div>
-        
+
         <div id="school-list" class="select-school-list"></div>
         <div id="no-schools-msg" class="empty-state hidden">
-          <div class="empty-icon">🏫</div>
+          <div class="empty-icon"><svg width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"/><polyline points="9 22 9 12 15 12 15 22"/></svg></div>
           <p>Nessuna scuola trovata in questa città</p>
         </div>
 
@@ -39,7 +42,7 @@
           <span>La tua scuola non c'è?</span>
         </div>
         <button class="btn btn-request-school-action" id="btn-request-school">
-          📝 Richiedi l'aggiunta della tua scuola
+          Richiedi l'aggiunta della tua scuola
         </button>
       </div>
 
@@ -48,7 +51,7 @@
         <button class="btn-back" id="btn-back-school">← Torna alla lista</button>
         <h3 style="margin-bottom:8px;">Richiedi una nuova scuola</h3>
         <p class="subtitle" style="margin-bottom:20px;">La tua richiesta verrà esaminata da un amministratore</p>
-        
+
         <form id="form-request-school">
           <div class="form-group">
             <label for="req-school-name">Nome scuola *</label>
@@ -74,11 +77,12 @@
 
       <!-- Conferma richiesta inviata -->
       <div id="step-request-sent" class="select-school-step hidden">
-        <div class="request-sent-icon">✉️</div>
+        <div class="request-sent-icon"><svg width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="var(--primary)" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg></div>
         <h3>Richiesta inviata!</h3>
-        <p class="subtitle">Un amministratore esaminerà la tua richiesta. Riceverai la scuola non appena verrà approvata.</p>
-        <p class="subtitle" style="margin-top:16px;">Nel frattempo puoi continuare a usare la piattaforma.</p>
-        <a href="/dashboard.html" class="btn btn-primary" style="display:inline-block;margin-top:20px;text-decoration:none;">Vai alla dashboard</a>
+        <p class="subtitle">Un amministratore esaminerà la tua richiesta il prima possibile.</p>
+        <p class="subtitle" style="margin-top:12px;">Non appena la tua scuola verrà approvata e aggiunta, potrai accedere a <strong>post, spotted</strong> e a tutte le funzionalità della piattaforma.</p>
+        <a href="/dashboard.html" class="btn btn-primary"
+          style="display:inline-block;margin-top:20px;text-decoration:none;">Vai alla home</a>
       </div>
 
       <div class="select-school-skip">
@@ -90,4 +94,5 @@
   <script src="/js/api.js"></script>
   <script src="/js/select-school.js"></script>
 </body>
+
 </html>

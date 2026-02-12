@@ -13,7 +13,7 @@ document.addEventListener("DOMContentLoaded", async () => {
     const { profile } = await API.getProfile();
 
     // Navbar
-    document.getElementById("nav-user-name").textContent = profile.full_name || profile.email;
+    document.getElementById("nav-user-name").textContent = profile.nickname || profile.full_name;
     const roleEl = document.getElementById("nav-user-role");
     const roleLabel = profile.role === 'co_admin' ? 'Co-Admin' : profile.role;
     roleEl.textContent = roleLabel;
@@ -21,6 +21,7 @@ document.addEventListener("DOMContentLoaded", async () => {
 
     // Popola form
     document.getElementById("profile-name").value = profile.full_name || "";
+    document.getElementById("profile-nickname").value = profile.nickname || "";
     document.getElementById("profile-email").value = profile.email;
     document.getElementById("profile-role").value = roleLabel;
     document.getElementById("profile-classe").value = profile.classe || "";
@@ -104,6 +105,7 @@ document.addEventListener("DOMContentLoaded", async () => {
     try {
       const data = {
         full_name: document.getElementById("profile-name").value,
+        nickname: document.getElementById("profile-nickname").value.trim().toLowerCase(),
         classe: document.getElementById("profile-classe").value,
         sezione: document.getElementById("profile-sezione").value,
         bio: document.getElementById("profile-bio").value,

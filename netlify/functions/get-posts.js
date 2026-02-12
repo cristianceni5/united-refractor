@@ -21,17 +21,26 @@ exports.handler = async (event) => {
     }
 
     const profile = await getUserProfile(user.id);
-    if (!profile || !profile.school_id) {
-      return response(400, { error: "Profilo o scuola non trovata" });
+    if (!profile) {
+      return response(400, { error: "Profilo non trovato" });
+    }
+
+    // Admin vede tutte le scuole, gli altri solo la propria
+    if (profile.role !== 'admin' && !profile.school_id) {
+      return response(400, { error: "Nessuna scuola associata al profilo" });
     }
 
     const admin = getSupabaseAdmin();
     let query = admin
       .from("posts")
       .select("id, school_id, author_id, title, body, image_url, category, pinned, created_at, updated_at, profiles(full_name, avatar_url)")
-      .eq("school_id", profile.school_id)
       .order("pinned", { ascending: false })
       .order("created_at", { ascending: false });
+
+    // Filtra per scuola solo se non è admin
+    if (profile.role !== 'admin' && profile.school_id) {
+      query = query.eq("school_id", profile.school_id);
+    }
 
     const params = event.queryStringParameters || {};
     if (params.category) {

@@ -50,7 +50,7 @@ document.addEventListener("DOMContentLoaded", async () => {
       return `
         <button class="select-school-item" data-city="${escapeAttr(city)}">
           <div class="select-school-item-info">
-            <span class="select-school-item-name">📍 ${escapeHtml(city)}</span>
+            <span class="select-school-item-name">${escapeHtml(city)}</span>
             <span class="select-school-item-count">${count} scuol${count === 1 ? 'a' : 'e'}</span>
           </div>
           <span class="select-school-item-arrow">›</span>
@@ -81,7 +81,7 @@ document.addEventListener("DOMContentLoaded", async () => {
   // Step 2: Scuole della città
   // ========================
   function renderSchools() {
-    selectedCityBadge.textContent = `📍 ${selectedCity}`;
+    selectedCityBadge.textContent = selectedCity;
 
     const schoolsInCity = allSchools.filter(s => s.city === selectedCity);
 
@@ -95,7 +95,7 @@ document.addEventListener("DOMContentLoaded", async () => {
     schoolList.innerHTML = schoolsInCity.map(s => {
       const logoHtml = s.logo_url
         ? `<img src="${escapeAttr(s.logo_url)}" alt="" class="select-school-logo">`
-        : `<div class="select-school-logo-placeholder">🏫</div>`;
+        : `<div class="select-school-logo-placeholder"><svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"/><polyline points="9 22 9 12 15 12 15 22"/></svg></div>`;
 
       return `
         <button class="select-school-item" data-school-id="${s.id}">

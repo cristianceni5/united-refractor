@@ -43,7 +43,7 @@ document.addEventListener("DOMContentLoaded", async () => {
     document.getElementById("vs-name").textContent = school.name;
     const locationParts = [school.city, school.province].filter(Boolean);
     document.getElementById("vs-location").textContent =
-      "📍 " + locationParts.join(" (") + (school.province ? ")" : "");
+      "" + locationParts.join(" (") + (school.province ? ")" : "");
 
     if (school.address) {
       document.getElementById("vs-address").textContent = school.address;

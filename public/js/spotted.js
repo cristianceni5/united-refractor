@@ -14,7 +14,7 @@ document.addEventListener("DOMContentLoaded", async () => {
     currentProfile = profile;
 
     // Navbar
-    document.getElementById("nav-user-name").textContent = profile.full_name || profile.email;
+    document.getElementById("nav-user-name").textContent = profile.nickname || profile.full_name;
     const roleEl = document.getElementById("nav-user-role");
     roleEl.textContent = profile.role === 'co_admin' ? 'Co-Admin' : profile.role;
     roleEl.classList.add(`role-${profile.role}`);
@@ -142,16 +142,26 @@ document.addEventListener("DOMContentLoaded", async () => {
               <div class="spotted-ig-bar">
                 <div class="spotted-ig-actions">
                   <button class="btn-like ${s.liked ? "liked" : ""}" onclick="toggleLike('${s.id}', this)">
-                    ${s.liked ? "❤️" : "🤍"} <span class="like-count">${s.likes_count}</span>
+                    <svg class="like-icon" width="18" height="18" viewBox="0 0 24 24" fill="${s.liked ? 'var(--error)' : 'none'}" stroke="${s.liked ? 'var(--error)' : 'currentColor'}" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z"/></svg> <span class="like-count">${s.likes_count}</span>
                   </button>
                   <button class="btn-comment" onclick="toggleComments('${s.id}', this)">
-                    💬 <span class="comment-label">Commenti</span>
+                    <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/></svg> <span class="comment-label">Commenti</span> <span class="comment-count">${s.comments_count || 0}</span>
                   </button>
                 </div>
                 <div class="spotted-ig-meta">
                   ${
                     s.is_own || (currentProfile && ['admin', 'co_admin'].includes(currentProfile.role))
-                      ? `<button class="spotted-ig-delete" onclick="deleteSpotted('${s.id}')" title="Elimina">&times;</button>`
+                      ? `<div class="card-more-wrap">
+                          <button class="card-more-btn" onclick="toggleMoreMenu(event)" aria-label="Opzioni">
+                            <svg width="20" height="20" viewBox="0 0 24 24" fill="currentColor"><circle cx="12" cy="5" r="2"/><circle cx="12" cy="12" r="2"/><circle cx="12" cy="19" r="2"/></svg>
+                          </button>
+                          <div class="card-more-dropdown">
+                            <button class="card-more-item danger" onclick="deleteSpotted('${s.id}')">
+                              <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="3 6 5 6 21 6"/><path d="M19 6l-1 14a2 2 0 0 1-2 2H8a2 2 0 0 1-2-2L5 6"/><path d="M10 11v6"/><path d="M14 11v6"/><path d="M9 6V4a1 1 0 0 1 1-1h4a1 1 0 0 1 1 1v2"/></svg>
+                              Elimina
+                            </button>
+                          </div>
+                        </div>`
                       : ""
                   }
                 </div>
@@ -176,7 +186,7 @@ document.addEventListener("DOMContentLoaded", async () => {
     try {
       const { liked, likes_count } = await API.toggleLikeSpotted(spottedId);
       btn.classList.toggle("liked", liked);
-      btn.innerHTML = `${liked ? "❤️" : "🤍"} <span class="like-count">${likes_count}</span>`;
+      btn.innerHTML = `<svg class="like-icon" width="18" height="18" viewBox="0 0 24 24" fill="${liked ? 'var(--error)' : 'none'}" stroke="${liked ? 'var(--error)' : 'currentColor'}" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z"/></svg> <span class="like-count">${likes_count}</span>`;
     } catch (err) {
       showAlert(err.message, "error");
     }
@@ -254,6 +264,7 @@ document.addEventListener("DOMContentLoaded", async () => {
   };
 
   window.deleteSpotted = async (id) => {
+    closeAllMoreMenus();
     if (!confirm("Sei sicuro di voler eliminare questo spotted?")) return;
     try {
       await API.deleteSpotted(id);
@@ -263,6 +274,21 @@ document.addEventListener("DOMContentLoaded", async () => {
       showAlert(err.message, "error");
     }
   };
+
+  // Three-dots menu helpers
+  window.toggleMoreMenu = (e) => {
+    e.stopPropagation();
+    const dropdown = e.currentTarget.nextElementSibling;
+    const wasOpen = dropdown.classList.contains("open");
+    closeAllMoreMenus();
+    if (!wasOpen) dropdown.classList.add("open");
+  };
+
+  function closeAllMoreMenus() {
+    document.querySelectorAll(".card-more-dropdown.open").forEach(d => d.classList.remove("open"));
+  }
+
+  document.addEventListener("click", () => closeAllMoreMenus());
 
   function showAlert(message, type) {
     alertEl.textContent = message;

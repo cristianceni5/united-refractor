@@ -14,7 +14,7 @@ document.addEventListener("DOMContentLoaded", async () => {
     currentProfile = profile;
 
     // Navbar
-    document.getElementById("nav-user-name").textContent = profile.full_name || profile.email;
+    document.getElementById("nav-user-name").textContent = profile.nickname || profile.full_name;
     const roleEl = document.getElementById("nav-user-role");
     const roleLabel = profile.role === 'co_admin' ? 'Co-Admin' : profile.role;
     roleEl.textContent = roleLabel;
@@ -39,7 +39,7 @@ document.addEventListener("DOMContentLoaded", async () => {
 
     // Welcome greeting
     document.getElementById("welcome-text").textContent =
-      `Ciao, ${(profile.full_name || profile.email).split(" ")[0]}!`;
+      `Ciao, ${(profile.full_name || profile.nickname).split(" ")[0]}!`;
 
     // Stats e lista per admin/co_admin/rappresentante
     if (["admin", "co_admin", "rappresentante"].includes(profile.role)) {
@@ -64,7 +64,7 @@ document.addEventListener("DOMContentLoaded", async () => {
         const listContainer = document.getElementById("recent-users-list");
         const recent = users.slice(0, 10);
         listContainer.innerHTML = recent.map(u => {
-          const initials = (u.full_name || u.email || "?")
+          const initials = (u.full_name || u.nickname || "?")
             .split(" ").map(n => n[0]).join("").toUpperCase().slice(0, 2);
           const avatarHtml = u.avatar_url
             ? `<img src="${escapeHtml(u.avatar_url)}" alt="Avatar">`
@@ -76,7 +76,7 @@ document.addEventListener("DOMContentLoaded", async () => {
             <a href="/view-profile.html?id=${u.id}" class="recent-user-item">
               <div class="recent-user-avatar">${avatarHtml}</div>
               <div class="recent-user-info">
-                <div class="recent-user-name">${escapeHtml(u.full_name || u.email)}</div>
+                <div class="recent-user-name">${escapeHtml(u.full_name || u.nickname)}</div>
                 <div class="recent-user-meta">
                   <span class="user-role role-${u.role}" style="font-size:0.62rem;padding:1px 8px;">${displayRole}</span>
                   ${classeText ? `<span class="recent-user-classe">${escapeHtml(classeText)}</span>` : ''}
@@ -87,6 +87,21 @@ document.addEventListener("DOMContentLoaded", async () => {
         }).join("");
       } catch (err) {
         // L'utente potrebbe non avere i permessi
+      }
+    }
+
+    // Home feeds per tutti gli utenti con scuola (admin vede tutto)
+    if (profile.school_id || profile.role === 'admin') {
+      loadHomeFeeds();
+    } else {
+      // Utente senza scuola: mostra banner appropriato
+      if (profile.pending_school_request) {
+        const banner = document.getElementById("pending-school-banner");
+        document.getElementById("pending-school-name").textContent =
+          `${profile.pending_school_request.name} (${profile.pending_school_request.city})`;
+        banner.classList.remove("hidden");
+      } else {
+        document.getElementById("no-school-banner").classList.remove("hidden");
       }
     }
 
@@ -113,6 +128,85 @@ document.addEventListener("DOMContentLoaded", async () => {
   document.getElementById("btn-logout").addEventListener("click", () => {
     API.logout();
   });
+
+  // ========================
+  // Home Feeds
+  // ========================
+  async function loadHomeFeeds() {
+    const feedsEl = document.getElementById("home-feeds");
+    if (!feedsEl) return;
+    feedsEl.classList.remove("hidden");
+
+    // Load posts
+    try {
+      const { posts } = await API.getPosts();
+      const recentPosts = posts.slice(0, 5);
+
+      renderFeedPosts(recentPosts);
+    } catch (e) { /* ignore */ }
+
+    // Load spotted
+    try {
+      const { spotted } = await API.getSpotted();
+      const recentSpotted = spotted.slice(0, 5);
+      renderFeedSpotted(recentSpotted);
+    } catch (e) { /* ignore */ }
+  }
+
+  function renderFeedPosts(posts) {
+    const container = document.getElementById("feed-posts");
+    if (!posts.length) return;
+    container.innerHTML = posts.map(p => {
+      const authorInitials = (p.author_name || "?")
+        .split(" ").map(n => n[0]).join("").toUpperCase().slice(0, 2);
+      return `
+        <a href="/posts.html" class="home-feed-item">
+          <div class="home-feed-item-avatar">${
+            p.author_avatar_url
+              ? `<img src="${escapeHtml(p.author_avatar_url)}" alt="">`
+              : authorInitials
+          }</div>
+          <div class="home-feed-item-content">
+            <span class="home-feed-item-title">${escapeHtml(p.title)}</span>
+            <span class="home-feed-item-meta">${escapeHtml(p.author_name || '')} · ${timeAgo(p.created_at)}</span>
+          </div>
+        </a>
+      `;
+    }).join("");
+  }
+
+  function renderFeedSpotted(spotted) {
+    const container = document.getElementById("feed-spotted");
+    if (!spotted.length) return;
+    container.innerHTML = spotted.map(s => {
+      const preview = s.body.length > 80 ? s.body.substring(0, 80) + "…" : s.body;
+      return `
+        <a href="/spotted.html" class="home-feed-item">
+          <div class="home-feed-item-content" style="flex:1;">
+            <span class="home-feed-item-title">${escapeHtml(preview)}</span>
+            <span class="home-feed-item-meta">
+              <span class="home-feed-spotted-stats">
+                <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z"/></svg> ${s.likes_count}
+                <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="margin-left:8px;"><path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/></svg> ${s.comments_count || 0}
+              </span>
+              · ${timeAgo(s.created_at)}
+            </span>
+          </div>
+        </a>
+      `;
+    }).join("");
+  }
+
+  function timeAgo(dateStr) {
+    const now = new Date();
+    const d = new Date(dateStr);
+    const diff = Math.floor((now - d) / 1000);
+    if (diff < 60) return "ora";
+    if (diff < 3600) return `${Math.floor(diff / 60)}m fa`;
+    if (diff < 86400) return `${Math.floor(diff / 3600)}h fa`;
+    if (diff < 604800) return `${Math.floor(diff / 86400)}g fa`;
+    return d.toLocaleDateString("it-IT", { day: "numeric", month: "short" });
+  }
 
   // ========================
   // Tab System
@@ -164,7 +258,7 @@ document.addEventListener("DOMContentLoaded", async () => {
           statusHtml = '<span class="user-status status-active">Attivo</span>';
         }
 
-        const initials = (u.full_name || u.email || "?")
+        const initials = (u.full_name || u.nickname || "?")
           .split(" ").map(n => n[0]).join("").toUpperCase().slice(0, 2);
 
         const avatarHtml = u.avatar_url
@@ -188,7 +282,7 @@ document.addEventListener("DOMContentLoaded", async () => {
               <a href="/view-profile.html?id=${u.id}" class="user-avatar" style="text-decoration:none;color:white;">${avatarHtml}</a>
               <div class="user-info-block">
                 <div class="user-name"><a href="/view-profile.html?id=${u.id}" style="color:inherit;text-decoration:none;">${escapeHtml(u.full_name || "-")}</a>${isMe ? ' <span class="you-badge">Tu</span>' : ''}</div>
-                <div class="user-email">${escapeHtml(u.email)}</div>
+                <div class="user-email">${u.nickname ? '@' + escapeHtml(u.nickname) : escapeHtml(u.email)}</div>
                 <div class="user-meta">
                   <span class="user-role role-${u.role}">${roleDisplayLabel}</span>
                   ${u.classe ? `<span class="user-classe">${escapeHtml(`${u.classe}${u.sezione || ''}`)}</span>` : ''}
@@ -206,9 +300,10 @@ document.addEventListener("DOMContentLoaded", async () => {
               </div>
               <div class="ban-actions">
                 ${isBanned
-                  ? `<button class="btn btn-sm btn-unban" data-user-id="${u.id}">✓ Rimuovi ban</button>`
-                  : `<button class="btn btn-sm btn-ban" data-user-id="${u.id}" data-user-name="${escapeHtml(u.full_name || u.email)}">Ban / Sospendi</button>`
+                  ? `<button class="btn btn-sm btn-unban" data-user-id="${u.id}">Rimuovi ban</button>`
+                  : `<button class="btn btn-sm btn-ban" data-user-id="${u.id}" data-user-name="${escapeHtml(u.full_name || u.nickname)}">Ban / Sospendi</button>`
                 }
+                ${currentProfile.role === 'admin' ? `<button class="btn btn-sm btn-delete-user" data-user-id="${u.id}" data-user-name="${escapeHtml(u.full_name || u.nickname)}" style="background:var(--danger);color:#fff;">Elimina</button>` : ''}
               </div>
             </div>` : isMe ? '' : `<div class="user-card-actions"><span style="color: var(--text-muted); font-size: 0.8rem;">Protetto</span></div>`}
           </div>
@@ -250,6 +345,26 @@ document.addEventListener("DOMContentLoaded", async () => {
             await loadUsers();
           } catch (err) {
             showAlert(err.message, "error");
+          }
+        });
+      });
+
+      // Event: delete user (solo admin)
+      container.querySelectorAll(".btn-delete-user").forEach(btn => {
+        btn.addEventListener("click", async () => {
+          const name = btn.dataset.userName;
+          if (!confirm(`Sei sicuro di voler ELIMINARE definitivamente l'utente "${name}"? Questa azione è irreversibile.`)) return;
+          if (!confirm(`Conferma eliminazione di "${name}". Verranno eliminati profilo, dati e account di autenticazione.`)) return;
+          btn.disabled = true;
+          btn.textContent = "...";
+          try {
+            const result = await API.deleteUser(btn.dataset.userId);
+            showAlert(result.message, "success");
+            await loadUsers();
+          } catch (err) {
+            showAlert(err.message, "error");
+            btn.disabled = false;
+            btn.textContent = "Elimina";
           }
         });
       });
@@ -297,10 +412,10 @@ document.addEventListener("DOMContentLoaded", async () => {
           </div>
           <div class="mod-card-actions">
             <button class="btn btn-sm btn-approve" data-id="${s.id}">
-              ✓ Approva
+              Approva
             </button>
             <button class="btn btn-sm btn-reject" data-id="${s.id}">
-              ✕ Rifiuta
+              Rifiuta
             </button>
           </div>
         </div>
@@ -428,7 +543,7 @@ document.addEventListener("DOMContentLoaded", async () => {
       if (!container) return;
 
       container.innerHTML = requests.map(r => {
-        const requesterName = r.requester?.full_name || r.requester?.email || "Utente sconosciuto";
+        const requesterName = r.requester?.full_name || r.requester?.nickname || "Utente sconosciuto";
         const locationParts = [r.city, r.province].filter(Boolean);
         const location = locationParts.join(" (") + (r.province ? ")" : "");
         const date = new Date(r.created_at).toLocaleString("it-IT");
@@ -436,8 +551,8 @@ document.addEventListener("DOMContentLoaded", async () => {
         return `
           <div class="mod-card" data-id="${r.id}">
             <div class="mod-card-body">
-              <p class="mod-text" style="font-weight:700;font-size:1.05rem;">🏫 ${escapeHtml(r.name)}</p>
-              <p style="margin:4px 0;color:var(--text-muted);">📍 ${escapeHtml(location)}</p>
+              <p class="mod-text" style="font-weight:700;font-size:1.05rem;">${escapeHtml(r.name)}</p>
+              <p style="margin:4px 0;color:var(--text-muted);">${escapeHtml(location)}</p>
               ${r.address ? `<p style="margin:2px 0;color:var(--text-muted);font-size:0.85rem;">${escapeHtml(r.address)}</p>` : ''}
               <p style="margin:6px 0;font-size:0.85rem;color:var(--text-muted);">
                 Richiesta da <strong>${escapeHtml(requesterName)}</strong> il ${date}
@@ -445,10 +560,10 @@ document.addEventListener("DOMContentLoaded", async () => {
             </div>
             <div class="mod-card-actions">
               <button class="btn btn-sm btn-approve" data-id="${r.id}">
-                ✓ Approva
+                Approva
               </button>
               <button class="btn btn-sm btn-reject" data-id="${r.id}">
-                ✕ Rifiuta
+                Rifiuta
               </button>
             </div>
           </div>
@@ -547,10 +662,10 @@ document.addEventListener("DOMContentLoaded", async () => {
         if (isEditing) {
           schoolData.school_id = editId;
           await API.updateSchool(schoolData);
-          showAlert("🏫 Scuola aggiornata!", "success");
+          showAlert("Scuola aggiornata!", "success");
         } else {
           await API.createSchool(schoolData);
-          showAlert("🏫 Scuola aggiunta!", "success");
+          showAlert("Scuola aggiunta!", "success");
         }
         resetSchoolForm();
         formWrapper.classList.add("hidden");
@@ -611,7 +726,7 @@ document.addEventListener("DOMContentLoaded", async () => {
       container.innerHTML = schools.map(s => {
         const logoHtml = s.logo_url
           ? `<img src="${escapeHtml(s.logo_url)}" alt="${escapeHtml(s.name)}" class="school-card-logo">`
-          : `<div class="school-card-logo-placeholder">🏫</div>`;
+          : `<div class="school-card-logo-placeholder"><svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"/><polyline points="9 22 9 12 15 12 15 22"/></svg></div>`;
 
         const locationParts = [s.city, s.province].filter(Boolean);
         const location = locationParts.join(" (") + (s.province ? ")" : "");
@@ -622,12 +737,12 @@ document.addEventListener("DOMContentLoaded", async () => {
               ${logoHtml}
               <div class="school-card-info">
                 <div class="school-card-name">${escapeHtml(s.name)}</div>
-                <div class="school-card-location">📍 ${escapeHtml(location)}</div>
+                <div class="school-card-location">${escapeHtml(location)}</div>
                 ${s.address ? `<div class="school-card-address">${escapeHtml(s.address)}</div>` : ""}
                 ${s.description ? `<div class="school-card-desc">${escapeHtml(s.description)}</div>` : ""}
               </div>
             </div>
-            <button class="btn btn-sm btn-edit-school" data-school='${JSON.stringify(s).replace(/'/g, "&#39;")}'>✏️ Modifica</button>
+            <button class="btn btn-sm btn-edit-school" data-school='${JSON.stringify(s).replace(/'/g, "&#39;")}'>Modifica</button>
           </a>
         `;
       }).join("");

@@ -32,7 +32,7 @@ exports.handler = async (event) => {
     // Fetch profile with school info
     const { data: profile, error } = await admin
       .from("profiles")
-      .select("id, full_name, email, role, classe, sezione, bio, avatar_url, school_id, created_at")
+      .select("id, full_name, nickname, email, role, classe, sezione, bio, avatar_url, school_id, created_at")
       .eq("id", userId)
       .single();
 

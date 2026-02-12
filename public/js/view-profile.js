@@ -21,7 +21,7 @@ document.addEventListener("DOMContentLoaded", async () => {
   try {
     // Load current user for navbar
     const { profile: me } = await API.getProfile();
-    document.getElementById("nav-user-name").textContent = me.full_name || me.email;
+    document.getElementById("nav-user-name").textContent = me.nickname || me.full_name;
     const roleEl = document.getElementById("nav-user-role");
     roleEl.textContent = me.role === "co_admin" ? "Co-Admin" : me.role;
     roleEl.classList.add(`role-${me.role}`);
@@ -64,8 +64,8 @@ document.addEventListener("DOMContentLoaded", async () => {
       classeEl.textContent = `${profile.classe}${profile.sezione ? " " + profile.sezione : ""}`;
     }
 
-    // Email
-    document.getElementById("vp-email").textContent = profile.email;
+    // Nickname
+    document.getElementById("vp-nickname").textContent = profile.nickname ? '@' + profile.nickname : '';
 
     // Bio
     const bioEl = document.getElementById("vp-bio");

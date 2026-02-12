@@ -1,15 +1,18 @@
 <!DOCTYPE html>
 <html lang="it">
+
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Home - Project Gauss</title>
   <link rel="stylesheet" href="/css/style.css">
 </head>
+
 <body>
   <nav class="navbar">
     <div class="navbar-content">
-      <a href="/dashboard.html" class="navbar-brand"><img src="/img/gauss-logo.png" alt="Project Gauss"> Project Gauss</a>
+      <a href="/dashboard.html" class="navbar-brand"><img src="/img/gauss-logo.png" alt="Project Gauss"> Project
+        Gauss</a>
       <ul class="navbar-nav">
         <li><a href="/dashboard.html" class="active">Home</a></li>
         <li><a href="/posts.html">Post</a></li>
@@ -44,22 +47,49 @@
           </div>
         </div>
         <a href="/profile.html" class="home-hero-edit" title="Modifica profilo">
-          <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7"/><path d="M18.5 2.5a2.121 2.121 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z"/></svg>
+          <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"
+            stroke-linecap="round" stroke-linejoin="round">
+            <path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7" />
+            <path d="M18.5 2.5a2.121 2.121 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z" />
+          </svg>
         </a>
+      </div>
+
+      <!-- Banner richiesta scuola pendente -->
+      <div id="pending-school-banner" class="pending-school-banner hidden">
+        <div class="pending-school-banner-icon">
+          <svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg>
+        </div>
+        <div class="pending-school-banner-content">
+          <h3 class="pending-school-banner-title">Richiesta in corso</h3>
+          <p class="pending-school-banner-text">Hai richiesto l'aggiunta di <strong id="pending-school-name"></strong>. Non appena un amministratore approverà la tua scuola, potrai accedere a tutte le funzionalità della piattaforma.</p>
+        </div>
+      </div>
+
+      <!-- Banner nessuna scuola (senza richiesta) -->
+      <div id="no-school-banner" class="pending-school-banner no-school-variant hidden">
+        <div class="pending-school-banner-icon">
+          <svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"/><polyline points="9 22 9 12 15 12 15 22"/></svg>
+        </div>
+        <div class="pending-school-banner-content">
+          <h3 class="pending-school-banner-title">Seleziona la tua scuola</h3>
+          <p class="pending-school-banner-text">Per accedere a tutte le funzionalità, seleziona o richiedi l'aggiunta della tua scuola.</p>
+          <a href="/select-school.html" class="btn btn-primary btn-sm" style="margin-top:10px;border-radius:999px;padding:8px 24px;display:inline-block;text-decoration:none;">Scegli scuola</a>
+        </div>
       </div>
 
       <!-- Quick actions -->
       <div class="home-quick-actions">
         <a href="/posts.html" class="home-action-card">
-          <span class="home-action-icon">📢</span>
+          <span class="home-action-icon"><svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/><line x1="16" y1="13" x2="8" y2="13"/><line x1="16" y1="17" x2="8" y2="17"/></svg></span>
           <span class="home-action-label">Post</span>
         </a>
         <a href="/spotted.html" class="home-action-card">
-          <span class="home-action-icon">👀</span>
+          <span class="home-action-icon"><svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"/><circle cx="12" cy="12" r="3"/></svg></span>
           <span class="home-action-label">Spotted</span>
         </a>
         <a href="/profile.html" class="home-action-card">
-          <span class="home-action-icon">👤</span>
+          <span class="home-action-icon"><svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/><circle cx="12" cy="7" r="4"/></svg></span>
           <span class="home-action-label">Profilo</span>
         </a>
       </div>
@@ -82,6 +112,31 @@
 
       <!-- ====== TAB: Panoramica ====== -->
       <div class="tab-panel active" id="panel-overview">
+
+        <!-- Home Feeds (studenti e rappresentanti) -->
+        <div id="home-feeds" class="home-feeds hidden">
+          <!-- Post recenti -->
+          <div class="home-feed-section">
+            <div class="home-feed-header">
+              <h2 class="home-feed-title">Post recenti</h2>
+              <a href="/posts.html" class="home-feed-link">Vedi tutti</a>
+            </div>
+            <div id="feed-posts" class="home-feed-list">
+              <div class="home-feed-empty">Nessun post recente</div>
+            </div>
+          </div>
+
+          <!-- Spotted recenti -->
+          <div class="home-feed-section">
+            <div class="home-feed-header">
+              <h2 class="home-feed-title">Spotted recenti</h2>
+              <a href="/spotted.html" class="home-feed-link">Vedi tutti</a>
+            </div>
+            <div id="feed-spotted" class="home-feed-list">
+              <div class="home-feed-empty">Nessuno spotted recente</div>
+            </div>
+          </div>
+        </div>
 
         <!-- Stats -->
         <div id="stats-section" class="hidden">
@@ -117,17 +172,20 @@
         <div id="add-school-section" class="hidden">
           <div class="card">
             <div class="card-header-row">
-              <h2>🏫 Scuole</h2>
-              <button class="btn btn-sm" id="btn-toggle-school-form" style="font-size: 0.78rem; padding: 5px 14px; border-radius: 999px; background: var(--primary-light); color: var(--primary); border: none; font-weight: 700;">+ Aggiungi</button>
+              <h2>Scuole</h2>
+              <button class="btn btn-sm" id="btn-toggle-school-form"
+                style="font-size: 0.78rem; padding: 5px 14px; border-radius: 999px; background: var(--primary-light); color: var(--primary); border: none; font-weight: 700;">+
+                Aggiungi</button>
             </div>
 
             <div id="schools-list" class="schools-list"></div>
             <div id="no-schools" class="empty-state hidden">
-              <div class="empty-icon">🏫</div>
+              <div class="empty-icon"><svg width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"/><polyline points="9 22 9 12 15 12 15 22"/></svg></div>
               <p>Nessuna scuola registrata</p>
             </div>
 
-            <div id="school-form-wrapper" class="hidden" style="margin-top: 20px; padding-top: 20px; border-top: 1px solid var(--border);">
+            <div id="school-form-wrapper" class="hidden"
+              style="margin-top: 20px; padding-top: 20px; border-top: 1px solid var(--border);">
               <h3 id="school-form-title">Aggiungi scuola</h3>
               <form id="form-add-school">
                 <input type="hidden" id="school-edit-id" value="">
@@ -160,11 +218,13 @@
                 </div>
                 <div class="form-group">
                   <label for="school-description">Descrizione</label>
-                  <textarea id="school-description" rows="3" placeholder="Una breve descrizione della scuola..."></textarea>
+                  <textarea id="school-description" rows="3"
+                    placeholder="Una breve descrizione della scuola..."></textarea>
                 </div>
                 <div class="form-actions-row">
                   <button type="submit" class="btn btn-primary" style="width: auto;">Salva scuola</button>
-                  <button type="button" class="btn btn-secondary btn-sm" id="btn-cancel-school" style="background: var(--border); color: var(--text); border: none;">Annulla</button>
+                  <button type="button" class="btn btn-secondary btn-sm" id="btn-cancel-school"
+                    style="background: var(--border); color: var(--text); border: none;">Annulla</button>
                 </div>
               </form>
             </div>
@@ -181,7 +241,7 @@
           </div>
           <div id="pending-spotted-list"></div>
           <div id="no-pending" class="empty-state hidden">
-            <div class="empty-icon">✓</div>
+            <div class="empty-icon"><svg width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"/></svg></div>
             <p>Nessuno spotted in attesa di approvazione</p>
           </div>
         </div>
@@ -196,7 +256,7 @@
           </div>
           <div id="school-requests-list"></div>
           <div id="no-school-requests" class="empty-state hidden">
-            <div class="empty-icon">✓</div>
+            <div class="empty-icon"><svg width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"/></svg></div>
             <p>Nessuna richiesta di scuola in attesa</p>
           </div>
         </div>
@@ -252,14 +312,14 @@
           <label class="ban-option">
             <input type="radio" name="ban-action" value="kick" checked>
             <div class="ban-option-content">
-              <span class="ban-option-label">⏱ Sospensione temporanea</span>
+              <span class="ban-option-label">Sospensione temporanea</span>
               <span class="ban-option-desc">L'utente non potrà accedere per un periodo limitato</span>
             </div>
           </label>
           <label class="ban-option">
             <input type="radio" name="ban-action" value="ban">
             <div class="ban-option-content">
-              <span class="ban-option-label">🚫 Ban permanente</span>
+              <span class="ban-option-label">Ban permanente</span>
               <span class="ban-option-desc">L'utente sarà bloccato definitivamente</span>
             </div>
           </label>
@@ -274,7 +334,8 @@
         </div>
       </div>
       <div class="modal-footer">
-        <button class="btn btn-secondary" id="ban-modal-cancel" style="background: var(--border); color: var(--text); border: none;">Annulla</button>
+        <button class="btn btn-secondary" id="ban-modal-cancel"
+          style="background: var(--border); color: var(--text); border: none;">Annulla</button>
         <button class="btn btn-danger" id="ban-modal-confirm">Conferma</button>
       </div>
     </div>
@@ -293,14 +354,34 @@
 
   <nav class="bottom-nav">
     <ul class="bottom-nav-items">
-      <li><a href="/dashboard.html" class="active"><span class="nav-icon"><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"/><polyline points="9 22 9 12 15 12 15 22"/></svg></span>Home</a></li>
-      <li><a href="/posts.html"><span class="nav-icon"><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/><line x1="16" y1="13" x2="8" y2="13"/><line x1="16" y1="17" x2="8" y2="17"/></svg></span>Post</a></li>
-      <li><a href="/spotted.html"><span class="nav-icon"><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"/><circle cx="12" cy="12" r="3"/></svg></span>Spotted</a></li>
-      <li><a href="/profile.html"><span class="nav-icon"><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/><circle cx="12" cy="7" r="4"/></svg></span>Profilo</a></li>
+      <li><a href="/dashboard.html" class="active"><span class="nav-icon"><svg width="22" height="22"
+              viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"
+              stroke-linejoin="round">
+              <path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z" />
+              <polyline points="9 22 9 12 15 12 15 22" />
+            </svg></span>Home</a></li>
+      <li><a href="/posts.html"><span class="nav-icon"><svg width="22" height="22" viewBox="0 0 24 24" fill="none"
+              stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+              <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z" />
+              <polyline points="14 2 14 8 20 8" />
+              <line x1="16" y1="13" x2="8" y2="13" />
+              <line x1="16" y1="17" x2="8" y2="17" />
+            </svg></span>Post</a></li>
+      <li><a href="/spotted.html"><span class="nav-icon"><svg width="22" height="22" viewBox="0 0 24 24" fill="none"
+              stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+              <path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z" />
+              <circle cx="12" cy="12" r="3" />
+            </svg></span>Spotted</a></li>
+      <li><a href="/profile.html"><span class="nav-icon"><svg width="22" height="22" viewBox="0 0 24 24" fill="none"
+              stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+              <path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2" />
+              <circle cx="12" cy="7" r="4" />
+            </svg></span>Profilo</a></li>
     </ul>
   </nav>
 
   <script src="/js/api.js"></script>
   <script src="/js/dashboard.js"></script>
 </body>
+
 </html>

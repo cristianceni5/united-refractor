@@ -10,10 +10,26 @@ exports.handler = async (event) => {
   }
 
   try {
-    const { email, password, full_name } = JSON.parse(event.body);
+    const { email, password, full_name, nickname } = JSON.parse(event.body);
 
-    if (!email || !password || !full_name) {
-      return response(400, { error: "Email, password e nome completo sono obbligatori" });
+    if (!email || !password || !full_name || !nickname) {
+      return response(400, { error: "Email, password, nome completo e nickname sono obbligatori" });
+    }
+
+    // Valida nickname
+    if (!/^[a-zA-Z0-9_.-]{3,24}$/.test(nickname)) {
+      return response(400, { error: "Nickname non valido (3-24 caratteri, lettere, numeri, _ . -)" });
+    }
+
+    // Controlla unicità nickname
+    const admin0 = getSupabaseAdmin();
+    const { data: existingNick } = await admin0
+      .from("profiles")
+      .select("id")
+      .eq("nickname", nickname.toLowerCase())
+      .maybeSingle();
+    if (existingNick) {
+      return response(400, { error: "Questo nickname è già in uso" });
     }
 
     const supabase = getSupabaseClient();
@@ -40,6 +56,7 @@ exports.handler = async (event) => {
         id: data.user.id,
         email: email,
         full_name: full_name,
+        nickname: nickname.toLowerCase(),
         school_id: null,
         role: "studente",
       });
@@ -58,6 +75,7 @@ exports.handler = async (event) => {
         id: data.user.id,
         email: email,
         full_name: full_name,
+        nickname: nickname.toLowerCase(),
         school_id: null,
         role: "studente",
       });

@@ -20,10 +20,10 @@ const API = {
   },
 
   // Auth
-  async signup(email, password, full_name) {
+  async signup(email, password, full_name, nickname) {
     return this.request("auth-signup", {
       method: "POST",
-      body: JSON.stringify({ email, password, full_name }),
+      body: JSON.stringify({ email, password, full_name, nickname }),
     });
   },
 
@@ -240,6 +240,13 @@ const API = {
     return this.request("ban-user", {
       method: "PUT",
       body: JSON.stringify({ user_id, action, duration_hours, reason }),
+    });
+  },
+
+  async deleteUser(user_id) {
+    return this.request("delete-user", {
+      method: "DELETE",
+      body: JSON.stringify({ user_id }),
     });
   },
 

@@ -21,7 +21,7 @@ document.addEventListener("DOMContentLoaded", async () => {
   // Mostra messaggio se email appena verificata
   const urlParams = new URLSearchParams(window.location.search);
   if (urlParams.get("verified") === "1") {
-    showAlert("✅ Email verificata! Ora puoi accedere.", "success");
+    showAlert("Email verificata! Ora puoi accedere.", "success");
     window.history.replaceState({}, "", "/");
   }
 
@@ -168,10 +168,11 @@ document.addEventListener("DOMContentLoaded", async () => {
 
     try {
       const full_name = document.getElementById("signup-name").value;
+      const nickname = document.getElementById("signup-nickname").value.trim().toLowerCase();
       const email = document.getElementById("signup-email").value;
       const password = document.getElementById("signup-password").value;
 
-      const result = await API.signup(email, password, full_name);
+      const result = await API.signup(email, password, full_name, nickname);
 
       if (result.session) {
         localStorage.setItem("access_token", result.session.access_token);
@@ -243,10 +244,10 @@ document.addEventListener("DOMContentLoaded", async () => {
     try {
       if (pendingOtpType === "signup") {
         // Per la registrazione non possiamo re-inviare facilmente via API senza ri-fare signup
-        showAlert("📧 Se non hai ricevuto il codice, controlla lo spam", "success");
+        showAlert("Se non hai ricevuto il codice, controlla lo spam", "success");
       } else {
         await API.forgotPassword(pendingEmail);
-        showAlert("📧 Codice re-inviato! Controlla la posta", "success");
+        showAlert("Codice re-inviato! Controlla la posta", "success");
       }
       clearOtpInputs(document.getElementById("otp-inputs"));
     } catch (err) {
@@ -288,7 +289,7 @@ document.addEventListener("DOMContentLoaded", async () => {
       document.getElementById("reset-email-display").textContent = email;
       showSection(resetSection);
       clearOtpInputs(document.getElementById("reset-otp-inputs"));
-      showAlert("📧 Codice inviato! Controlla la tua email", "success");
+      showAlert("Codice inviato! Controlla la tua email", "success");
     } catch (err) {
       showAlert(err.message, "error");
     } finally {
@@ -339,7 +340,7 @@ document.addEventListener("DOMContentLoaded", async () => {
 
     try {
       const result = await API.resetPassword(pendingEmail, otp, newPassword);
-      showAlert("✅ " + result.message, "success");
+      showAlert(result.message, "success");
       setTimeout(() => backToLogin(), 2000);
     } catch (err) {
       showAlert(err.message, "error");
@@ -355,6 +356,40 @@ document.addEventListener("DOMContentLoaded", async () => {
   });
 
   // OAuth buttons disabled - coming soon
+
+  // ==============================
+  // Password Toggle (eye icon)
+  // ==============================
+  document.querySelectorAll('.password-toggle').forEach(btn => {
+    btn.addEventListener('click', () => {
+      const wrapper = btn.closest('.password-wrapper');
+      const input = wrapper.querySelector('input');
+      const eyeOpen = btn.querySelector('.eye-open');
+      const eyeClosed = btn.querySelector('.eye-closed');
+      if (input.type === 'password') {
+        input.type = 'text';
+        eyeOpen.classList.add('hidden');
+        eyeClosed.classList.remove('hidden');
+      } else {
+        input.type = 'password';
+        eyeOpen.classList.remove('hidden');
+        eyeClosed.classList.add('hidden');
+      }
+    });
+  });
+
+  // ==============================
+  // "Accedi" link from signup form
+  // ==============================
+  const linkGoLogin = document.getElementById('link-go-login');
+  if (linkGoLogin) {
+    linkGoLogin.addEventListener('click', (e) => {
+      e.preventDefault();
+      tabLogin.classList.add('active');
+      tabSignup.classList.remove('active');
+      showSection(formLogin);
+    });
+  }
 
   function showAlert(message, type) {
     alert.textContent = message;

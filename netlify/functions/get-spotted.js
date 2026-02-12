@@ -21,8 +21,13 @@ exports.handler = async (event) => {
     }
 
     const profile = await getUserProfile(user.id);
-    if (!profile || !profile.school_id) {
-      return response(400, { error: "Profilo o scuola non trovata" });
+    if (!profile) {
+      return response(400, { error: "Profilo non trovato" });
+    }
+
+    // Admin vede tutte le scuole, gli altri solo la propria
+    if (profile.role !== 'admin' && !profile.school_id) {
+      return response(400, { error: "Nessuna scuola associata al profilo" });
     }
 
     const admin = getSupabaseAdmin();
@@ -32,8 +37,12 @@ exports.handler = async (event) => {
     let query = admin
       .from("spotted")
       .select("id, school_id, author_id, body, status, likes_count, created_at")
-      .eq("school_id", profile.school_id)
       .order("created_at", { ascending: false });
+
+    // Filtra per scuola solo se non è admin
+    if (profile.role !== 'admin' && profile.school_id) {
+      query = query.eq("school_id", profile.school_id);
+    }
 
     if (params.status && ['admin', 'co_admin'].includes(profile.role)) {
       query = query.eq("status", params.status);
@@ -53,6 +62,7 @@ exports.handler = async (event) => {
     // Verifica quali spotted l'utente ha likato
     const spottedIds = data.map((s) => s.id);
     let userLikes = [];
+    let commentCounts = {};
     if (spottedIds.length > 0) {
       const { data: likes } = await admin
         .from("spotted_likes")
@@ -60,6 +70,15 @@ exports.handler = async (event) => {
         .eq("user_id", user.id)
         .in("spotted_id", spottedIds);
       userLikes = (likes || []).map((l) => l.spotted_id);
+
+      // Count comments per spotted
+      const { data: comments } = await admin
+        .from("spotted_comments")
+        .select("spotted_id")
+        .in("spotted_id", spottedIds);
+      (comments || []).forEach((c) => {
+        commentCounts[c.spotted_id] = (commentCounts[c.spotted_id] || 0) + 1;
+      });
     }
 
     // Rimuovi author_id dalla risposta, aggiungi is_own e liked
@@ -68,6 +87,7 @@ exports.handler = async (event) => {
       body: s.body,
       status: s.status,
       likes_count: s.likes_count,
+      comments_count: commentCounts[s.id] || 0,
       created_at: s.created_at,
       is_own: s.author_id === user.id,
       liked: userLikes.includes(s.id),

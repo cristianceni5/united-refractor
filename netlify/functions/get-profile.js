@@ -1,4 +1,4 @@
-const { extractToken, getUserFromToken, getUserProfile, headers, response } = require("../../lib/supabase");
+const { getSupabaseAdmin, extractToken, getUserFromToken, getUserProfile, headers, response } = require("../../lib/supabase");
 
 exports.handler = async (event) => {
   if (event.httpMethod === "OPTIONS") {
@@ -23,6 +23,21 @@ exports.handler = async (event) => {
     const profile = await getUserProfile(user.id);
     if (!profile) {
       return response(404, { error: "Profilo non trovato" });
+    }
+
+    // Se l'utente non ha una scuola, controlla se ha una richiesta pendente
+    if (!profile.school_id) {
+      const admin = getSupabaseAdmin();
+      const { data: pendingReq } = await admin
+        .from("school_requests")
+        .select("id, name, city, created_at")
+        .eq("requested_by", user.id)
+        .eq("status", "pending")
+        .order("created_at", { ascending: false })
+        .limit(1)
+        .maybeSingle();
+
+      profile.pending_school_request = pendingReq || null;
     }
 
     return response(200, { profile });
