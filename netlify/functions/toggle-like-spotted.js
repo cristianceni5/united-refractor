@@ -21,7 +21,10 @@ exports.handler = async (event) => {
     }
 
     const profile = await getUserProfile(user.id);
-    if (profile && isBanned(profile)) {
+    if (!profile) {
+      return response(404, { error: "Profilo non trovato" });
+    }
+    if (isBanned(profile)) {
       return response(403, { error: getBanMessage(profile) });
     }
 
@@ -43,12 +46,15 @@ exports.handler = async (event) => {
 
     if (existing) {
       // Rimuovi like
-      await admin
+      const { error: deleteErr } = await admin
         .from("spotted_likes")
         .delete()
         .eq("id", existing.id);
 
-      // Recupera il conteggio aggiornato
+      if (deleteErr) {
+        return response(400, { error: "Errore rimozione like: " + deleteErr.message });
+      }
+
       const { data: spotted } = await admin
         .from("spotted")
         .select("likes_count")
@@ -58,9 +64,13 @@ exports.handler = async (event) => {
       return response(200, { liked: false, likes_count: spotted?.likes_count || 0 });
     } else {
       // Aggiungi like
-      await admin
+      const { error: insertErr } = await admin
         .from("spotted_likes")
         .insert({ spotted_id, user_id: user.id });
+
+      if (insertErr) {
+        return response(400, { error: "Errore aggiunta like: " + insertErr.message });
+      }
 
       const { data: spotted } = await admin
         .from("spotted")

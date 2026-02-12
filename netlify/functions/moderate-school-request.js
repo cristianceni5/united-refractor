@@ -62,7 +62,7 @@ exports.handler = async (event) => {
       }
 
       // Aggiorna la richiesta con lo status e l'id della scuola creata
-      await admin
+      const { error: updateReqErr } = await admin
         .from("school_requests")
         .update({
           status: "approved",
@@ -72,6 +72,11 @@ exports.handler = async (event) => {
         })
         .eq("id", request_id);
 
+      if (updateReqErr) {
+        console.error("Update request error:", updateReqErr);
+        return response(500, { error: "Errore nell'aggiornamento della richiesta" });
+      }
+
       // Assegna automaticamente la scuola al richiedente se non ne ha una
       const { data: requesterProfile } = await admin
         .from("profiles")
@@ -80,10 +85,14 @@ exports.handler = async (event) => {
         .single();
 
       if (requesterProfile && !requesterProfile.school_id) {
-        await admin
+        const { error: assignErr } = await admin
           .from("profiles")
           .update({ school_id: newSchool.id, updated_at: new Date().toISOString() })
           .eq("id", req.requested_by);
+
+        if (assignErr) {
+          console.error("Assign school error:", assignErr);
+        }
       }
 
       return response(200, {
@@ -92,7 +101,7 @@ exports.handler = async (event) => {
       });
     } else {
       // Rejected
-      await admin
+      const { error: rejectErr } = await admin
         .from("school_requests")
         .update({
           status: "rejected",
@@ -100,6 +109,11 @@ exports.handler = async (event) => {
           reviewed_at: new Date().toISOString(),
         })
         .eq("id", request_id);
+
+      if (rejectErr) {
+        console.error("Reject request error:", rejectErr);
+        return response(500, { error: "Errore nel rifiuto della richiesta" });
+      }
 
       return response(200, {
         message: `Richiesta per "${req.name}" rifiutata.`,

@@ -22,14 +22,16 @@ exports.handler = async (event) => {
 
     const profile = await getUserProfile(user.id);
     if (!profile) {
-      return response(400, { error: "Profilo non trovato" });
+      return response(404, { error: "Profilo non trovato" });
     }
 
     if (isBanned(profile)) {
       return response(403, { error: getBanMessage(profile) });
     }
 
-    if (!profile.school_id) {
+    // Admin e co_admin possono creare spotted globali (senza scuola)
+    const isGlobal = ['admin', 'co_admin'].includes(profile.role);
+    if (!isGlobal && !profile.school_id) {
       return response(400, { error: "Nessuna scuola associata al profilo" });
     }
 
@@ -43,10 +45,10 @@ exports.handler = async (event) => {
     const { data, error } = await admin
       .from("spotted")
       .insert({
-        school_id: profile.school_id,
+        school_id: isGlobal ? null : profile.school_id,
         author_id: user.id,
         body: body.trim(),
-        status: "pending",
+        status: isGlobal ? "approved" : "pending",
       })
       .select("id, body, status, likes_count, created_at")
       .single();

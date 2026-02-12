@@ -78,7 +78,10 @@ document.addEventListener("DOMContentLoaded", async () => {
 
     // School
     const schoolEl = document.getElementById("vp-school");
-    if (profile.school) {
+    const schoolRow = schoolEl.closest('.vp-detail-item');
+    if (["admin", "co_admin"].includes(profile.role)) {
+      schoolRow.style.display = 'none';
+    } else if (profile.school) {
       schoolEl.textContent = profile.school.name;
       schoolEl.href = `/view-school.html?id=${profile.school.id}`;
     } else {

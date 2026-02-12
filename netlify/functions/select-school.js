@@ -23,7 +23,17 @@ exports.handler = async (event) => {
       return response(400, { error: "Seleziona una scuola" });
     }
 
+    // Admin e co_admin non hanno una scuola di appartenenza
     const admin = getSupabaseAdmin();
+    const { data: callerProfile } = await admin
+      .from("profiles")
+      .select("role")
+      .eq("id", user.id)
+      .single();
+
+    if (callerProfile && ['admin', 'co_admin'].includes(callerProfile.role)) {
+      return response(403, { error: "Gli amministratori non hanno una scuola di appartenenza" });
+    }
 
     // Verifica che la scuola esista
     const { data: school, error: schoolErr } = await admin

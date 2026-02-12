@@ -22,7 +22,7 @@ exports.handler = async (event) => {
 
     const profile = await getUserProfile(user.id);
     if (!profile) {
-      return response(400, { error: "Profilo non trovato" });
+      return response(404, { error: "Profilo non trovato" });
     }
 
     const { comment_id } = JSON.parse(event.body);

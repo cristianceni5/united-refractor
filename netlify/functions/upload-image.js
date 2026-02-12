@@ -61,6 +61,10 @@ exports.handler = async (event) => {
       .from("images")
       .getPublicUrl(filePath);
 
+    if (!urlData || !urlData.publicUrl) {
+      return response(400, { error: "Errore nel generare URL immagine" });
+    }
+
     return response(200, { url: urlData.publicUrl });
   } catch (err) {
     console.error("Upload error:", err);

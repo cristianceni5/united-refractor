@@ -23,6 +23,9 @@ exports.handler = async (event) => {
     });
 
     if (error) {
+      if (error.message && error.message.toLowerCase().includes("email not confirmed")) {
+        return response(401, { error: "Email non ancora verificata. Controlla la tua casella di posta (anche lo spam) per il codice di verifica." });
+      }
       return response(401, { error: "Credenziali non valide" });
     }
 

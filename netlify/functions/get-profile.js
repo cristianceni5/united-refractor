@@ -25,9 +25,28 @@ exports.handler = async (event) => {
       return response(404, { error: "Profilo non trovato" });
     }
 
+    const admin = getSupabaseAdmin();
+
+    // Recupera info scuola se presente (e non è admin/co_admin)
+    let school = null;
+    if (profile.school_id && !['admin', 'co_admin'].includes(profile.role)) {
+      const { data: schoolData } = await admin
+        .from("schools")
+        .select("id, name, city, province, logo_url")
+        .eq("id", profile.school_id)
+        .single();
+      school = schoolData || null;
+    }
+
+    // Conta i post dell'utente
+    const { count: postsCount } = await admin
+      .from("posts")
+      .select("id", { count: "exact", head: true })
+      .eq("author_id", user.id);
+
     // Se l'utente non ha una scuola, controlla se ha una richiesta pendente
-    if (!profile.school_id) {
-      const admin = getSupabaseAdmin();
+    let pending_school_request = null;
+    if (!profile.school_id && !['admin', 'co_admin'].includes(profile.role)) {
       const { data: pendingReq } = await admin
         .from("school_requests")
         .select("id, name, city, created_at")
@@ -37,10 +56,17 @@ exports.handler = async (event) => {
         .limit(1)
         .maybeSingle();
 
-      profile.pending_school_request = pendingReq || null;
+      pending_school_request = pendingReq || null;
     }
 
-    return response(200, { profile });
+    return response(200, {
+      profile: {
+        ...profile,
+        school,
+        posts_count: postsCount || 0,
+        pending_school_request,
+      },
+    });
   } catch (err) {
     return response(500, { error: "Errore interno del server" });
   }

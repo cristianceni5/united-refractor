@@ -47,25 +47,21 @@ exports.handler = async (event) => {
 
     const admin = getSupabaseAdmin();
 
-    // 1. Elimina il profilo dalla tabella profiles (le FK con ON DELETE CASCADE
-    //    elimineranno spotted_likes, spotted_comments, ecc.)
-    const { error: profileError } = await admin
-      .from("profiles")
-      .delete()
-      .eq("id", user_id);
-
-    if (profileError) {
-      return response(400, { error: "Errore eliminazione profilo: " + profileError.message });
-    }
-
-    // 2. Elimina l'utente da auth.users usando l'admin API di Supabase
+    // IMPORTANTE: Elimina prima dall'auth, il CASCADE eliminerà automaticamente
+    // il profilo e tutte le righe correlate (spotted_likes, spotted_comments, posts, ecc.)
+    // grazie ai vincoli ON DELETE CASCADE nel database
     const { error: authError } = await admin.auth.admin.deleteUser(user_id);
 
     if (authError) {
-      return response(400, { error: "Profilo eliminato ma errore eliminazione auth: " + authError.message });
+      return response(400, { error: "Errore eliminazione utente: " + authError.message });
     }
 
-    return response(200, { message: "Utente eliminato completamente" });
+    // Il profilo e tutti i dati correlati sono stati eliminati automaticamente
+    // grazie al vincolo ON DELETE CASCADE (auth.users → profiles)
+    return response(200, {
+      message: "Utente eliminato completamente da auth e database",
+      deletedUserId: user_id
+    });
   } catch (err) {
     console.error("Delete user error:", err);
     return response(500, { error: "Errore interno del server" });

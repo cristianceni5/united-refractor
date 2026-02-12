@@ -21,31 +21,50 @@ exports.handler = async (event) => {
     }
 
     const profile = await getUserProfile(user.id);
-    if (!profile || !["admin", "co_admin", "rappresentante"].includes(profile.role)) {
-      return response(403, { error: "Solo admin, co-admin e rappresentanti possono creare post" });
+    if (!profile) {
+      return response(403, { error: "Profilo non trovato" });
     }
 
-    if (!profile.school_id) {
-      return response(400, { error: "Nessuna scuola associata al profilo" });
-    }
-
-    const { title, body, image_url, category, pinned } = JSON.parse(event.body);
+    const { title, body, image_url, category, pinned, discount } = JSON.parse(event.body);
 
     if (!title || !body) {
       return response(400, { error: "Titolo e corpo sono obbligatori" });
+    }
+
+    const isConvenzione = category === "convenzione";
+
+    // Solo admin/co_admin/rappresentante possono creare post normali
+    // Chiunque autenticato può creare un post convenzione (va in approvazione)
+    if (!isConvenzione && !["admin", "co_admin", "rappresentante"].includes(profile.role)) {
+      return response(403, { error: "Solo admin, co-admin e rappresentanti possono creare post" });
+    }
+
+    // Admin e co_admin possono creare post globali (senza scuola)
+    // Le convenzioni sono sempre globali
+    const isGlobal = ['admin', 'co_admin'].includes(profile.role) || isConvenzione;
+    if (!isGlobal && !profile.school_id) {
+      return response(400, { error: "Nessuna scuola associata al profilo" });
+    }
+
+    // Convenzioni richiedono approvazione admin (auto-approve per admin/co_admin)
+    let postStatus = "approved";
+    if (isConvenzione && !['admin', 'co_admin'].includes(profile.role)) {
+      postStatus = "pending";
     }
 
     const admin = getSupabaseAdmin();
     const { data, error } = await admin
       .from("posts")
       .insert({
-        school_id: profile.school_id,
+        school_id: isGlobal ? null : profile.school_id,
         author_id: user.id,
         title,
         body,
         image_url: image_url || null,
         category: category || "altro",
         pinned: pinned || false,
+        status: postStatus,
+        discount: isConvenzione && discount ? discount : null,
       })
       .select()
       .single();

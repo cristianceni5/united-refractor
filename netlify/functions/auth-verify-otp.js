@@ -35,23 +35,36 @@ exports.handler = async (event) => {
       return response(400, { error: "Verifica non riuscita, riprova" });
     }
 
-    // Per signup: verifica che il profilo esista
+    // Per signup: crea il profilo ORA che l'email è verificata
     if (otpType === "signup" && data.user) {
       const admin = getSupabaseAdmin();
-      const { data: profile } = await admin
+      const { data: existingProfile } = await admin
         .from("profiles")
         .select("id")
         .eq("id", data.user.id)
-        .single();
+        .maybeSingle();
 
-      if (!profile) {
-        // Crea profilo se non esiste (fallback)
+      if (!existingProfile) {
         const meta = data.user.user_metadata || {};
-        await admin.from("profiles").upsert({
+        let nickname = meta.nickname || data.user.email.split("@")[0].toLowerCase();
+
+        // Safety check: unicità nickname (raro, ma possibile in caso di race condition)
+        const { data: nickTaken } = await admin
+          .from("profiles")
+          .select("id")
+          .eq("nickname", nickname)
+          .maybeSingle();
+
+        if (nickTaken) {
+          nickname = nickname + "_" + Math.random().toString(36).slice(2, 6);
+        }
+
+        await admin.from("profiles").insert({
           id: data.user.id,
           email: data.user.email,
           full_name: meta.full_name || data.user.email.split("@")[0],
-          school_id: meta.school_id || null,
+          nickname: nickname,
+          school_id: null,
           role: "studente",
         });
       }

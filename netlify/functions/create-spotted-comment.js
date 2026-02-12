@@ -21,7 +21,10 @@ exports.handler = async (event) => {
     }
 
     const profile = await getUserProfile(user.id);
-    if (profile && isBanned(profile)) {
+    if (!profile) {
+      return response(404, { error: "Profilo non trovato" });
+    }
+    if (isBanned(profile)) {
       return response(403, { error: getBanMessage(profile) });
     }
 

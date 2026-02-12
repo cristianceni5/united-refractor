@@ -41,6 +41,11 @@ document.addEventListener("DOMContentLoaded", async () => {
     document.getElementById("welcome-text").textContent =
       `Ciao, ${(profile.full_name || profile.nickname).split(" ")[0]}!`;
 
+    // Banner nickname mancante
+    if (!profile.nickname) {
+      document.getElementById("no-nickname-banner").classList.remove("hidden");
+    }
+
     // Stats e lista per admin/co_admin/rappresentante
     if (["admin", "co_admin", "rappresentante"].includes(profile.role)) {
       document.getElementById("add-school-section").classList.remove("hidden");
@@ -90,8 +95,8 @@ document.addEventListener("DOMContentLoaded", async () => {
       }
     }
 
-    // Home feeds per tutti gli utenti con scuola (admin vede tutto)
-    if (profile.school_id || profile.role === 'admin') {
+    // Home feeds per tutti gli utenti con scuola (admin e co_admin vedono tutto)
+    if (profile.school_id || ['admin', 'co_admin'].includes(profile.role)) {
       loadHomeFeeds();
     } else {
       // Utente senza scuola: mostra banner appropriato
@@ -751,8 +756,12 @@ document.addEventListener("DOMContentLoaded", async () => {
         btn.addEventListener("click", (e) => {
           e.preventDefault();
           e.stopPropagation();
-          const school = JSON.parse(btn.dataset.school);
-          editSchool(school);
+          try {
+            const school = JSON.parse(btn.dataset.school);
+            editSchool(school);
+          } catch (parseErr) {
+            console.error("Errore parsing dati scuola:", parseErr);
+          }
         });
       });
     } catch (err) {

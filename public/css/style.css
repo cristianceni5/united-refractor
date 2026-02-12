@@ -65,7 +65,7 @@ body {
   align-items: center;
   min-height: 100vh;
   padding: 20px;
-  background: linear-gradient(135deg, #007AFF 0%, #34AADC 40%, #5AC8FA 70%, #007AFF 100%);
+  background: linear-gradient(135deg, #007AFF 0%, #0051D5 40%, #0A84FF 70%, #007AFF 100%);
   background-size: 200% 200%;
   animation: gradientShift 8s ease infinite;
 }
@@ -251,7 +251,7 @@ body {
 }
 
 .btn-primary {
-  background: linear-gradient(135deg, var(--primary) 0%, #34AADC 100%);
+  background: linear-gradient(135deg, var(--primary) 0%, #0051D5 100%);
   color: white;
   width: 100%;
   position: relative;
@@ -462,6 +462,11 @@ body {
   background: linear-gradient(135deg, #fefce8 0%, #fef9c3 100%);
   border-color: #fde047;
 }
+.pending-school-banner.nickname-variant {
+  background: linear-gradient(135deg, #f0fdf4 0%, #dcfce7 100%);
+  border-color: #86efac;
+}
+.nickname-variant .pending-school-banner-icon { color: #16a34a; }
 .pending-school-banner-icon {
   flex-shrink: 0;
   color: var(--primary);
@@ -506,7 +511,7 @@ body {
   width: 52px;
   height: 52px;
   border-radius: 50%;
-  background: linear-gradient(135deg, var(--primary), #34AADC, #5AC8FA);
+  background: linear-gradient(135deg, var(--primary), #0051D5, #0A84FF);
   color: white;
   display: flex;
   align-items: center;
@@ -697,7 +702,7 @@ body {
   width: 32px;
   height: 32px;
   border-radius: 50%;
-  background: linear-gradient(135deg, var(--primary), #34AADC);
+  background: linear-gradient(135deg, var(--primary), #0051D5);
   color: white;
   display: flex;
   align-items: center;
@@ -784,14 +789,14 @@ body {
   left: 0;
   right: 0;
   height: 3px;
-  background: linear-gradient(90deg, var(--primary), #34AADC, #5AC8FA);
+  background: linear-gradient(90deg, var(--primary), #0051D5, #0A84FF);
   opacity: 0.6;
 }
 
 .stat-card .stat-value {
   font-size: 1.6rem;
   font-weight: 800;
-  background: linear-gradient(135deg, var(--primary), #34AADC);
+  background: linear-gradient(135deg, var(--primary), #0051D5);
   -webkit-background-clip: text;
   -webkit-text-fill-color: transparent;
   background-clip: text;
@@ -834,7 +839,7 @@ body {
   width: 36px;
   height: 36px;
   border-radius: 50%;
-  background: linear-gradient(135deg, var(--primary), #34AADC);
+  background: linear-gradient(135deg, var(--primary), #0051D5);
   color: white;
   display: flex;
   align-items: center;
@@ -1004,7 +1009,7 @@ body {
   width: 36px;
   height: 36px;
   border-radius: 50%;
-  background: linear-gradient(135deg, var(--primary), #34AADC);
+  background: linear-gradient(135deg, var(--primary), #0051D5);
   color: white;
   display: flex;
   align-items: center;
@@ -1080,7 +1085,7 @@ body {
 /* Spotted compose card - gradient border */
 .spotted-compose-card {
   border: 2px solid transparent;
-  background-image: linear-gradient(var(--surface), var(--surface)), linear-gradient(135deg, #007AFF, #34AADC);
+  background-image: linear-gradient(var(--surface), var(--surface)), linear-gradient(135deg, #007AFF, #0051D5);
   background-origin: border-box;
   background-clip: padding-box, border-box;
 }
@@ -1170,7 +1175,7 @@ body {
 }
 
 .filter-chip.active {
-  background: linear-gradient(135deg, var(--primary) 0%, #34AADC 100%);
+  background: linear-gradient(135deg, var(--primary) 0%, #0051D5 100%);
   color: white;
   border-color: transparent;
   box-shadow: none;
@@ -1214,7 +1219,7 @@ body {
   width: 36px;
   height: 36px;
   border-radius: 50%;
-  background: linear-gradient(135deg, var(--primary), #34AADC);
+  background: linear-gradient(135deg, var(--primary), #0051D5);
   color: white;
   display: flex;
   align-items: center;
@@ -1423,6 +1428,107 @@ body {
 .cat-evento { background: #dbeafe; color: #1e40af; }
 .cat-circolare { background: var(--primary-light); color: #0A4DA6; }
 .cat-altro { background: #f1f5f9; color: #475569; }
+.cat-convenzione {
+  background: linear-gradient(135deg, #10b981, #059669);
+  color: white;
+}
+
+/* Bordo post convenzione */
+.post-convenzione {
+  border: 1.5px solid #10b981;
+}
+
+/* Pill sconto (accanto alla pill categoria nel footer) */
+.post-discount-pill {
+  display: inline-block;
+  padding: 2px 8px;
+  background: #ecfdf5;
+  color: #065f46;
+  font-weight: 600;
+  font-size: 0.75rem;
+  border-radius: 999px;
+  border: 1px solid #a7f3d0;
+}
+
+/* Ribbon Pending (per post in attesa approvazione) */
+.pending-ribbon {
+  position: absolute;
+  top: 12px;
+  right: -32px;
+  background: linear-gradient(135deg, #f59e0b, #d97706);
+  color: white;
+  padding: 4px 36px;
+  font-size: 0.7rem;
+  font-weight: 700;
+  transform: rotate(45deg);
+  box-shadow: 0 2px 8px rgba(245, 158, 11, 0.3);
+  z-index: 10;
+}
+
+/* Styling per post pending */
+.post-pending {
+  position: relative;
+  border: 2px dashed #f59e0b;
+  opacity: 0.85;
+  overflow: hidden;
+}
+
+/* Azioni moderazione (bottoni Approva/Rifiuta) */
+.post-moderate-actions {
+  display: flex;
+  gap: 8px;
+  padding: 12px 16px;
+  border-top: 1px solid var(--border);
+  background: var(--bg);
+}
+
+/* Bottone Approva */
+.btn-approve {
+  flex: 1;
+  padding: 8px 16px;
+  background: linear-gradient(135deg, #10b981, #059669);
+  color: white;
+  border: none;
+  border-radius: var(--radius-sm);
+  font-weight: 700;
+  font-size: 0.85rem;
+  cursor: pointer;
+  transition: all 0.2s;
+}
+
+.btn-approve:hover {
+  background: linear-gradient(135deg, #059669, #047857);
+  transform: translateY(-1px);
+  box-shadow: 0 4px 12px rgba(16, 185, 129, 0.3);
+}
+
+.btn-approve:active {
+  transform: translateY(0);
+}
+
+/* Bottone Rifiuta */
+.btn-reject {
+  flex: 1;
+  padding: 8px 16px;
+  background: linear-gradient(135deg, #ef4444, #dc2626);
+  color: white;
+  border: none;
+  border-radius: var(--radius-sm);
+  font-weight: 700;
+  font-size: 0.85rem;
+  cursor: pointer;
+  transition: all 0.2s;
+}
+
+.btn-reject:hover {
+  background: linear-gradient(135deg, #dc2626, #b91c1c);
+  transform: translateY(-1px);
+  box-shadow: 0 4px 12px rgba(239, 68, 68, 0.3);
+}
+
+.btn-reject:active {
+  transform: translateY(0);
+}
 
 .post-pin {
   display: inline-block;
@@ -1692,6 +1798,22 @@ body {
 }
 
 /* ============================================
+   MY PROFILE EDIT HEADER
+   ============================================ */
+.myprofile-edit-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: 20px;
+}
+
+.myprofile-edit-header h2 {
+  font-size: 1.1rem;
+  font-weight: 800;
+  margin: 0;
+}
+
+/* ============================================
    PROFILE AVATAR UPLOAD
    ============================================ */
 .profile-card {
@@ -1719,7 +1841,7 @@ body {
   width: 88px;
   height: 88px;
   border-radius: 50%;
-  background: linear-gradient(135deg, var(--primary), #34AADC, #5AC8FA);
+  background: linear-gradient(135deg, var(--primary), #0051D5, #0A84FF);
   color: white;
   display: flex;
   align-items: center;
@@ -1889,7 +2011,7 @@ tbody td {
   width: 56px;
   height: 56px;
   border-radius: 50%;
-  background: linear-gradient(135deg, var(--primary), #34AADC, #5AC8FA);
+  background: linear-gradient(135deg, var(--primary), #0051D5, #0A84FF);
   color: white;
   display: flex;
   align-items: center;
@@ -1947,7 +2069,7 @@ tbody td {
   width: 44px;
   height: 44px;
   border-radius: 50%;
-  background: linear-gradient(135deg, var(--primary), #34AADC);
+  background: linear-gradient(135deg, var(--primary), #0051D5);
   color: white;
   display: flex;
   align-items: center;
@@ -1980,7 +2102,7 @@ tbody td {
   border-radius: 999px;
   font-size: 0.65rem;
   font-weight: 700;
-  background: linear-gradient(135deg, var(--primary), #34AADC);
+  background: linear-gradient(135deg, var(--primary), #0051D5);
   color: white;
   text-transform: uppercase;
 }
@@ -2190,7 +2312,7 @@ tbody td {
   height: 40px;
   border-radius: 10px;
   object-fit: contain;
-  background: var(--background);
+  background: #ffffff;
   border: 1px solid var(--border);
   padding: 4px;
   flex-shrink: 0;
@@ -2273,7 +2395,7 @@ tbody td {
   height: 48px;
   border-radius: 10px;
   object-fit: contain;
-  background: var(--background);
+  background: #ffffff;
   border: 1px solid var(--border);
   padding: 4px;
 }
@@ -2435,17 +2557,50 @@ tbody td {
   position: relative;
   display: none;
   margin-top: 12px;
+  border-radius: var(--radius);
+  border: 1px solid var(--border);
+  overflow: hidden;
+  aspect-ratio: 16 / 9;
+  max-height: 180px;
+  background: #000;
+  cursor: grab;
+  touch-action: none;
+  user-select: none;
+  -webkit-user-select: none;
 }
+.image-preview-container:active { cursor: grabbing; }
 
 .image-preview-container.has-image { display: block; }
 
 .image-preview {
+  position: absolute;
+  left: 50%;
+  top: 50%;
   width: 100%;
-  max-height: 200px;
-  object-fit: cover;
-  border-radius: var(--radius);
-  border: 1px solid var(--border);
+  height: auto;
+  pointer-events: none;
+  will-change: transform;
+  transform-origin: center center;
+  transform: translate(-50%, -50%);
 }
+
+.image-preview-hint {
+  position: absolute;
+  bottom: 8px;
+  left: 50%;
+  transform: translateX(-50%);
+  background: rgba(0,0,0,0.55);
+  color: #fff;
+  font-size: 0.7rem;
+  font-weight: 600;
+  padding: 4px 12px;
+  border-radius: 999px;
+  pointer-events: none;
+  backdrop-filter: blur(4px);
+  opacity: 1;
+  transition: opacity 0.4s;
+}
+.image-preview-hint.fade { opacity: 0; }
 
 .image-preview-remove {
   position: absolute;
@@ -2477,7 +2632,7 @@ tbody td {
 
 .progress-bar-fill {
   height: 100%;
-  background: linear-gradient(90deg, var(--primary), #34AADC);
+  background: linear-gradient(90deg, var(--primary), #0051D5);
   border-radius: 2px;
   width: 0%;
   transition: width 0.3s ease;
@@ -2944,7 +3099,7 @@ textarea {
    ============================================ */
 .view-profile-hero {
   max-width: 600px;
-  margin: 0 auto 20px;
+  margin: 20px auto 20px;
 }
 
 .view-profile-top {
@@ -2960,7 +3115,7 @@ textarea {
   width: 80px;
   height: 80px;
   border-radius: 50%;
-  background: linear-gradient(135deg, var(--primary), #34AADC, #5AC8FA);
+  background: linear-gradient(135deg, var(--primary), #0051D5, #0A84FF);
   color: white;
   display: flex;
   align-items: center;
@@ -3094,7 +3249,7 @@ textarea {
   width: 64px;
   height: 64px;
   border-radius: 16px;
-  background: var(--primary-light);
+  background: #ffffff;
   display: flex;
   align-items: center;
   justify-content: center;
@@ -3174,7 +3329,7 @@ textarea {
 .vs-stat-value {
   font-size: 1.4rem;
   font-weight: 800;
-  background: linear-gradient(135deg, var(--primary), #34AADC);
+  background: linear-gradient(135deg, var(--primary), #0051D5);
   -webkit-background-clip: text;
   -webkit-text-fill-color: transparent;
   background-clip: text;
@@ -3216,7 +3371,7 @@ textarea {
   width: 38px;
   height: 38px;
   border-radius: 50%;
-  background: linear-gradient(135deg, var(--primary), #34AADC);
+  background: linear-gradient(135deg, var(--primary), #0051D5);
   color: white;
   display: flex;
   align-items: center;
@@ -3297,7 +3452,7 @@ textarea {
   align-items: center;
   justify-content: center;
   padding: 24px 16px;
-  background: linear-gradient(135deg, #007AFF 0%, #34AADC 40%, #5AC8FA 70%, #007AFF 100%);
+  background: linear-gradient(135deg, #007AFF 0%, #0051D5 40%, #0A84FF 70%, #007AFF 100%);
   background-size: 200% 200%;
   animation: gradientShift 8s ease infinite;
 }
@@ -3420,7 +3575,10 @@ textarea {
   width: 36px;
   height: 36px;
   border-radius: 10px;
-  object-fit: cover;
+  object-fit: contain;
+  background: #ffffff;
+  border: 1px solid var(--border);
+  padding: 3px;
   flex-shrink: 0;
 }
 
@@ -4036,10 +4194,6 @@ textarea {
   /* Image upload */
   .image-upload-area {
     padding: 24px;
-  }
-
-  .image-preview {
-    max-height: 250px;
   }
 
   /* Modal */

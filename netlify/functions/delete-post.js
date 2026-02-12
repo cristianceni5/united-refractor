@@ -36,7 +36,7 @@ exports.handler = async (event) => {
     // Verifica che il post esista
     const { data: existingPost, error: fetchError } = await admin
       .from("posts")
-      .select("author_id")
+      .select("author_id, image_url")
       .eq("id", post_id)
       .single();
 
@@ -46,6 +46,21 @@ exports.handler = async (event) => {
 
     if (existingPost.author_id !== user.id && !['admin', 'co_admin'].includes(profile.role)) {
       return response(403, { error: "Puoi eliminare solo i tuoi post" });
+    }
+
+    // Elimina l'immagine dallo storage se presente
+    if (existingPost.image_url) {
+      try {
+        const url = existingPost.image_url;
+        // Estrai il path dallo storage URL: .../object/public/images/posts/...
+        const match = url.match(/\/storage\/v1\/object\/public\/images\/(.+)/);
+        if (match && match[1]) {
+          await admin.storage.from("images").remove([decodeURIComponent(match[1])]);
+        }
+      } catch (storageErr) {
+        // Non bloccare la cancellazione del post se lo storage fallisce
+        console.error("Errore cancellazione immagine dallo storage:", storageErr);
+      }
     }
 
     const { error } = await admin

@@ -22,11 +22,11 @@ exports.handler = async (event) => {
 
     const profile = await getUserProfile(user.id);
     if (!profile) {
-      return response(400, { error: "Profilo non trovato" });
+      return response(404, { error: "Profilo non trovato" });
     }
 
-    // Admin vede tutte le scuole, gli altri solo la propria
-    if (profile.role !== 'admin' && !profile.school_id) {
+    // Admin e co_admin vedono tutte le scuole, gli altri solo la propria
+    if (!['admin', 'co_admin'].includes(profile.role) && !profile.school_id) {
       return response(400, { error: "Nessuna scuola associata al profilo" });
     }
 
@@ -39,9 +39,9 @@ exports.handler = async (event) => {
       .select("id, school_id, author_id, body, status, likes_count, created_at")
       .order("created_at", { ascending: false });
 
-    // Filtra per scuola solo se non è admin
-    if (profile.role !== 'admin' && profile.school_id) {
-      query = query.eq("school_id", profile.school_id);
+    // Admin e co_admin vedono tutto; gli altri vedono la propria scuola + spotted globali (school_id IS NULL)
+    if (!['admin', 'co_admin'].includes(profile.role) && profile.school_id) {
+      query = query.or(`school_id.eq.${profile.school_id},school_id.is.null`);
     }
 
     if (params.status && ['admin', 'co_admin'].includes(profile.role)) {

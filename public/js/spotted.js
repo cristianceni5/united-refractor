@@ -101,14 +101,14 @@ document.addEventListener("DOMContentLoaded", async () => {
       noMsg.classList.add("hidden");
 
       const gradients = [
-        "linear-gradient(135deg, #007AFF 0%, #34AADC 100%)",
-        "linear-gradient(135deg, #5AC8FA 0%, #007AFF 100%)",
-        "linear-gradient(135deg, #34AADC 0%, #0051D5 100%)",
-        "linear-gradient(135deg, #0A84FF 0%, #5AC8FA 100%)",
-        "linear-gradient(135deg, #007AFF 0%, #64D2FF 100%)",
-        "linear-gradient(135deg, #0051D5 0%, #34AADC 100%)",
-        "linear-gradient(135deg, #30B0C7 0%, #007AFF 100%)",
-        "linear-gradient(135deg, #5AC8FA 0%, #0051D5 100%)",
+        "linear-gradient(135deg, #007AFF 0%, #0051D5 100%)",
+        "linear-gradient(135deg, #0051D5 0%, #0A84FF 100%)",
+        "linear-gradient(135deg, #0A84FF 0%, #003CB3 100%)",
+        "linear-gradient(135deg, #003CB3 0%, #007AFF 100%)",
+        "linear-gradient(135deg, #0051D5 0%, #0066E6 100%)",
+        "linear-gradient(135deg, #0066E6 0%, #003CB3 100%)",
+        "linear-gradient(135deg, #007AFF 0%, #0A84FF 100%)",
+        "linear-gradient(135deg, #003CB3 0%, #0051D5 100%)",
       ];
 
       function anonNumber(id) {

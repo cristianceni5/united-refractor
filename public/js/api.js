@@ -168,6 +168,13 @@ const API = {
     });
   },
 
+  async moderatePost(post_id, status) {
+    return this.request("moderate-post", {
+      method: "PUT",
+      body: JSON.stringify({ post_id, status }),
+    });
+  },
+
   async updatePost(data) {
     return this.request("update-post", {
       method: "PUT",

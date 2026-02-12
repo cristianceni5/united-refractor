@@ -35,11 +35,12 @@ exports.handler = async (event) => {
     const supabase = getSupabaseClient();
 
     // Usa signUp standard con email verification
+    // Salva nickname e full_name nei user_metadata per creare il profilo dopo la verifica OTP
     const { data, error } = await supabase.auth.signUp({
       email,
       password,
       options: {
-        data: { full_name },
+        data: { full_name, nickname: nickname.toLowerCase() },
         emailRedirectTo: `${process.env.URL || 'http://localhost:8888'}/auth-callback.html`,
       },
     });
@@ -68,18 +69,8 @@ exports.handler = async (event) => {
       });
     }
 
-    // Email non ancora confermata - crea profilo in anticipo
-    if (data.user) {
-      const admin = getSupabaseAdmin();
-      await admin.from("profiles").upsert({
-        id: data.user.id,
-        email: email,
-        full_name: full_name,
-        nickname: nickname.toLowerCase(),
-        school_id: null,
-        role: "studente",
-      });
-    }
+    // NON creare il profilo ora — verrà creato dopo la verifica OTP
+    // I dati (full_name, nickname) sono salvati nei user_metadata di auth.users
 
     return response(200, {
       message: "Ti abbiamo inviato un'email di verifica! Controlla la tua casella di posta.",

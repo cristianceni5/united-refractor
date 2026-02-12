@@ -104,6 +104,24 @@ CREATE POLICY "Enable insert for service role"
 -- Non serve più un trigger su auth.users
 
 -- ============================================================
+-- TRIGGER: Sincronizzazione eliminazione profile → auth.users
+-- ============================================================
+-- Quando viene eliminato un profilo, elimina anche l'utente dall'auth
+CREATE OR REPLACE FUNCTION delete_auth_user_on_profile_delete()
+RETURNS TRIGGER AS $$
+BEGIN
+  -- Elimina l'utente da auth.users (richiede service role)
+  DELETE FROM auth.users WHERE id = OLD.id;
+  RETURN OLD;
+END;
+$$ LANGUAGE plpgsql SECURITY DEFINER;
+
+CREATE TRIGGER on_profile_delete
+  BEFORE DELETE ON profiles
+  FOR EACH ROW
+  EXECUTE FUNCTION delete_auth_user_on_profile_delete();
+
+-- ============================================================
 -- 2b. SCHOOL_REQUESTS (richieste nuove scuole)
 -- ============================================================
 CREATE TABLE school_requests (
@@ -132,13 +150,15 @@ CREATE POLICY "Service role full access school_requests"
 -- ============================================================
 CREATE TABLE posts (
   id UUID DEFAULT gen_random_uuid() PRIMARY KEY,
-  school_id UUID REFERENCES schools(id) NOT NULL,
+  school_id UUID REFERENCES schools(id),
   author_id UUID REFERENCES profiles(id) NOT NULL,
   title TEXT NOT NULL,
   body TEXT NOT NULL,
   image_url TEXT,
-  category TEXT DEFAULT 'altro' CHECK (category IN ('avviso', 'evento', 'circolare', 'altro')),
+  category TEXT DEFAULT 'altro' CHECK (category IN ('avviso', 'evento', 'circolare', 'convenzione', 'altro')),
   pinned BOOLEAN DEFAULT false,
+  status TEXT DEFAULT 'approved' CHECK (status IN ('approved', 'pending', 'rejected')),
+  discount TEXT,
   created_at TIMESTAMPTZ DEFAULT NOW(),
   updated_at TIMESTAMPTZ DEFAULT NOW()
 );
@@ -166,7 +186,7 @@ CREATE POLICY "Service role full access posts"
 -- ============================================================
 CREATE TABLE spotted (
   id UUID DEFAULT gen_random_uuid() PRIMARY KEY,
-  school_id UUID REFERENCES schools(id) NOT NULL,
+  school_id UUID REFERENCES schools(id),
   author_id UUID REFERENCES profiles(id) NOT NULL,
   body TEXT NOT NULL,
   status TEXT DEFAULT 'pending' CHECK (status IN ('pending', 'approved', 'rejected')),
