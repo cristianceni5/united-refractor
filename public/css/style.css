@@ -2593,7 +2593,7 @@ textarea {
   font-size: 0.82rem;
 }
 
-.footer-brand img { height: 20px; width: auto; opacity: 0.5; }
+.footer-brand img { height: 20px; width: auto; filter: brightness(0) saturate(100%) invert(24%) sepia(95%) saturate(2000%) hue-rotate(210deg) brightness(95%) contrast(100%); }
 
 .footer-credits {
   color: var(--text-muted);
